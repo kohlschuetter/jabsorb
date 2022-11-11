@@ -1,10 +1,12 @@
 /bin/
 /target/
+/target-eclipse/
 /.classpath
 /.project
 /.settings
 /.idea
 *.iml
-
 .idea/
-
+*~
+.*.swp
+.DS_Store
