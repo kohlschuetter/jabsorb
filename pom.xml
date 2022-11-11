@@ -154,6 +154,30 @@ org.slf4j</Import-Package>
                     </includes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <!-- invoke with: mvn license:format -->
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <failIfMissing>${license.strict}</failIfMissing>
+                    <header>${kohlschutter.project.notice.file}</header>
+                    <includes>
+                        <include>src/main/java/org/jabsorb/**/*.java</include>
+                        <include>src/test/java/org/jabsorb/**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
