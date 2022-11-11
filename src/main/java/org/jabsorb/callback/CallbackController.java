@@ -27,7 +27,6 @@ package org.jabsorb.callback;
 import java.io.Serializable;
 import java.lang.reflect.AccessibleObject;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -51,13 +50,13 @@ public class CallbackController implements Serializable {
   /**
    * Holds all callbacks registered with this controller. Type: CallbackData
    */
-  private Set callbackSet;
+  private final Set<CallbackData> callbackSet;
 
   /**
    * Default constructor.
    */
   public CallbackController() {
-    callbackSet = new HashSet();
+    callbackSet = new HashSet<CallbackData>();
   }
 
   /**
@@ -72,9 +71,7 @@ public class CallbackController implements Serializable {
   public void errorCallback(Object context, Object instance, AccessibleObject accessibleObject,
       Throwable error) {
     synchronized (callbackSet) {
-      Iterator i = callbackSet.iterator();
-      while (i.hasNext()) {
-        CallbackData cbdata = (CallbackData) i.next();
+      for (CallbackData cbdata : callbackSet) {
         if (cbdata.understands(context) && (cbdata
             .getCallback() instanceof ErrorInvocationCallback)) {
           ErrorInvocationCallback ecb = (ErrorInvocationCallback) cbdata.getCallback();
@@ -102,9 +99,7 @@ public class CallbackController implements Serializable {
   public void postInvokeCallback(Object context, Object instance, AccessibleObject accessibleObject,
       Object result) throws Exception {
     synchronized (callbackSet) {
-      Iterator i = callbackSet.iterator();
-      while (i.hasNext()) {
-        CallbackData cbdata = (CallbackData) i.next();
+      for (CallbackData cbdata : callbackSet) {
         if (cbdata.understands(context)) {
           cbdata.getCallback().postInvoke(context, instance, accessibleObject, result);
         }
@@ -125,9 +120,7 @@ public class CallbackController implements Serializable {
   public void preInvokeCallback(Object context, Object instance, AccessibleObject accessibleObject,
       Object arguments[]) throws Exception {
     synchronized (callbackSet) {
-      Iterator i = callbackSet.iterator();
-      while (i.hasNext()) {
-        CallbackData cbdata = (CallbackData) i.next();
+      for (CallbackData cbdata : callbackSet) {
         if (cbdata.understands(context)) {
           cbdata.getCallback().preInvoke(context, instance, accessibleObject, arguments);
         }
@@ -142,7 +135,7 @@ public class CallbackController implements Serializable {
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
    */
-  public void registerCallback(InvocationCallback callback, Class contextInterface) {
+  public void registerCallback(InvocationCallback callback, Class<?> contextInterface) {
 
     synchronized (callbackSet) {
       callbackSet.add(new CallbackData(callback, contextInterface));
@@ -159,7 +152,7 @@ public class CallbackController implements Serializable {
    * @param callback The previously registered InvocationCallback object
    * @param contextInterface The previously registered transport Context interface.
    */
-  public void unregisterCallback(InvocationCallback callback, Class contextInterface) {
+  public void unregisterCallback(InvocationCallback callback, Class<?> contextInterface) {
 
     synchronized (callbackSet) {
       callbackSet.remove(new CallbackData(callback, contextInterface));

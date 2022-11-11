@@ -26,7 +26,6 @@ package org.jabsorb.localarg;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,9 +55,10 @@ public class LocalArgController {
   /**
    * Key: argClazz (ie Class), Value: HashSet<LocalArgResolverData>
    */
-  private static Map localArgResolverMap = new HashMap();
+  private static Map<Class<?>, Set<LocalArgResolverData>> localArgResolverMap;
 
   static {
+    localArgResolverMap = new HashMap<Class<?>, Set<LocalArgResolverData>>();
     // Make sure this doesn't happen until after the variables are assigned!
     LocalArgController.registerLocalArgResolver(HttpServletRequest.class, HttpServletRequest.class,
         new HttpServletRequestArgResolver());
@@ -75,10 +75,9 @@ public class LocalArgController {
    * is filled in on the server prior to being invoked.
    * 
    * @param param local argument class.
-   * 
    * @return true if the class can be resolved to a local argument.
    */
-  public static boolean isLocalArg(Class param) {
+  public static boolean isLocalArg(Class<?> param) {
     synchronized (localArgResolverMap) {
       return localArgResolverMap.containsKey(param);
     }
@@ -86,10 +85,8 @@ public class LocalArgController {
 
   /**
    * Registers a Class to be removed from the exported method signatures and instead be resolved
-   * locally using context information from the transport.
-   * 
-   * TODO: make the order that the variables are given to this function the same as the variables
-   * are given to LocalArgResolverData
+   * locally using context information from the transport. TODO: make the order that the variables
+   * are given to this function the same as the variables are given to LocalArgResolverData
    * 
    * @param argClazz The class to be resolved locally
    * @param argResolver The user defined class that resolves the and returns the method argument
@@ -97,12 +94,12 @@ public class LocalArgController {
    * @param contextInterface The type of transport Context object the callback is interested in eg.
    *          HttpServletRequest.class for the servlet transport
    */
-  public static void registerLocalArgResolver(Class argClazz, Class contextInterface,
+  public static void registerLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
       LocalArgResolver argResolver) {
     synchronized (localArgResolverMap) {
-      Set resolverSet = (Set) localArgResolverMap.get(argClazz);
+      Set<LocalArgResolverData> resolverSet = localArgResolverMap.get(argClazz);
       if (resolverSet == null) {
-        resolverSet = new HashSet();
+        resolverSet = new HashSet<LocalArgResolverData>();
         localArgResolverMap.put(argClazz, resolverSet);
       }
       resolverSet.add(new LocalArgResolverData(argResolver, argClazz, contextInterface));
@@ -118,16 +115,13 @@ public class LocalArgController {
    * @param context callers context. In an http servlet environment, this will contain the servlet
    *          request and response objects.
    * @param param class type parameter to resolve to a local argument.
-   * 
    * @return the run time instance that is resolved, to be used when calling the method.
-   * 
    * @throws UnmarshallException if there if a failure during resolution.
    */
-  public static Object resolveLocalArg(Object context[], Class param) throws UnmarshallException {
-    Set resolverSet = (Set) localArgResolverMap.get(param);
-    Iterator i = resolverSet.iterator();
-    while (i.hasNext()) {
-      LocalArgResolverData resolverData = (LocalArgResolverData) i.next();
+  public static Object resolveLocalArg(Object context[], Class<?> param)
+      throws UnmarshallException {
+    Set<LocalArgResolverData> resolverSet = localArgResolverMap.get(param);
+    for (LocalArgResolverData resolverData : resolverSet) {
       for (int j = 0; j < context.length; j++) {
         if (resolverData.understands(context[j])) {
           try {
@@ -148,10 +142,10 @@ public class LocalArgController {
    * @param argResolver The previously registered LocalArgResolver object
    * @param contextInterface The previously registered transport Context interface.
    */
-  public static void unregisterLocalArgResolver(Class argClazz, Class contextInterface,
+  public static void unregisterLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
       LocalArgResolver argResolver) {
     synchronized (localArgResolverMap) {
-      HashSet resolverSet = (HashSet) localArgResolverMap.get(argClazz);
+      Set<LocalArgResolverData> resolverSet = localArgResolverMap.get(argClazz);
       if (resolverSet == null || !resolverSet.remove(new LocalArgResolverData(argResolver, argClazz,
           contextInterface))) {
         log.warn("local arg resolver " + argResolver.getClass().getName()

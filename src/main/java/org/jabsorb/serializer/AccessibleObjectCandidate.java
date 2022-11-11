@@ -43,7 +43,7 @@ public class AccessibleObjectCandidate {
   /**
    * The parameters of the accessibleObject
    */
-  final private Class[] parameterTypes;
+  final private Class<?>[] parameterTypes;
 
   /**
    * Creatse a new MethodCandidate
@@ -52,7 +52,7 @@ public class AccessibleObjectCandidate {
    * @param parameterTypes The parameters of the accessibleObject
    * @param matches How well this matches the requested method/constructor
    */
-  public AccessibleObjectCandidate(AccessibleObject accessibleObject, Class[] parameterTypes,
+  public AccessibleObjectCandidate(AccessibleObject accessibleObject, Class<?>[] parameterTypes,
       ObjectMatch[] matches) {
     if (parameterTypes.length != matches.length) {
       throw new ArrayIndexOutOfBoundsException(
@@ -92,7 +92,7 @@ public class AccessibleObjectCandidate {
    * 
    * @return The parameter types
    */
-  public Class[] getParameterTypes() {
+  public Class<?>[] getParameterTypes() {
     return parameterTypes;
   }
 

@@ -25,12 +25,18 @@
 package org.jabsorb.serializer;
 
 import org.jabsorb.JSONSerializer;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Convenience class for implementing Serializers providing default setOwner and canSerialize
  * implementations.
  */
 public abstract class AbstractSerializer implements Serializer {
+  /**
+   * Generated id.
+   */
+  private static final long serialVersionUID = 1L;
 
   /**
    * Main serialiser
@@ -43,13 +49,12 @@ public abstract class AbstractSerializer implements Serializer {
    * 
    * @param clazz Java type to check if this Serializer can handle.
    * @param jsonClazz JSON type to check this Serializer can handle.
-   * 
    * @return true If this Serializer can serialize/deserialize the given java,json pair.
    */
-  public boolean canSerialize(Class clazz, Class jsonClazz) {
+  public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
     boolean canJava = false, canJSON = false;
 
-    Class serializableClasses[] = getSerializableClasses();
+    Class<?> serializableClasses[] = getSerializableClasses();
     for (int i = 0; i < serializableClasses.length; i++) {
       if (clazz == serializableClasses[i]) {
         canJava = true;
@@ -59,7 +64,7 @@ public abstract class AbstractSerializer implements Serializer {
     if (jsonClazz == null) {
       canJSON = true;
     } else {
-      Class jsonClasses[] = getJSONClasses();
+      Class<?> jsonClasses[] = getJSONClasses();
       for (int i = 0; i < jsonClasses.length; i++) {
         if (jsonClazz == jsonClasses[i]) {
           canJSON = true;
@@ -78,4 +83,26 @@ public abstract class AbstractSerializer implements Serializer {
   public void setOwner(JSONSerializer ser) {
     this.ser = ser;
   }
+
+  /**
+   * Marshalls class hints onto an object, if appropriate (ie check
+   * <code>getMarshallClassHints()</code>).
+   * 
+   * @param toAddTo The object to add the hints to.
+   * @param objectWithClass The object from which the class should be taken
+   * @return the object to which the hints were added, for use with chaining.
+   * @throws MarshallException If an exception occurs while the hints are added.
+   */
+  protected JSONObject marshallHints(JSONObject toAddTo, final Object objectWithClass)
+      throws MarshallException {
+    if (ser.getMarshallClassHints()) {
+      try {
+        toAddTo.put(JSONSerializer.JAVA_CLASS_FIELD, objectWithClass.getClass().getName());
+      } catch (JSONException e) {
+        throw new MarshallException("javaClass not found!", e);
+      }
+    }
+    return toAddTo;
+  }
+
 }

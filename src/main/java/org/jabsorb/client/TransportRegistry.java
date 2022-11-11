@@ -26,16 +26,30 @@ package org.jabsorb.client;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A registry of transports serving JSON-RPC-Client
  */
 public class TransportRegistry {
 
-  private static TransportRegistry singleton;
-
-  public TransportRegistry() {
+  /**
+   * A factory used to create transport sessions. Register with #registerTransport.
+   */
+  public interface SessionFactory {
+    /**
+     * Creates the new session
+     * 
+     * @param uri URI used to open this session
+     * @return The new session
+     */
+    Session newSession(URI uri);
   }
+
+  /**
+   * Maintains singleton instance of this class
+   */
+  private static TransportRegistry singleton;
 
   /**
    * Use this function when there is no IOC container to rely on creating the factory.
@@ -50,42 +64,22 @@ public class TransportRegistry {
   }
 
   /**
-   * Downgrading to Java 1.4: manual specialization of HashMap<String, SessionFactory>
+   * Maps schemes (eg "http") to session factories
    */
-  static class RegistryMap {
-    HashMap rep;
-
-    public RegistryMap() {
-      rep = new HashMap();
-    }
-
-    public SessionFactory get(String key) {
-      return (SessionFactory) rep.get(key);
-    }
-
-    public SessionFactory put(String key, SessionFactory value) {
-      return (SessionFactory) rep.put(key, value);
-    }
-  }
-
-  private RegistryMap registry = new RegistryMap();
+  private final Map<String, SessionFactory> registry;
 
   /**
-   * A factory used to create transport sessions. Register with #registerTransport.
+   * Creates a new TransportRegistry
    */
-  public interface SessionFactory {
-    /**
-     * @param uri URI used to open this session
-     */
-    Session newSession(URI uri);
-  }
-
-  public void registerTransport(String scheme, SessionFactory factory) {
-    registry.put(scheme, factory);
+  public TransportRegistry() {
+    this.registry = new HashMap<String, SessionFactory>();
   }
 
   /**
    * Create a session from 'uriString' using one of registered transports.
+   * 
+   * @param uriString The uri of the session
+   * @return a URLConnectionSession
    */
   public Session createSession(String uriString) {
     try {
@@ -93,13 +87,22 @@ public class TransportRegistry {
       SessionFactory found = registry.get(uri.getScheme());
       if (found != null) {
         return found.newSession(uri);
-      } else {
-        // Fallback
-        return new URLConnectionSession(uri.toURL());
       }
+      // Fallback
+      return new URLConnectionSession(uri.toURL());
     } catch (Exception e) {
       throw new ClientError(e);
     }
+  }
+
+  /**
+   * Register a factory for a transport type
+   * 
+   * @param scheme The transport type
+   * @param factory The session factory for the scheme
+   */
+  public void registerTransport(String scheme, SessionFactory factory) {
+    registry.put(scheme, factory);
   }
 
 }

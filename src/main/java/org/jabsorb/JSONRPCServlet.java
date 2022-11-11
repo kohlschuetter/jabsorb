@@ -39,6 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jabsorb.serializer.response.results.FailedResult;
+import org.jabsorb.serializer.response.results.JSONRPCResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -53,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * The following can be added to your web.xml to export the servlet under the URI
  * &quot;<code>/JSON-RPC</code>&quot;
  * </p>
- *
+ * 
  * <pre>
  * &lt;servlet&gt;
  *   &lt;servlet-name&gt;org.jabsorb.JSONRPCServlet&lt;/servlet-name&gt;
@@ -61,7 +63,7 @@ import org.slf4j.LoggerFactory;
  *   &lt;!-- optional gzip threshold control --&gt;
  *   &lt;init-param&gt;
  *     &lt;param-name&gt;gzip_threshold&lt;/param-name&gt;
- *     &lt;param-value>200&lt;/param-value&gt;
+ *     &lt;param-value&gt;200&lt;/param-value&gt;
  *   &lt;/init-param&gt;
  * &lt;/servlet&gt;
  * &lt;servlet-mapping&gt;
@@ -69,7 +71,7 @@ import org.slf4j.LoggerFactory;
  *   &lt;url-pattern&gt;/JSON-RPC&lt;/url-pattern&gt;
  * &lt;/servlet-mapping&gt;
  * </pre>
- *
+ * 
  * </p>
  * The JSONRPCServlet looks for a session specific bridge object under the attribute
  * <code>"JSONRPCBridge"</code> in the HttpSession associated with the request (without creating a
@@ -103,9 +105,30 @@ import org.slf4j.LoggerFactory;
 
 public class JSONRPCServlet extends HttpServlet {
   /**
-   * Unique serialisation id.
+   * The size of the buffer used for reading requests
    */
-  private final static long serialVersionUID = 2;
+  private final static int buf_size = 4096;
+
+  /**
+   * The GZIP_THRESHOLD indicates the response size at which the servlet will attempt to gzip the
+   * response if it can. Gzipping smaller responses is counter productive for 2 reasons: 1. if the
+   * response is really small, the gzipped output can actually be larger than the non-compressed
+   * original. because of the gzip header and the general overhead of the gzipping. This is a
+   * lose-lose situation, so the original should always be sent in this case. 2. gzipping imposes a
+   * small performance penality in that it takes a little more time to gzip the content. There is
+   * also a corresponding penality on the browser side when the content has to be uncompressed. This
+   * penalty is really small, and is normally more than outweighed by the bandwidth savings provided
+   * by gzip (the response is typically 1/10th the size when gzipped! Especially for json data which
+   * tends to have a lot of repetition. So, the GZIP_THRESHOLD should be tuned to a size that is
+   * optimal for your application. If your application is always served from a high speed network,
+   * you might want to set this to a very high number-- (or even -1 to turn it off) for slower
+   * networks where it's more important to conserve bandwidth, set this to a lower number (but not
+   * too low!) Set this to zero if you want to always attempt to gzip the output when the browser
+   * can accept gzip encoded responses. This is useful for analyzing what a good gzip setting should
+   * be for potential responses from your application. You can set this to -1 if you want to turn
+   * off gzip encoding for some reason.
+   */
+  private static int GZIP_THRESHOLD = 200;
 
   /**
    * The logger for this class
@@ -113,38 +136,30 @@ public class JSONRPCServlet extends HttpServlet {
   private final static Logger log = LoggerFactory.getLogger(JSONRPCServlet.class);
 
   /**
-   * The size of the buffer used for reading requests
+   * Unique serialisation id.
    */
-  private final static int buf_size = 4096;
+  private final static long serialVersionUID = 2;
 
   /**
-   * The GZIP_THRESHOLD indicates the response size at which the servlet will attempt to gzip the
-   * response if it can. Gzipping smaller responses is counter productive for 2 reasons:
-   *
-   * 1. if the response is really small, the gzipped output can actually be larger than the
-   * non-compressed original. because of the gzip header and the general overhead of the gzipping.
-   * This is a lose-lose situation, so the original should always be sent in this case.
-   *
-   * 2. gzipping imposes a small performance penality in that it takes a little more time to gzip
-   * the content. There is also a corresponding penality on the browser side when the content has to
-   * be uncompressed.
-   *
-   * This penalty is really small, and is normally more than outweighed by the bandwidth savings
-   * provided by gzip (the response is typically 1/10th the size when gzipped! Especially for json
-   * data which tends to have a lot of repetition.
-   *
-   * So, the GZIP_THRESHOLD should be tuned to a size that is optimal for your application. If your
-   * application is always served from a high speed network, you might want to set this to a very
-   * high number-- (or even -1 to turn it off) for slower networks where it's more important to
-   * conserve bandwidth, set this to a lower number (but not too low!)
-   *
-   * Set this to zero if you want to always attempt to gzip the output when the browser can accept
-   * gzip encoded responses. This is useful for analyzing what a good gzip setting should be for
-   * potential responses from your application.
-   *
-   * You can set this to -1 if you want to turn off gzip encoding for some reason.
+   * The location of the JSONRPCBridge variable in the session
    */
-  private static int GZIP_THRESHOLD = 200;
+  private final String bridgeLocation;
+
+  /**
+   * Creates a new JSONRPCServlet with the bridge in the "JSONRPCBridge" variable
+   */
+  public JSONRPCServlet() {
+    this("JSONRPCBridge");
+  }
+
+  /**
+   * Creates a new JSONRPCServlet
+   * 
+   * @param bridgeLocation The location of the JSONRPCBridge variable in the session
+   */
+  public JSONRPCServlet(String bridgeLocation) {
+    this.bridgeLocation = bridgeLocation;
+  }
 
   /**
    * Called by the container when the servlet is initialized. Check for optional configuration
@@ -184,6 +199,7 @@ public class JSONRPCServlet extends HttpServlet {
    * @param config ServletConfig from container.
    * @throws ServletException if something goes wrong during initialization.
    */
+  @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
 
@@ -201,13 +217,14 @@ public class JSONRPCServlet extends HttpServlet {
     log.debug("GZIP_THRESHOLD is " + JSONRPCServlet.GZIP_THRESHOLD);
 
     if (JSONRPCServlet.GZIP_THRESHOLD == -1) {
-      log.debug(
-          "Gzipping is turned OFF.  No attempts will be made to gzip content from this servlet.");
+      log.debug("Gzipping is turned OFF.  "
+          + "No attempts will be made to gzip content from this servlet.");
     } else if (JSONRPCServlet.GZIP_THRESHOLD == 0) {
-      log.debug("All responses will be Gzipped when gzipping results in a smaller response size.");
+      log.debug("All responses will be Gzipped "
+          + "when gzipping results in a smaller response size.");
     } else {
-      log.debug(
-          "Responses over this size will be Gzipped when gzipping results in a smaller response size.");
+      log.debug("Responses over this size will be Gzipped "
+          + "when gzipping results in a smaller response size.");
     }
   }
 
@@ -215,12 +232,12 @@ public class JSONRPCServlet extends HttpServlet {
    * Called when a JSON-RPC requests comes in. Looks in the session for a JSONRPCBridge and if not
    * found there, uses the global bridge; then passes off the JSON-PRC call to be handled by the
    * JSONRPCBridge found.
-   *
+   * 
    * @param request servlet request from browser.
    * @param response servlet response to browser.
-   *
    * @throws IOException if an IOException occurs during processing.
    */
+  @Override
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Use protected method in case someone wants to override it
     JSONRPCBridge json_bridge = findBridge(request);
@@ -263,6 +280,7 @@ public class JSONRPCServlet extends HttpServlet {
     }
 
     if (log.isDebugEnabled()) {
+      log.debug("receive on: " + bridgeLocation);
       log.debug("receive: " + receiveString);
       log.debug("receive: " + prettyPrintJson(receiveString));
     }
@@ -275,7 +293,7 @@ public class JSONRPCServlet extends HttpServlet {
       json_res = json_bridge.call(new Object[] {request, response}, json_req);
     } catch (JSONException e) {
       log.error("can't parse call" + receiveString, e);
-      json_res = new JSONRPCResult(JSONRPCResult.CODE_ERR_PARSE, null, JSONRPCResult.MSG_ERR_PARSE);
+      json_res = new FailedResult(FailedResult.CODE_ERR_PARSE, null, FailedResult.MSG_ERR_PARSE);
     }
 
     String sendString = json_res.toString();
@@ -341,7 +359,7 @@ public class JSONRPCServlet extends HttpServlet {
   /**
    * Find the JSONRPCBridge from the current session. If it can't be found in the session, or there
    * is no session, then return the global bridge.
-   *
+   * 
    * @param request The message received
    * @return the JSONRPCBridge to use for this request
    */
@@ -351,7 +369,7 @@ public class JSONRPCServlet extends HttpServlet {
     HttpSession session = request.getSession(false);
     JSONRPCBridge json_bridge = null;
     if (session != null) {
-      json_bridge = (JSONRPCBridge) session.getAttribute("JSONRPCBridge");
+      json_bridge = (JSONRPCBridge) session.getAttribute(this.bridgeLocation);
     }
     if (json_bridge == null) {
       // Use the global bridge if we can't find a bridge in the session.
@@ -364,28 +382,8 @@ public class JSONRPCServlet extends HttpServlet {
   }
 
   /**
-   * Format (pretty print) json nicely for debugging output. If the pretty printing fails for any
-   * reason (this is not expected) then the original, unformatted json will be returned.
-   *
-   * @param unformattedJSON a json string.
-   *
-   * @return a String containing the formatted json text for the passed in json object.
-   */
-  private String prettyPrintJson(String unformattedJSON) {
-    if (unformattedJSON == null || "".equals(unformattedJSON)) {
-      return unformattedJSON;
-    }
-    try {
-      // sort the keys in the output as well
-      return new JSONObject(unformattedJSON).toString(2);
-    } catch (JSONException je) {
-      return unformattedJSON; // fall back to unformatted json, if pretty print fails...
-    }
-  }
-
-  /**
    * Can browser accept gzip encoding?
-   *
+   * 
    * @param request browser request object.
    * @return true if gzip encoding accepted.
    */
@@ -397,7 +395,7 @@ public class JSONRPCServlet extends HttpServlet {
 
   /**
    * Gzip something.
-   *
+   * 
    * @param in original content
    * @return size gzipped content
    */
@@ -419,5 +417,24 @@ public class JSONRPCServlet extends HttpServlet {
       }
     }
     return new byte[0];
+  }
+
+  /**
+   * Format (pretty print) json nicely for debugging output. If the pretty printing fails for any
+   * reason (this is not expected) then the original, unformatted json will be returned.
+   * 
+   * @param unformattedJSON a json string.
+   * @return a String containing the formatted json text for the passed in json object.
+   */
+  private String prettyPrintJson(String unformattedJSON) {
+    if (unformattedJSON == null || "".equals(unformattedJSON)) {
+      return unformattedJSON;
+    }
+    try {
+      // sort the keys in the output as well
+      return new JSONObject(unformattedJSON).toString(2);
+    } catch (JSONException je) {
+      return unformattedJSON; // fall back to unformatted json, if pretty print fails...
+    }
   }
 }

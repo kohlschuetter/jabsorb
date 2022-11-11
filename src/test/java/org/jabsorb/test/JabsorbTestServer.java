@@ -56,11 +56,6 @@ public class JabsorbTestServer {
   }
 
   /**
-   * The port the server runs on
-   */
-  private final int port;
-
-  /**
    * The web server
    */
   private Server server;
@@ -71,8 +66,6 @@ public class JabsorbTestServer {
    * @param port The port the server runs on
    */
   public JabsorbTestServer(int port) {
-    this.port = port;
-
     try {
       this.server = new Server(port);
       createBaseContext();
@@ -99,9 +92,23 @@ public class JabsorbTestServer {
     context.addServlet(jspServlet, "*.jsp");
 
     // do static content
-    ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet());
-    jsonRpcServlet.setInitParameter("auto-session-bridge", "0");
-    context.addServlet(jsonRpcServlet, "/JSON-RPC/*");
+    {
+      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet("JSONRPCBridge_Default"));
+      jsonRpcServlet.setInitParameter("auto-session-bridge", "0");
+      context.addServlet(jsonRpcServlet, "/JSON-RPC-Default/*");
+
+    }
+    {
+      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet(
+          "JSONRPCBridge_CircRefs"));
+      jsonRpcServlet.setInitParameter("auto-session-bridge", "0");
+      context.addServlet(jsonRpcServlet, "/JSON-RPC/*");
+    }
+    {
+      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet("JSONRPCBridge_Flat"));
+      jsonRpcServlet.setInitParameter("auto-session-bridge", "0");
+      context.addServlet(jsonRpcServlet, "/JSON-RPC-Flat/*");
+    }
   }
 
   /**

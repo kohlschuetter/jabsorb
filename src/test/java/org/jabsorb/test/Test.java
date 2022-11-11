@@ -56,6 +56,7 @@ public class Test implements Serializable, ITest {
   // Void test
 
   public void voidFunction() {
+    // Void function does nothing
   }
 
   // Exception tests
@@ -88,7 +89,7 @@ public class Test implements Serializable, ITest {
     return object;
   }
 
-  public List echoList(List l) {
+  public List<?> echoList(List<?> l) {
     return l;
   }
 
@@ -160,10 +161,6 @@ public class Test implements Serializable, ITest {
     return rawObject;
   }
 
-  public Map echoMap(Map map) {
-    return map;
-  }
-
   // Container tests
 
   public int[] anArray() {
@@ -174,40 +171,48 @@ public class Test implements Serializable, ITest {
     return arr;
   }
 
-  public ArrayList anArrayList() {
-    ArrayList al = new ArrayList();
+  public enum Suit {
+    CLUBS, DIAMONDS, HEARTS, SPADES
+  }
+
+  public Enum<?> anEnum() {
+    return Suit.CLUBS;
+  }
+
+  public ArrayList<Integer> anArrayList() {
+    ArrayList<Integer> al = new ArrayList<Integer>();
     for (int i = 10; i < 20; i++) {
       al.add(new Integer(i));
     }
     return al;
   }
 
-  public Vector aVector() {
-    Vector v = new Vector();
+  public Vector<Integer> aVector() {
+    Vector<Integer> v = new Vector<Integer>();
     for (int i = 20; i < 30; i++) {
       v.add(new Integer(i));
     }
     return v;
   }
 
-  public List aList() {
-    List l = new Vector();
+  public List<Integer> aList() {
+    List<Integer> l = new Vector<Integer>();
     for (int i = 20; i < 30; i++) {
       l.add(new Integer(i));
     }
     return l;
   }
 
-  public Set aSet() {
-    Set s = new HashSet();
+  public Set<Integer> aSet() {
+    Set<Integer> s = new HashSet<Integer>();
     for (int i = 0; i < 5; i++) {
       s.add(new Integer(i));
     }
     return s;
   }
 
-  public Hashtable aHashtable() {
-    Hashtable ht = new Hashtable();
+  public Hashtable<Integer, ITest.Wiggle> aHashtable() {
+    Hashtable<Integer, ITest.Wiggle> ht = new Hashtable<Integer, ITest.Wiggle>();
     for (int i = 0; i < 3; i++) {
       ITest.Wiggle w = new ITest.Wiggle();
       w.setFoo("foo " + i);
@@ -231,21 +236,21 @@ public class Test implements Serializable, ITest {
     return beanA;
   }
 
-  public Map aCircRefMap() {
-    Map m = new HashMap();
+  public Map<String, Object> aCircRefMap() {
+    Map<String, Object> m = new HashMap<String, Object>();
     m.put("me", m);
     return m;
   }
 
-  public List aCircRefList() {
-    ArrayList list = new ArrayList();
+  public List<Object> aCircRefList() {
+    List<Object> list = new ArrayList<Object>();
     list.add(new Integer(0));
     Integer one = new Integer(1);
     list.add(one);
     Integer two = new Integer(2);
     list.add(two);
 
-    Map m = new HashMap();
+    Map<Object, Object> m = new HashMap<Object, Object>();
     m.put(new Integer(0), "zero");
     m.put(one, "one");
     m.put(two, "two");
@@ -269,8 +274,8 @@ public class Test implements Serializable, ITest {
    * 
    * @return a List with some duplicates.
    */
-  public List aDupDup() {
-    List list = new ArrayList();
+  public List<Object> aDupDup() {
+    List<Object> list = new ArrayList<Object>();
 
     BeanA a = new BeanA();
     BeanB b = new BeanB();
@@ -294,21 +299,21 @@ public class Test implements Serializable, ITest {
    * 
    * @return aList with duplicates.
    */
-  public List aDupDupDup() {
-    Map m = new HashMap();
+  public List<Map<String, Object>> aDupDupDup() {
+    Map<String, Object> m = new HashMap<String, Object>();
     m.put("drink", "soda");
     m.put("tree", "oak");
     m.put("planet", "jupiter");
     m.put("art", "painting");
     m.put("animal", "tiger");
-    List list = new ArrayList();
+    List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
     list.add(m);
     list.add(m);
     list.add(m);
     list.add(m);
 
-    Map m2 = new TreeMap();
+    Map<String, Object> m2 = new TreeMap<String, Object>();
     m2.put("map", m);
     m2.put("dup", m);
     m2.put("copy", m);
@@ -324,8 +329,8 @@ public class Test implements Serializable, ITest {
    * 
    * @return a List with 3 duplicate Strings.
    */
-  public List aStringListDup() {
-    List list = new ArrayList();
+  public List<String> aStringListDup() {
+    List<String> list = new ArrayList<String>();
 
     String dup = "Supercalifragilisticexpialidocious";
     list.add(dup);
@@ -336,7 +341,7 @@ public class Test implements Serializable, ITest {
 
   /**
    * Test an array of 3 duplicate Strings.
-   *
+   * 
    * @return an array of 3 duplicate Strings.
    */
   public String[] aStringArrayDup() {
@@ -350,7 +355,7 @@ public class Test implements Serializable, ITest {
 
   /**
    * Test an array of 3 duplicate Beans.
-   *
+   * 
    * @return an array of 3 duplicate Beans.
    */
   public BeanA[] aBeanArrayDup() {
@@ -370,8 +375,8 @@ public class Test implements Serializable, ITest {
    * 
    * @return a List that has several Strings and a few nulls.
    */
-  public List listNull() {
-    List l = new ArrayList();
+  public List<String> listNull() {
+    List<String> l = new ArrayList<String>();
     l.add("one");
     l.add("two");
     l.add(null);
@@ -381,6 +386,13 @@ public class Test implements Serializable, ITest {
     l.add(null);
     l.add(null);
     return l;
+  }
+
+  public Map<Object, Object> nullKeyedMap() {
+    Map<Object, Object> m = new HashMap<Object, Object>();
+    m.put("normalKey", "normal value");
+    m.put(null, "Null value");
+    return m;
   }
 
   // Misc tests
@@ -403,24 +415,24 @@ public class Test implements Serializable, ITest {
     return waggle;
   }
 
-  public ArrayList aWiggleArrayList(int numWiggles) {
-    ArrayList al = new ArrayList();
+  public ArrayList<ITest.Wiggle> aWiggleArrayList(int numWiggles) {
+    ArrayList<ITest.Wiggle> al = new ArrayList<ITest.Wiggle>();
     for (int i = 0; i < numWiggles; i++) {
       al.add(new ITest.Wiggle(i));
     }
     return al;
   }
 
-  public ArrayList aWaggleArrayList(int numWaggles) {
-    ArrayList al = new ArrayList();
+  public ArrayList<ITest.Waggle> aWaggleArrayList(int numWaggles) {
+    ArrayList<ITest.Waggle> al = new ArrayList<ITest.Waggle>();
     for (int i = 0; i < numWaggles; i++) {
       al.add(new ITest.Waggle(i));
     }
     return al;
   }
 
-  public String wigOrWag(ArrayList al) {
-    Iterator i = al.iterator();
+  public String wigOrWag(ArrayList<?> al) {
+    Iterator<?> i = al.iterator();
     StringBuffer buf = new StringBuffer();
     while (i.hasNext()) {
       Object o = i.next();
@@ -438,7 +450,7 @@ public class Test implements Serializable, ITest {
   }
 
   // Reference Tests
-  static public class CallableRefTest implements Serializable, Comparable {
+  static public class CallableRefTest implements Serializable, Comparable<Object> {
 
     private final static long serialVersionUID = 2;
 
@@ -471,6 +483,7 @@ public class Test implements Serializable, ITest {
       this.s = s;
     }
 
+    @Override
     public String toString() {
       return s;
     }
@@ -482,34 +495,35 @@ public class Test implements Serializable, ITest {
     return callableRef;
   }
 
-  public Vector getCallableRefVector() {
-    Vector v = new Vector();
+  public Vector<CallableRefTest> getCallableRefVector() {
+    Vector<CallableRefTest> v = new Vector<CallableRefTest>();
     v.add(callableRef);
     v.add(callableRef);
     return v;
   }
 
-  public Vector getCallableRefInnerVector() {
-    Vector v1 = new Vector();
-    Vector v = new Vector();
+  public Vector<Vector<CallableRefTest>> getCallableRefInnerVector() {
+    Vector<Vector<CallableRefTest>> v1 = new Vector<Vector<CallableRefTest>>();
+    Vector<CallableRefTest> v = new Vector<CallableRefTest>();
     v.add(callableRef);
     v.add(callableRef);
     v1.add(v);
     return v1;
   }
 
-  public Map getCallableRefMap() {
-    Map m = new TreeMap();
+  public Map<String, CallableRefTest> getCallableRefMap() {
+    Map<String, CallableRefTest> m = new TreeMap<String, CallableRefTest>();
     m.put("a", callableRef);
     m.put("b", callableRef);
     return m;
   }
 
-  public Set getCallableRefSet() {
-    Set s = new TreeSet();
+  public Set<CallableRefTest> getCallableRefSet() {
+    Set<CallableRefTest> s = new TreeSet<CallableRefTest>();
     s.add(callableRef);
     return s;
   }
+
   // Callback tests
 
   public void setCallback(JSONRPCBridge bridge, boolean flag) {
@@ -539,19 +553,19 @@ public class Test implements Serializable, ITest {
 
     public void postInvoke(Object context, Object instance, AccessibleObject m, Object result)
         throws Exception {
+      // Nothing done
     }
   };
 
   /**
    * Count the number of true booleans in the Map.
-   *
+   * 
    * @param input map.
    * @return number of booleans in the map that were set to true.
    */
-  public int trueBooleansInMap(Map in) {
+  public int trueBooleansInMap(Map<Object, Object> in) {
     int numTrue = 0;
-    Set keys = in.keySet();
-    for (Iterator i = keys.iterator(); i.hasNext();) {
+    for (Iterator<Object> i = in.keySet().iterator(); i.hasNext();) {
       Object key = i.next();
       Object value = in.get(key);
       if (value instanceof Boolean && ((Boolean) value).booleanValue()) {
@@ -559,6 +573,18 @@ public class Test implements Serializable, ITest {
       }
     }
     return numTrue;
+  }
+
+  public Map<?, ?> complexKeyedMap() {
+    Map<CallableRefTest, CallableRefTest> map = new HashMap<CallableRefTest, CallableRefTest>();
+
+    CallableRefTest a = new CallableRefTest();
+    CallableRefTest b = new CallableRefTest();
+    CallableRefTest c = new CallableRefTest();
+    CallableRefTest d = new CallableRefTest();
+    map.put(a, b);
+    map.put(c, d);
+    return map;
   }
 
 }

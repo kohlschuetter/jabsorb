@@ -62,11 +62,9 @@ public class ServerTestBase extends TestCase {
 
   static ServerContext serverContext;
 
-  public ServerTestBase() {
-  }
-
   static final String JABSORB_CONTEXT = "/jabsorb-trunk";
 
+  @Override
   protected void setUp() throws Exception {
     // Prevent multiple startups of the server
     if (serverContext == null) {
@@ -75,6 +73,7 @@ public class ServerTestBase extends TestCase {
     super.setUp();
   }
 
+  @Override
   protected void tearDown() throws Exception {
     super.tearDown();
   }

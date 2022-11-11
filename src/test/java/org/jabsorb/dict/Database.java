@@ -49,6 +49,7 @@ public class Database implements Serializable {
     this.description = description;
   }
 
+  @Override
   public String toString() {
     return "database: " + database + " \"" + description + "\"";
   }

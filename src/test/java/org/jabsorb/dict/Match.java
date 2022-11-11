@@ -48,6 +48,7 @@ public class Match implements Serializable {
     this.word = word;
   }
 
+  @Override
   public String toString() {
     return "match: " + word + " \"" + database + "\"";
   }

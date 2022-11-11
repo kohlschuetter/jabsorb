@@ -26,12 +26,14 @@ package org.jabsorb.test;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Iterator;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,7 +42,8 @@ public class Browser implements Serializable {
 
   protected static class BrowserStore {
 
-    private Set userAgents = new TreeSet();
+    private Set<String> userAgents = new TreeSet<String>();
+
     private String dataFile;
 
     protected BrowserStore(String suffix) {
@@ -53,21 +56,22 @@ public class Browser implements Serializable {
     }
 
     protected synchronized void load() throws IOException {
-      BufferedReader in = new BufferedReader(new FileReader(dataFile));
-      String line;
-      while ((line = in.readLine()) != null) {
-        userAgents.add(line);
+      try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(
+          dataFile), StandardCharsets.UTF_8))) {
+        String line;
+        while ((line = in.readLine()) != null) {
+          userAgents.add(line);
+        }
       }
-      in.close();
     }
 
     protected synchronized void save() throws IOException {
-      PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(dataFile)));
-      Iterator i = userAgents.iterator();
-      while (i.hasNext()) {
-        out.println(i.next());
+      try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream(dataFile), StandardCharsets.UTF_8)))) {
+        for (String userAgent : userAgents) {
+          out.println(userAgent);
+        }
       }
-      out.close();
     }
 
     protected boolean addUserAgent(String userAgent) throws IOException {
@@ -79,20 +83,26 @@ public class Browser implements Serializable {
       return false;
     }
 
-    protected Set getUserAgents() {
+    protected Set<String> getUserAgents() {
       return userAgents;
     }
 
   }
 
   private static BrowserStore passStore = new BrowserStore("pass");
+
   private static BrowserStore failStore = new BrowserStore("fail");
 
   public String userAgent;
+
   public boolean gotSession = false;
+
   public boolean firstRun = true;
+
   public boolean failed = false;
+
   public boolean passed = false;
+
   public boolean addNotify = false;
 
   /*
@@ -119,11 +129,11 @@ public class Browser implements Serializable {
     failed = true;
   }
 
-  public synchronized Set getPassedUserAgents() throws IOException {
+  public synchronized Set<String> getPassedUserAgents() {
     return passStore.getUserAgents();
   }
 
-  public synchronized Set getFailedUserAgents() throws IOException {
+  public synchronized Set<String> getFailedUserAgents() {
     return failStore.getUserAgents();
   }
 }

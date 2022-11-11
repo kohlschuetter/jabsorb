@@ -24,23 +24,55 @@
  */
 package org.jabsorb.client;
 
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Exception created from the JSON-RPC error response
  */
 public class ErrorResponse extends ClientError {
+  /**
+   * Generated id
+   */
+  private static final long serialVersionUID = 1L;
+  private String message;
   private String trace;
 
   public ErrorResponse(Integer code, String message, String trace) {
-    super(ErrorResponse.formatMessage(code, message, trace));
+    super(ErrorResponse.formatMessage(code));
+    this.message = message;
     this.trace = trace;
   }
 
-  private static String formatMessage(Integer code, String message, String trace) {
+  private static String formatMessage(Integer code) {
     String result = code == null ? "JSONRPC error: " : "JSONRPC error code " + code.toString()
         + ": ";
-    if (message != null) {
-      result += "\nCaused by " + message;
-    }
     return result;
+  }
+
+  /** Borrowed from org.apache.commons.lang.exception.NestableDelegate */
+  @Override
+  public void printStackTrace(PrintStream out) {
+    synchronized (out) {
+      PrintWriter pw = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8), false);
+      printStackTrace(pw);
+      // Flush the PrintWriter before it's GC'ed.
+      pw.flush();
+    }
+  }
+
+  @Override
+  public void printStackTrace(PrintWriter s) {
+    super.printStackTrace(s);
+    if (message != null) {
+      s.print("\nCaused by: ");
+      s.println(message);
+    }
+    if (trace != null) {
+      s.println();
+      s.println(trace);
+    }
   }
 }

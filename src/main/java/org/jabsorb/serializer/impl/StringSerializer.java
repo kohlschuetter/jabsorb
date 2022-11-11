@@ -24,6 +24,8 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.nio.charset.StandardCharsets;
+
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
 import org.jabsorb.serializer.ObjectMatch;
@@ -42,27 +44,30 @@ public class StringSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class[] _serializableClasses = new Class[] {
+  private static Class<?>[] _serializableClasses = new Class[] {
       String.class, char.class, Character.class, byte[].class, char[].class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class[] _JSONClasses = new Class[] {String.class, Integer.class};
+  private static Class<?>[] _JSONClasses = new Class[] {String.class, Integer.class};
 
-  public Class[] getJSONClasses() {
+  @Override
+  public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
-  public Class[] getSerializableClasses() {
+  @Override
+  public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     if (o instanceof Character) {
       return o.toString();
     } else if (o instanceof byte[]) {
-      return new String((byte[]) o);
+      return new String((byte[]) o, StandardCharsets.UTF_8);
     } else if (o instanceof char[]) {
       return new String((char[]) o);
     } else {
@@ -70,14 +75,15 @@ public class StringSerializer extends AbstractSerializer {
     }
   }
 
-  public ObjectMatch tryUnmarshall(SerializerState state, Class clazz, Object jso)
+  @Override
+  public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     // For some reason getClass can be String but getClasses will return an
     // empty array. This catches this.
     if (jso.getClass().equals(String.class)) {
       return ObjectMatch.OKAY;
     }
-    Class classes[] = jso.getClass().getClasses();
+    Class<?> classes[] = jso.getClass().getClasses();
     for (int i = 0; i < classes.length; i++) {
       if (classes[i].equals(String.class)) {
         state.setSerialized(jso, ObjectMatch.OKAY);
@@ -89,14 +95,15 @@ public class StringSerializer extends AbstractSerializer {
     return ObjectMatch.SIMILAR;
   }
 
-  public Object unmarshall(SerializerState state, Class clazz, Object jso)
+  @Override
+  public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     Object returnValue;
     String val = jso instanceof String ? (String) jso : jso.toString();
     if (clazz == char.class) {
       returnValue = new Character(val.charAt(0));
     } else if (clazz == byte[].class) {
-      returnValue = val.getBytes();
+      returnValue = val.getBytes(StandardCharsets.UTF_8);
     } else if (clazz == char[].class) {
       returnValue = val.toCharArray();
     } else {

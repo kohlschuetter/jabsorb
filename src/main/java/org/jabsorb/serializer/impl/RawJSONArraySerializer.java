@@ -24,7 +24,6 @@
  */
 package org.jabsorb.serializer.impl;
 
-import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
 import org.jabsorb.serializer.ObjectMatch;
@@ -32,7 +31,6 @@ import org.jabsorb.serializer.SerializerState;
 import org.jabsorb.serializer.UnmarshallException;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Formats the Java JSONArray object.
@@ -46,18 +44,18 @@ public class RawJSONArraySerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class[] _serializableClasses = new Class[] {JSONArray.class};
+  private static Class<?>[] _serializableClasses = new Class[] {JSONArray.class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class[] _JSONClasses = new Class[] {JSONArray.class};
+  private static Class<?>[] _JSONClasses = new Class[] {JSONArray.class};
 
-  public Class[] getJSONClasses() {
+  public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
-  public Class[] getSerializableClasses() {
+  public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
@@ -72,13 +70,7 @@ public class RawJSONArraySerializer extends AbstractSerializer {
 
       for (i = 0; i < j; i++) {
         Object json = ser.marshall(state, o, jsonIn.opt(i), new Integer(i));
-        if (JSONSerializer.CIRC_REF_OR_DUPLICATE != json) {
-          jsonOut.put(i, json);
-        } else {
-          // put a slot where the object would go, so it can be fixed up properly in the fix up
-          // phase
-          jsonOut.put(i, JSONObject.NULL);
-        }
+        jsonOut.put(i, json);
       }
     } catch (MarshallException e) {
       throw new MarshallException("element " + i, e);
@@ -88,13 +80,13 @@ public class RawJSONArraySerializer extends AbstractSerializer {
     return jsonOut;
   }
 
-  public ObjectMatch tryUnmarshall(SerializerState state, Class clazz, Object jso)
+  public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     state.setSerialized(jso, ObjectMatch.OKAY);
     return ObjectMatch.OKAY;
   }
 
-  public Object unmarshall(SerializerState state, Class clazz, Object jso)
+  public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     state.setSerialized(jso, jso);
     return jso;

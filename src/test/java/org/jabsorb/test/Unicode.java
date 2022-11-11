@@ -30,15 +30,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Map.Entry;
 
 public class Unicode implements Serializable {
   private final static long serialVersionUID = 2;
 
-  private static InputStream getResourceStream(String rsrcName) throws IOException {
+  static InputStream getResourceStream(String rsrcName) {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
     return loader.getResourceAsStream("unicode/" + rsrcName);
   }
@@ -48,8 +48,11 @@ public class Unicode implements Serializable {
     private final static long serialVersionUID = 2;
 
     private String desc;
+
     private String charset;
+
     private String rsrc;
+
     private String data;
 
     private boolean compares = false;
@@ -70,7 +73,7 @@ public class Unicode implements Serializable {
       this.data = data;
     }
 
-    private void setCompares(boolean b) {
+    void setCompares(boolean b) {
       compares = b;
     }
 
@@ -110,7 +113,7 @@ public class Unicode implements Serializable {
 
     private final static long serialVersionUID = 2;
 
-    private HashMap tests = new HashMap();
+    private Map<String, UnicodeTest> tests = new HashMap<String, UnicodeTest>();
 
     private Properties testProps = new Properties();
 
@@ -119,9 +122,7 @@ public class Unicode implements Serializable {
         InputStream in = getResourceStream(indexName);
         testProps.load(in);
         in.close();
-        Iterator i = testProps.entrySet().iterator();
-        while (i.hasNext()) {
-          Map.Entry m = (Map.Entry) i.next();
+        for (Entry<Object, Object> m : testProps.entrySet()) {
           String key = (String) m.getKey();
           String value = (String) m.getValue();
           StringTokenizer tok = new StringTokenizer(key, ".");
@@ -130,7 +131,7 @@ public class Unicode implements Serializable {
             throw new Exception("invalid syntax: " + key);
           }
           String testAttr = tok.nextToken();
-          UnicodeTest test = (UnicodeTest) tests.get(testName);
+          UnicodeTest test = tests.get(testName);
           if (test == null) {
             test = new UnicodeTest();
             tests.put(testName, test);
@@ -150,24 +151,23 @@ public class Unicode implements Serializable {
       }
     }
 
-    public HashMap getTests() {
+    public Map<String, UnicodeTest> getTests() {
       return tests;
     }
   }
 
   private UnicodeTestStore store = new UnicodeTestStore("00index.properties");
 
-  public HashMap getTests() {
+  public Map<String, UnicodeTest> getTests() {
     return store.getTests();
   }
 
-  public HashMap compareTests(HashMap remoteTests) throws Exception {
-    Iterator i = remoteTests.entrySet().iterator();
-    while (i.hasNext()) {
-      Map.Entry m = (Map.Entry) i.next();
-      String testName = (String) m.getKey();
-      UnicodeTest remoteTest = (UnicodeTest) m.getValue();
-      UnicodeTest localTest = (UnicodeTest) store.getTests().get(testName);
+  public Map<String, UnicodeTest> compareTests(Map<String, UnicodeTest> remoteTests)
+      throws Exception {
+    for (Map.Entry<String, UnicodeTest> m : remoteTests.entrySet()) {
+      String testName = m.getKey();
+      UnicodeTest remoteTest = m.getValue();
+      UnicodeTest localTest = store.getTests().get(testName);
       if (localTest == null) {
         throw new Exception("test not found");
       }

@@ -44,22 +44,22 @@ public class NumberSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class[] _serializableClasses = new Class[] {
+  private static Class<?>[] _serializableClasses = new Class[] {
       Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class,
       BigDecimal.class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class[] _JSONClasses = new Class[] {
+  private static Class<?>[] _JSONClasses = new Class[] {
       Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class,
       BigDecimal.class, String.class};
 
-  public Class[] getSerializableClasses() {
+  public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
-  public Class[] getJSONClasses() {
+  public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
@@ -71,7 +71,7 @@ public class NumberSerializer extends AbstractSerializer {
    * @return A Java primitive type in its java.lang wrapper.
    * @throws NumberFormatException If clazz is numeric and jso does not parse into a number.
    */
-  public Object toNumber(Class clazz, Object jso) throws NumberFormatException {
+  public Object toNumber(Class<?> clazz, Object jso) throws NumberFormatException {
     // TODO: isn't this largely a dupe of PrimitiveSerialiser.toPrimitive()?
     // We should probably have just one method that does this, or have one use
     // the other
@@ -114,7 +114,7 @@ public class NumberSerializer extends AbstractSerializer {
     return null;
   }
 
-  public ObjectMatch tryUnmarshall(SerializerState state, Class clazz, Object jso)
+  public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     try {
       toNumber(clazz, jso);
@@ -125,7 +125,7 @@ public class NumberSerializer extends AbstractSerializer {
     return ObjectMatch.OKAY;
   }
 
-  public Object unmarshall(SerializerState state, Class clazz, Object jso)
+  public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     try {
       if (jso == null || "".equals(jso)) {

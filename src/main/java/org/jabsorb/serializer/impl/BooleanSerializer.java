@@ -42,18 +42,18 @@ public class BooleanSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class[] _serializableClasses = new Class[] {boolean.class, Boolean.class};
+  private static Class<?>[] _serializableClasses = new Class[] {boolean.class, Boolean.class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class[] _JSONClasses = new Class[] {Boolean.class, String.class};
+  private static Class<?>[] _JSONClasses = new Class[] {Boolean.class, String.class};
 
-  public Class[] getJSONClasses() {
+  public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
-  public Class[] getSerializableClasses() {
+  public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
@@ -61,7 +61,7 @@ public class BooleanSerializer extends AbstractSerializer {
     return o;
   }
 
-  public ObjectMatch tryUnmarshall(SerializerState state, Class clazz, Object jso)
+  public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     final ObjectMatch toReturn;
     if (jso instanceof String) {
@@ -83,7 +83,7 @@ public class BooleanSerializer extends AbstractSerializer {
     return toReturn;
   }
 
-  public Object unmarshall(SerializerState state, Class clazz, Object jso)
+  public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     Boolean returnValue = Boolean.FALSE;
 

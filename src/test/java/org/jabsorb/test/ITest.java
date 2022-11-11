@@ -29,10 +29,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
-import org.json.JSONObject;
 
 public interface ITest {
   static public class Waggle implements Serializable {
@@ -43,9 +42,10 @@ public interface ITest {
 
     private String bang;
 
-    Integer bork;
+    private Integer bork;
 
     public Waggle() {
+      // This empty default constructor is used
     }
 
     public Waggle(int i) {
@@ -77,6 +77,7 @@ public interface ITest {
       this.bork = bork;
     }
 
+    @Override
     public String toString() {
       return "waggle " + baz + " and " + bang;
     }
@@ -91,6 +92,7 @@ public interface ITest {
     private int bar;
 
     public Wiggle() {
+      // This empty default constructor is used
     }
 
     public Wiggle(int i) {
@@ -114,6 +116,7 @@ public interface ITest {
       this.bar = bar;
     }
 
+    @Override
     public String toString() {
       return "wiggle " + foo + " and " + bar;
     }
@@ -137,7 +140,7 @@ public interface ITest {
    */
   Object[] echoArray(Object[] object);
 
-  List echoList(List l);
+  List<?> echoList(List<?> l);
 
   byte[] echoByteArray(byte ba[]);
 
@@ -171,21 +174,30 @@ public interface ITest {
 
   Object echoObjectArray(Object[] o);
 
-  JSONObject echoRawJSON(JSONObject rawObject);
-
   int[] anArray();
 
-  ArrayList anArrayList();
+  ArrayList<?> anArrayList();
 
-  Vector aVector();
+  Vector<?> aVector();
 
-  List aList();
+  List<?> aList();
 
-  Set aSet();
+  Set<?> aSet();
 
   BeanA aBean();
 
-  Hashtable aHashtable();
+  Map<?, ?> complexKeyedMap();
+
+  Enum<?> anEnum();
+
+  Hashtable<?, ?> aHashtable();
+
+  /**
+   * Checks bug #18 is fixed
+   * 
+   * @return A map with a null key.
+   */
+  Map<?, ?> nullKeyedMap();
 
   String[] twice(String string);
 
@@ -195,9 +207,9 @@ public interface ITest {
 
   ITest.Waggle echo(ITest.Waggle waggle);
 
-  ArrayList aWiggleArrayList(int numWiggles);
+  ArrayList<?> aWiggleArrayList(int numWiggles);
 
-  ArrayList aWaggleArrayList(int numWaggles);
+  ArrayList<?> aWaggleArrayList(int numWaggles);
 
-  String wigOrWag(ArrayList al);
+  String wigOrWag(ArrayList<?> al);
 }

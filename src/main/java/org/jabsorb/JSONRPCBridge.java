@@ -24,12 +24,21 @@
  */
 package org.jabsorb;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.reflect.AccessibleObject;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -43,7 +52,14 @@ import org.jabsorb.reflect.ClassAnalyzer;
 import org.jabsorb.reflect.ClassData;
 import org.jabsorb.serializer.AccessibleObjectResolver;
 import org.jabsorb.serializer.Serializer;
+import org.jabsorb.serializer.SerializerState;
 import org.jabsorb.serializer.impl.ReferenceSerializer;
+import org.jabsorb.serializer.request.RequestParser;
+import org.jabsorb.serializer.request.fixups.FixupsCircularReferenceHandler;
+import org.jabsorb.serializer.response.fixups.FixupCircRefAndNonPrimitiveDupes;
+import org.jabsorb.serializer.response.results.FailedResult;
+import org.jabsorb.serializer.response.results.JSONRPCResult;
+import org.jabsorb.serializer.response.results.SuccessfulResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,11 +118,16 @@ public class JSONRPCBridge implements Serializable {
   /**
    * Container for objects of which instances have been made
    */
-  private static class ObjectInstance implements Serializable {
+  protected static class ObjectInstance implements Serializable {
     /**
      * Unique serialisation id.
      */
     private final static long serialVersionUID = 2;
+
+    /**
+     * The class the object is of
+     */
+    private final Class<?> clazz;
 
     /**
      * The object for the instance
@@ -114,13 +135,8 @@ public class JSONRPCBridge implements Serializable {
     private final Object object;
 
     /**
-     * The class the object is of
-     */
-    private final Class clazz;
-
-    /**
      * Creates a new ObjectInstance
-     *
+     * 
      * @param object The object for the instance
      */
     public ObjectInstance(Object object) {
@@ -130,11 +146,11 @@ public class JSONRPCBridge implements Serializable {
 
     /**
      * Creates a new ObjectInstance
-     *
+     * 
      * @param object The object for the instance
      * @param clazz The class the object is of
      */
-    public ObjectInstance(Object object, Class clazz) {
+    public ObjectInstance(Object object, Class<?> clazz) {
       if (!clazz.isInstance(object)) {
         throw new ClassCastException("Attempt to register jsonrpc object with invalid class.");
       }
@@ -144,16 +160,16 @@ public class JSONRPCBridge implements Serializable {
 
     /**
      * Gets the class the object is of
-     *
+     * 
      * @return The class the object is of
      */
-    public Class getClazz() {
+    public Class<?> getClazz() {
       return clazz;
     }
 
     /**
      * Gets the object for the instance
-     *
+     * 
      * @return the object for the instance
      */
     public Object getObject() {
@@ -172,14 +188,39 @@ public class JSONRPCBridge implements Serializable {
   public static final String CONSTRUCTOR_FLAG = "$constructor";
 
   /**
+   * The default location of the properties file which is looked for in the constructor
+   */
+  public static final String DEFAULT_PROPERTIES_LOCATION = "jabsorb.properties";
+
+  /**
+   * The logger for this class
+   */
+  public final static Logger log;
+
+  /**
    * The prefix for objects, as sent in messages
    */
   public static final String OBJECT_METHOD_PREFIX = ".obj";
 
   /**
-   * Unique serialisation id.
+   * The key in the properties file in which the request parser class should be put
    */
-  private final static long serialVersionUID = 2;
+  public static final String REQUEST_PARSER_KEY = "RequestParser";
+
+  /**
+   * The key in the properties file in which the serializer state class should be put
+   */
+  public static final String SERIALIZER_STATE_CLASS_KEY = "SerializerStateClass";
+
+  /**
+   * The default file which should contain a list of serializers to load
+   */
+  public static final String SERIALIZERS_FILE = "serializers.txt";
+
+  /**
+   * Global bridge (for exporting to all users)
+   */
+  private final static JSONRPCBridge globalBridge;
 
   /**
    * A simple transformer that makes no change
@@ -191,32 +232,20 @@ public class JSONRPCBridge implements Serializable {
          */
         private final static long serialVersionUID = 2;
 
+        @Override
         public Object transform(Throwable t) {
           return t;
         }
       };
 
   /**
-   * The logger for this class
+   * Unique serialisation id.
    */
-  private final static Logger log = LoggerFactory.getLogger(JSONRPCBridge.class);
-
-  /**
-   * Global bridge (for exporting to all users)
-   */
-  private final static JSONRPCBridge globalBridge = new JSONRPCBridge();
-
-  /**
-   * Global JSONSerializer instance
-   */
-  private static JSONSerializer ser = new JSONSerializer();
+  private final static long serialVersionUID = 2;
 
   static {
-    try {
-      ser.registerDefaultSerializers();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    log = LoggerFactory.getLogger(JSONRPCBridge.class);
+    globalBridge = new JSONRPCBridge();
   }
 
   /**
@@ -224,7 +253,7 @@ public class JSONRPCBridge implements Serializable {
    * <p/>
    * It should be used with care as objects should generally be registered within session specific
    * bridges for security reasons.
-   *
+   * 
    * @return returns the global bridge object.
    */
   public static JSONRPCBridge getGlobalBridge() {
@@ -232,75 +261,158 @@ public class JSONRPCBridge implements Serializable {
   }
 
   /**
-   * Get the global JSONSerializer object.
-   *
-   * @return the global JSONSerializer object.
-   */
-  public static JSONSerializer getSerializer() {
-    return ser;
-  }
-
-  /**
    * Registers a Class to be removed from the exported method signatures and instead be resolved
    * locally using context information from the transport.
-   *
+   * 
    * @param argClazz The class to be resolved locally
    * @param argResolver The user defined class that resolves the and returns the method argument
    *          using transport context information
    * @param contextInterface The type of transport Context object the callback is interested in eg.
    *          HttpServletRequest.class for the servlet transport
    */
-  public static void registerLocalArgResolver(Class argClazz, Class contextInterface,
+  public static void registerLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
       LocalArgResolver argResolver) {
     LocalArgController.registerLocalArgResolver(argClazz, contextInterface, argResolver);
   }
 
-  /* Inner classes */
-
-  /**
-   * Set the global JSONSerializer object.
-   *
-   * @param ser the global JSONSerializer object.
-   */
-  public static void setSerializer(JSONSerializer ser) {
-    JSONRPCBridge.ser = ser;
-  }
-
   /**
    * Unregisters a LocalArgResolver</b>.
-   *
+   * 
    * @param argClazz The previously registered local class
    * @param argResolver The previously registered LocalArgResolver object
    * @param contextInterface The previously registered transport Context interface.
    */
-  public static void unregisterLocalArgResolver(Class argClazz, Class contextInterface,
+  public static void unregisterLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
       LocalArgResolver argResolver) {
     LocalArgController.unregisterLocalArgResolver(argClazz, contextInterface, argResolver);
   }
 
-  /* Implementation */
-
   /**
    * Create unique method names by appending the given prefix to the keys from the given HashMap and
    * adding them all to the given HashSet.
-   *
+   * 
    * @param m HashSet to add unique methods to.
    * @param prefix prefix to append to each method name found in the methodMap.
    * @param methodMap a HashMap containing MethodKey keys specifying methods.
    */
-  private static void uniqueMethods(Set m, String prefix, Map methodMap) {
-    Iterator i = methodMap.entrySet().iterator();
-    while (i.hasNext()) {
-      Map.Entry mentry = (Map.Entry) i.next();
-      AccessibleObjectKey mk = (AccessibleObjectKey) mentry.getKey();
+  protected static void uniqueMethods(Set<String> m, String prefix,
+      Map<AccessibleObjectKey, Set<AccessibleObject>> methodMap) {
+    for (Map.Entry<AccessibleObjectKey, Set<AccessibleObject>> mentry : methodMap.entrySet()) {
+      AccessibleObjectKey mk = mentry.getKey();
       m.add(prefix + mk.getMethodName());
     }
   }
 
   /**
-   * The functor used to convert exceptions
+   * Gets the request parser for the constructor
+   * 
+   * @param properties The properties file which should have a key <REQUEST_PARSER_KEY>
+   * @return A request parser as described by the properties file or the
+   *         FixupsCircularReferenceHandler if nothing is found
    */
-  private ExceptionTransformer exceptionTransformer = IDENTITY_EXCEPTION_TRANSFORMER;
+  private static RequestParser getInitRequestParser(Properties properties) {
+    final String className = properties.getProperty(REQUEST_PARSER_KEY);
+    if (className != null) {
+      try {
+        final Class<?> clazz = Class.forName(className);
+        Class<?> superClass = clazz.getSuperclass();
+        while (superClass != null) {
+          if (superClass.equals(RequestParser.class)) {
+            return (RequestParser) clazz.newInstance();
+          }
+          superClass = superClass.getSuperclass();
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        // let it fall through to the return
+      }
+    }
+    return new FixupsCircularReferenceHandler();
+  }
+
+  /**
+   * Loads serializer objects from a file.
+   * 
+   * @param filename The name of a file which has a list of serializer classes to load, through the
+   *          Class.forName() mechanism. One class name should occur per line
+   * @return A list of serializers to be loaded at the construction of the bridge.
+   */
+  private static List<Serializer> getInitSerializers(final String filename) {
+    if (filename != null) {
+      final File serializersFile = new File(filename);
+      try {
+        if (serializersFile.exists()) {
+          try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(
+              serializersFile), StandardCharsets.UTF_8))) {
+            String line;
+            final List<Serializer> serializers = new ArrayList<Serializer>();
+            while ((line = reader.readLine()) != null) {
+              log.info("Creating Serializer: " + line);
+              serializers.add((Serializer) Class.forName(line).newInstance());
+            }
+            return serializers;
+          }
+        }
+      } catch (Exception e) {
+        // fall through and return default serializers
+      }
+    }
+    return JSONSerializer.getDefaultSerializers();
+  }
+
+  /**
+   * Gets the serializer state for the constructor
+   * 
+   * @param properties The properties file which should have a key <SERIALIZER_STATE_CLASS_KEY>
+   * @return A serializer state class as described by the properties file or the
+   *         FixupCircRefAndNonPrimitiveDupes.class if nothing is found
+   */
+  @SuppressWarnings("unchecked")
+  private static Class<? extends SerializerState> getInitSerializerStateClass(
+      Properties properties) {
+    final String className = properties.getProperty(SERIALIZER_STATE_CLASS_KEY);
+    if (className != null) {
+      try {
+        final Class<?> clazz = Class.forName(className);
+        Class<?> interfaces[] = clazz.getInterfaces();
+        for (Class<?> c : interfaces) {
+          if (c.equals(SerializerState.class)) {
+            return (Class<? extends SerializerState>) clazz;
+          }
+        }
+      } catch (Exception e) {
+        // let it fall through to the return
+      }
+    }
+    return FixupCircRefAndNonPrimitiveDupes.class;
+  }
+
+  /**
+   * Creates and loads a java.util.Properties from a file.
+   * 
+   * @param propertiesFilename The name of the file to load the properties from.
+   * @return An initialised properties.
+   */
+  private static Properties loadProperties(final String propertiesFilename) {
+    final Properties p = new Properties();
+    try {
+      p.load(new BufferedInputStream(new FileInputStream(propertiesFilename)));
+    } catch (IOException e) {
+      // If we have an exception here we don't want to throw it up to the
+      // constructors, so just swallow it.
+    }
+    return p;
+  }
+
+  /**
+   * Whether references will be used on the bridge
+   */
+  protected boolean referencesEnabled;
+
+  /**
+   * key clazz, classes that should be returned as CallableReferences
+   */
+  private final Set<Class<?>> callableReferenceSet;
 
   /**
    * The callback controller
@@ -310,17 +422,22 @@ public class JSONRPCBridge implements Serializable {
   /**
    * key "exported class name", val Class
    */
-  private final Map classMap;
+  private final Map<String, Class<?>> classMap;
+
+  /**
+   * The functor used to convert exceptions
+   */
+  private ExceptionTransformer exceptionTransformer = IDENTITY_EXCEPTION_TRANSFORMER;
 
   /**
    * key "exported instance name", val ObjectInstance
    */
-  private final Map objectMap;
+  private final Map<Object, ObjectInstance> objectMap;
 
   /**
    * key Integer hashcode, object held as reference
    */
-  private final Map referenceMap;
+  private final Map<Integer, Object> referenceMap;
 
   /**
    * ReferenceSerializer if enabled
@@ -330,34 +447,89 @@ public class JSONRPCBridge implements Serializable {
   /**
    * key clazz, classes that should be returned as References
    */
-  private final Set referenceSet;
+  private final Set<Class<?>> referenceSet;
 
   /**
-   * key clazz, classes that should be returned as CallableReferences
+   * Local JSONSerializer instance
    */
-  private final Set callableReferenceSet;
-
-  /**
-   * Whether references will be used on the bridge
-   */
-  private boolean referencesEnabled;
+  private JSONSerializer ser;
 
   /**
    * Creates a new bridge.
    */
   public JSONRPCBridge() {
-    classMap = new HashMap();
-    objectMap = new HashMap();
-    referenceMap = new HashMap();
+    this(DEFAULT_PROPERTIES_LOCATION);
+  }
+
+  /**
+   * Creates a new bridge.
+   * 
+   * @param serializers The serializers to load on this bridge.
+   * @param requestParser The request parser to use
+   * @param serializerStateClass The serializer state to use
+   */
+  public JSONRPCBridge(final List<Serializer> serializers, final RequestParser requestParser,
+      final Class<? extends SerializerState> serializerStateClass) {
+    {
+      if (serializerStateClass == null) {
+        JSONRPCBridge.log.info("Using default serializer state");
+      } else {
+        JSONRPCBridge.log.info("Using serializer state: " + serializerStateClass
+            .getCanonicalName());
+      }
+      if (requestParser == null) {
+        JSONRPCBridge.log.info("Using default request parser");
+      } else {
+        JSONRPCBridge.log.info("Using request parser: " + requestParser.getClass()
+            .getCanonicalName());
+      }
+    }
+    ser = new JSONSerializer(serializerStateClass, requestParser);
+
     referenceSerializer = new ReferenceSerializer(this);
-    referenceSet = new HashSet();
-    callableReferenceSet = new HashSet();
+    try {
+      for (Serializer s : serializers) {
+        if (s.getClass().equals(ReferenceSerializer.class)) {
+          ser.registerSerializer(this.referenceSerializer);
+        } else {
+          ser.registerSerializer(s);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    classMap = new HashMap<String, Class<?>>();
+    objectMap = new HashMap<Object, ObjectInstance>();
+    referenceMap = new HashMap<Integer, Object>();
+    referenceSet = new HashSet<Class<?>>();
+    callableReferenceSet = new HashSet<Class<?>>();
     referencesEnabled = false;
   }
 
   /**
+   * Creates a new bridge.
+   * 
+   * @param properties Contains properties to initialize the bridge with.
+   */
+  public JSONRPCBridge(final Properties properties) {
+    this(getInitSerializers(properties.getProperty(SERIALIZERS_FILE)), getInitRequestParser(
+        properties), getInitSerializerStateClass(properties));
+  }
+
+  /**
+   * Creates a new bridge.
+   * 
+   * @param propertiesFilename The name of a file which has a properties to load, through the
+   *          Properties.load() mechanism.
+   */
+  public JSONRPCBridge(final String propertiesFilename) {
+    this(loadProperties(propertiesFilename));
+  }
+
+  /**
    * Adds a reference to the map of known references
-   *
+   * 
    * @param o The object to be added
    */
   public void addReference(Object o) {
@@ -368,12 +540,10 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Call a method using a JSON-RPC request object.
-   *
+   * 
    * @param context The transport context (the HttpServletRequest and HttpServletResponse objects in
    *          the case of the HTTP transport).
-   *
    * @param jsonReq The JSON-RPC request structured as a JSON object tree.
-   *
    * @return a JSONRPCResult object with the result of the invocation or an error.
    */
   public JSONRPCResult call(Object context[], JSONObject jsonReq) {
@@ -381,114 +551,86 @@ public class JSONRPCBridge implements Serializable {
     final String encodedMethod;
     final Object requestId;
     final JSONArray arguments;
-    final JSONArray fixups;
+    JSONRPCResult r;
     try {
-      encodedMethod = jsonReq.getString("method");
-      arguments = jsonReq.getJSONArray("params");
-      requestId = jsonReq.opt("id");
-      fixups = jsonReq.optJSONArray("fixups");
+      encodedMethod = jsonReq.getString(JSONSerializer.METHOD_FIELD);
+      requestId = jsonReq.opt(JSONSerializer.ID_FIELD);
+      arguments = this.ser.getRequestParser().unmarshallArray(jsonReq,
+          JSONSerializer.PARAMETER_FIELD);
+      if (log.isDebugEnabled()) {
+        log.debug("call " + encodedMethod + "(" + arguments + ")" + ", requestId=" + requestId);
+      }
+      // #2: Get the name of the class and method from the encodedMethod
+      final String className;
+      final String methodName;
+      {
+        StringTokenizer t = new StringTokenizer(encodedMethod, ".");
+        if (t.hasMoreElements()) {
+          className = t.nextToken();
+        } else {
+          className = null;
+        }
+        if (t.hasMoreElements()) {
+          methodName = t.nextToken();
+        } else {
+          methodName = null;
+        }
+      }
+      // #3: Get the id of the object (if it exists) from the className
+      // (in the format: ".obj#<objectID>")
+      final int objectID;
+      {
+        final int objectStartIndex = encodedMethod.indexOf('[');
+        final int objectEndIndex = encodedMethod.indexOf(']');
+        if (encodedMethod.startsWith(OBJECT_METHOD_PREFIX) && (objectStartIndex != -1)
+            && (objectEndIndex != -1) && (objectStartIndex < objectEndIndex)) {
+          objectID = Integer.parseInt(encodedMethod.substring(objectStartIndex + 1,
+              objectEndIndex));
+        } else {
+          objectID = 0;
+        }
+      }
+      // #4: Handle list method calls
+      if ((objectID == 0) && (encodedMethod.equals("system.listMethods"))) {
+        r = new SuccessfulResult(requestId, getSystemMethods());
+      } else {
+        // #5: Get the object to act upon and the possible method that could be
+        // called on it
+        final Map<AccessibleObjectKey, Set<AccessibleObject>> methodMap;
+        final Object javascriptObject;
+        final AccessibleObject ao;
+        try {
+          javascriptObject = getObjectContext(objectID, className);
+          methodMap = getAccessibleObjectMap(objectID, className, methodName);
+          // #6: Resolve the method
+          ao = AccessibleObjectResolver.resolveMethod(methodMap, methodName, arguments, ser);
+          if (ao == null) {
+            throw new NoSuchMethodException(FailedResult.MSG_ERR_NOMETHOD);
+          }
+          // #7: Call the method
+          r = AccessibleObjectResolver.invokeAccessibleObject(ao, context, arguments,
+              javascriptObject, requestId, ser, cbc, exceptionTransformer);
+        } catch (NoSuchMethodException e) {
+          if (e.getMessage().equals(FailedResult.MSG_ERR_NOCONSTRUCTOR)) {
+            r = new FailedResult(FailedResult.CODE_ERR_NOCONSTRUCTOR, requestId,
+                FailedResult.MSG_ERR_NOCONSTRUCTOR);
+          } else {
+            r = new FailedResult(FailedResult.CODE_ERR_NOMETHOD, requestId,
+                FailedResult.MSG_ERR_NOMETHOD);
+          }
+        }
+      }
     } catch (JSONException e) {
       log.error("no method or parameters in request");
-      return new JSONRPCResult(JSONRPCResult.CODE_ERR_NOMETHOD, null,
-          JSONRPCResult.MSG_ERR_NOMETHOD);
-    }
-    if (log.isDebugEnabled()) {
-      if (fixups != null) {
-        log.debug("call " + encodedMethod + "(" + arguments + ")" + ", requestId=" + requestId);
-      } else {
-        log.debug("call " + encodedMethod + "(" + arguments + ")" + ", fixups=" + fixups
-            + ", requestId=" + requestId);
-      }
+      r = new FailedResult(FailedResult.CODE_ERR_NOMETHOD, null, FailedResult.MSG_ERR_NOMETHOD);
     }
 
-    // apply the fixups (if any) to the parameters. This will result
-    // in a JSONArray that might have circular references-- so
-    // the toString method (or anything that internally tries to traverse
-    // the JSON (without being aware of this) should not be called after this
-    // point
-
-    if (fixups != null) {
-      try {
-        for (int i = 0; i < fixups.length(); i++) {
-          JSONArray assignment = fixups.getJSONArray(i);
-          JSONArray fixup = assignment.getJSONArray(0);
-          JSONArray original = assignment.getJSONArray(1);
-          applyFixup(arguments, fixup, original);
-        }
-      } catch (JSONException e) {
-        log.error("error applying fixups", e);
-
-        return new JSONRPCResult(JSONRPCResult.CODE_ERR_FIXUP, requestId,
-            JSONRPCResult.MSG_ERR_FIXUP + ": " + e.getMessage());
-      }
-    }
-
-    // #2: Get the name of the class and method from the encodedMethod
-    final String className;
-    final String methodName;
-    {
-      StringTokenizer t = new StringTokenizer(encodedMethod, ".");
-      if (t.hasMoreElements()) {
-        className = t.nextToken();
-      } else {
-        className = null;
-      }
-      if (t.hasMoreElements()) {
-        methodName = t.nextToken();
-      } else {
-        methodName = null;
-      }
-    }
-
-    // #3: Get the id of the object (if it exists) from the className
-    // (in the format: ".obj#<objectID>")
-    final int objectID;
-    {
-      final int objectStartIndex = encodedMethod.indexOf('[');
-      final int objectEndIndex = encodedMethod.indexOf(']');
-      if (encodedMethod.startsWith(OBJECT_METHOD_PREFIX) && (objectStartIndex != -1)
-          && (objectEndIndex != -1) && (objectStartIndex < objectEndIndex)) {
-        objectID = Integer.parseInt(encodedMethod.substring(objectStartIndex + 1, objectEndIndex));
-      } else {
-        objectID = 0;
-      }
-    }
-    // #4: Handle list method calls
-    if ((objectID == 0) && (encodedMethod.equals("system.listMethods"))) {
-      return new JSONRPCResult(JSONRPCResult.CODE_SUCCESS, requestId, getSystemMethods());
-    }
-
-    // #5: Get the object to act upon and the possible method that could be
-    // called on it
-    final Map methodMap;
-    final Object javascriptObject;
-    final AccessibleObject ao;
-    try {
-      javascriptObject = getObjectContext(objectID, className);
-      methodMap = getAccessibleObjectMap(objectID, className, methodName);
-      // #6: Resolve the method
-      ao = AccessibleObjectResolver.resolveMethod(methodMap, methodName, arguments, ser);
-      if (ao == null) {
-        throw new NoSuchMethodException(JSONRPCResult.MSG_ERR_NOMETHOD);
-      }
-    } catch (NoSuchMethodException e) {
-      if (e.getMessage().equals(JSONRPCResult.MSG_ERR_NOCONSTRUCTOR)) {
-        return new JSONRPCResult(JSONRPCResult.CODE_ERR_NOCONSTRUCTOR, requestId,
-            JSONRPCResult.MSG_ERR_NOCONSTRUCTOR);
-      }
-      return new JSONRPCResult(JSONRPCResult.CODE_ERR_NOMETHOD, requestId,
-          JSONRPCResult.MSG_ERR_NOMETHOD);
-    }
-
-    // #7: Call the method
-    JSONRPCResult r = AccessibleObjectResolver.invokeAccessibleObject(ao, context, arguments,
-        javascriptObject, requestId, ser, cbc, exceptionTransformer);
     return r;
   }
 
   /**
    * Allows references to be used on the bridge
-   *
+   * 
    * @throws Exception If a serialiser has already been registered for CallableReferences
    */
   public synchronized void enableReferences() throws Exception {
@@ -501,7 +643,7 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Get the CallbackController object associated with this bridge.
-   *
+   * 
    * @return the CallbackController object associated with this bridge.
    */
   public CallbackController getCallbackController() {
@@ -510,7 +652,7 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Gets a known reference
-   *
+   * 
    * @param objectId The id of the object to get
    * @return The requested reference
    */
@@ -521,12 +663,21 @@ public class JSONRPCBridge implements Serializable {
   }
 
   /**
+   * Get the global JSONSerializer object.
+   * 
+   * @return the global JSONSerializer object.
+   */
+  public JSONSerializer getSerializer() {
+    return ser;
+  }
+
+  /**
    * Check whether a class is registered as a callable reference type.
-   *
+   * 
    * @param clazz The class object to check is a callable reference.
    * @return true if it is, false otherwise
    */
-  public boolean isCallableReference(Class clazz) {
+  public boolean isCallableReference(Class<?> clazz) {
     if (this == globalBridge) {
       return false;
     }
@@ -539,7 +690,7 @@ public class JSONRPCBridge implements Serializable {
 
     // check if the class implements any interface that is
     // registered as a callable reference...
-    Class[] interfaces = clazz.getInterfaces();
+    Class<?>[] interfaces = clazz.getInterfaces();
     for (int i = 0; i < interfaces.length; i++) {
       if (callableReferenceSet.contains(interfaces[i])) {
         return true;
@@ -547,7 +698,7 @@ public class JSONRPCBridge implements Serializable {
     }
 
     // check super classes as well...
-    Class superClass = clazz.getSuperclass();
+    Class<?> superClass = clazz.getSuperclass();
     while (superClass != null) {
       if (callableReferenceSet.contains(superClass)) {
         return true;
@@ -563,11 +714,11 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Check whether a class is registered as a reference type.
-   *
+   * 
    * @param clazz The class object to check is a reference.
    * @return true if it is, false otherwise.
    */
-  public boolean isReference(Class clazz) {
+  public boolean isReference(Class<?> clazz) {
     if (this == globalBridge) {
       return false;
     }
@@ -582,25 +733,25 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Lookup a class that is registered with this bridge.
-   *
+   * 
    * @param name The registered name of the class to lookup.
    * @return the class for the name
    */
-  public Class lookupClass(String name) {
+  public Class<?> lookupClass(String name) {
     synchronized (classMap) {
-      return (Class) classMap.get(name);
+      return classMap.get(name);
     }
   }
 
   /**
    * Lookup an object that is registered with this bridge.
-   *
+   * 
    * @param key The registered name of the object to lookup.
    * @return The object desired if it exists, else null.
    */
   public Object lookupObject(Object key) {
     synchronized (objectMap) {
-      ObjectInstance oi = (ObjectInstance) objectMap.get(key);
+      ObjectInstance oi = objectMap.get(key);
       if (oi != null) {
         return oi.getObject();
       }
@@ -630,11 +781,11 @@ public class JSONRPCBridge implements Serializable {
    * </p>
    * <code>{ "javaClass":"org.jabsorb.test.Bar",<br />
    * "objectID":4827452,<br /> "JSONRPCType":"CallableReference" }</code>
-   *
+   * 
    * @param clazz The class object that should be marshalled as a callable reference.
    * @throws Exception if this method is called on the global bridge.
    */
-  public void registerCallableReference(Class clazz) throws Exception {
+  public void registerCallableReference(Class<?> clazz) throws Exception {
     if (this == globalBridge) {
       throw new Exception("Can't register callable reference on global bridge");
     }
@@ -644,6 +795,7 @@ public class JSONRPCBridge implements Serializable {
     synchronized (callableReferenceSet) {
       callableReferenceSet.add(clazz);
     }
+    ser.registerCallableReference(clazz);
     if (log.isDebugEnabled()) {
       log.debug("registered callable reference " + clazz.getName());
     }
@@ -651,12 +803,12 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Registers a callback to be called before and after method invocation
-   *
+   * 
    * @param callback The object implementing the InvocationCallback Interface
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
    */
-  public void registerCallback(InvocationCallback callback, Class contextInterface) {
+  public void registerCallback(InvocationCallback callback, Class<?> contextInterface) {
     if (cbc == null) {
       cbc = new CallbackController();
     }
@@ -672,14 +824,14 @@ public class JSONRPCBridge implements Serializable {
    * Calling registerClass for a clazz again under the same name will have no effect.
    * <p/>
    * To export instance methods you need to use registerObject.
-   *
+   * 
    * @param name The name to register the class with.
    * @param clazz The class to export static methods from.
    * @throws Exception If a class is already registed with this name
    */
-  public void registerClass(String name, Class clazz) throws Exception {
+  public void registerClass(String name, Class<?> clazz) throws Exception {
     synchronized (classMap) {
-      Class exists = (Class) classMap.get(name);
+      Class<?> exists = classMap.get(name);
       if (exists != null && exists != clazz) {
         throw new Exception("different class registered as " + name);
       }
@@ -702,7 +854,7 @@ public class JSONRPCBridge implements Serializable {
    * <code>&lt;key&gt;.&lt;methodnames&gt;</code> to JSON-RPC clients.
    * <p/>
    * Calling registerObject for a name that already exists will replace the existing entry.
-   *
+   * 
    * @param key The named prefix to export the object as
    * @param o The object instance to be called upon
    */
@@ -725,7 +877,7 @@ public class JSONRPCBridge implements Serializable {
    * <p/>
    * This will make available these methods of the object as
    * <code>&lt;key&gt;.&lt;methodnames&gt;</code> to JSON-RPC clients.
-   *
+   * 
    * @param key The named prefix to export the object as
    * @param o The object instance to be called upon
    * @param interfaceClass The type that this object should be registered as.
@@ -733,7 +885,7 @@ public class JSONRPCBridge implements Serializable {
    *          This can be used to restrict the exported methods to the methods defined in a specific
    *          superclass or interface.
    */
-  public void registerObject(Object key, Object o, Class interfaceClass) {
+  public void registerObject(String key, Object o, Class<?> interfaceClass) {
     ObjectInstance oi = new ObjectInstance(o, interfaceClass);
     synchronized (objectMap) {
       objectMap.put(key, oi);
@@ -763,11 +915,11 @@ public class JSONRPCBridge implements Serializable {
    * global bridge because there is currently no safe simple way to garbage collect such references
    * across the JavaScript/Java barrier.
    * </p>
-   *
+   * 
    * @param clazz The class object that should be marshalled as a reference.
    * @throws Exception if this method is called on the global bridge.
    */
-  public void registerReference(Class clazz) throws Exception {
+  public void registerReference(Class<?> clazz) throws Exception {
     if (this == globalBridge) {
       throw new Exception("Can't register reference on global bridge");
     }
@@ -784,7 +936,7 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Register a new serializer on this bridge.
-   *
+   * 
    * @param serializer A class implementing the Serializer interface (usually derived from
    *          AbstractSerializer).
    * @throws Exception If a serialiser has already been registered that serialises the same class
@@ -795,7 +947,7 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Set the CallbackController object for this bridge.
-   *
+   * 
    * @param cbc the CallbackController object to be set for this bridge.
    */
   public void setCallbackController(CallbackController cbc) {
@@ -804,7 +956,7 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Sets the exception transformer for the bridge.
-   *
+   * 
    * @param exceptionTransformer The new exception transformer to use.
    */
   public void setExceptionTransformer(ExceptionTransformer exceptionTransformer) {
@@ -812,12 +964,21 @@ public class JSONRPCBridge implements Serializable {
   }
 
   /**
+   * Allow serializer state class to be set after construction. This is necessary for beans.
+   * 
+   * @param serializerStateClass The serializer state class to use.
+   */
+  public void setSerializerStateClass(Class<? extends SerializerState> serializerStateClass) {
+    this.ser.setSerializerStateClass(serializerStateClass);
+  }
+
+  /**
    * Unregisters a callback
-   *
+   * 
    * @param callback The previously registered InvocationCallback object
    * @param contextInterface The previously registered transport Context interface.
    */
-  public void unregisterCallback(InvocationCallback callback, Class contextInterface) {
+  public void unregisterCallback(InvocationCallback callback, Class<?> contextInterface) {
     if (cbc == null) {
       return;
     }
@@ -828,12 +989,12 @@ public class JSONRPCBridge implements Serializable {
    * Unregisters a class exported with registerClass.
    * <p/>
    * The JSONBridge will unexport all static methods of the class.
-   *
+   * 
    * @param name The registered name of the class to unexport static methods from.
    */
   public void unregisterClass(String name) {
     synchronized (classMap) {
-      Class clazz = (Class) classMap.get(name);
+      Class<?> clazz = classMap.get(name);
       if (clazz != null) {
         classMap.remove(name);
         if (log.isDebugEnabled()) {
@@ -848,12 +1009,12 @@ public class JSONRPCBridge implements Serializable {
    * <p/>
    * The JSONBridge will unexport all instance methods and static methods of the particular object
    * under the name passed in as a key.
-   *
+   * 
    * @param key The named prefix of the object to unexport
    */
   public void unregisterObject(Object key) {
     synchronized (objectMap) {
-      ObjectInstance oi = (ObjectInstance) objectMap.get(key);
+      ObjectInstance oi = objectMap.get(key);
       if (oi.getObject() != null) {
         objectMap.remove(key);
         if (log.isDebugEnabled()) {
@@ -865,39 +1026,38 @@ public class JSONRPCBridge implements Serializable {
   }
 
   /**
-   * Add all instance methods that can be invoked on this bridge to a HashSet.
+   * Get list of system methods that can be invoked on this JSONRPCBridge.
    *
-   * @param m HashSet to add all static methods to.
+   * These are the methods that are retrieved via a system.listMethods call from the client (like
+   * when a new JSONRpcClient object is initialized by the browser side javascript.)
+   *
+   * @return A JSONArray of method names (in the format of Class.Method)
    */
-  private void allInstanceMethods(Set m) {
-    synchronized (objectMap) {
-      Iterator i = objectMap.entrySet().iterator();
-      while (i.hasNext()) {
-        Map.Entry oientry = (Map.Entry) i.next();
-        Object key = oientry.getKey();
-        if (!(key instanceof String)) {
-          continue;
-        }
-        String name = (String) key;
-        ObjectInstance oi = (ObjectInstance) oientry.getValue();
-        ClassData cd = ClassAnalyzer.getClassData(oi.getClazz());
-        uniqueMethods(m, name + ".", cd.getMethodMap());
-        uniqueMethods(m, name + ".", cd.getStaticMethodMap());
-      }
+  public JSONArray getSystemMethods() {
+    Set<String> m = new TreeSet<String>();
+    globalBridge.allInstanceMethods(m);
+    if (globalBridge != this) {
+      globalBridge.allStaticMethods(m);
+      globalBridge.allInstanceMethods(m);
     }
+    allStaticMethods(m);
+    allInstanceMethods(m);
+    allCallableReferences(m);
+    JSONArray methodNames = new JSONArray();
+    for (String methodName : m) {
+      methodNames.put(methodName);
+    }
+    return methodNames;
   }
 
   /**
    * Add all methods on registered callable references to a HashSet.
-   *
+   * 
    * @param m Set to add all methods to.
    */
-  private void allCallableReferences(Set m) {
+  private void allCallableReferences(Set<String> m) {
     synchronized (callableReferenceSet) {
-      Iterator i = callableReferenceSet.iterator();
-      while (i.hasNext()) {
-        Class clazz = (Class) i.next();
-
+      for (Class<?> clazz : callableReferenceSet) {
         ClassData cd = ClassAnalyzer.getClassData(clazz);
 
         uniqueMethods(m, CALLABLE_REFERENCE_METHOD_PREFIX + "[" + clazz.getName() + "].", cd
@@ -909,17 +1069,36 @@ public class JSONRPCBridge implements Serializable {
   }
 
   /**
-   * Add all static methods that can be invoked on this bridge to the given HashSet.
-   *
+   * Add all instance methods that can be invoked on this bridge to a HashSet.
+   * 
    * @param m HashSet to add all static methods to.
    */
-  private void allStaticMethods(Set m) {
+  private void allInstanceMethods(Set<String> m) {
+    synchronized (objectMap) {
+      for (Map.Entry<Object, ObjectInstance> oientry : objectMap.entrySet()) {
+        Object key = oientry.getKey();
+        if (!(key instanceof String)) {
+          continue;
+        }
+        String name = (String) key;
+        ObjectInstance oi = oientry.getValue();
+        ClassData cd = ClassAnalyzer.getClassData(oi.getClazz());
+        uniqueMethods(m, name + ".", cd.getMethodMap());
+        uniqueMethods(m, name + ".", cd.getStaticMethodMap());
+      }
+    }
+  }
+
+  /**
+   * Add all static methods that can be invoked on this bridge to the given HashSet.
+   * 
+   * @param m HashSet to add all static methods to.
+   */
+  private void allStaticMethods(Set<String> m) {
     synchronized (classMap) {
-      Iterator i = classMap.entrySet().iterator();
-      while (i.hasNext()) {
-        Map.Entry cdentry = (Map.Entry) i.next();
-        String name = (String) cdentry.getKey();
-        Class clazz = (Class) cdentry.getValue();
+      for (Map.Entry<String, Class<?>> cdentry : classMap.entrySet()) {
+        String name = cdentry.getKey();
+        Class<?> clazz = cdentry.getValue();
         ClassData cd = ClassAnalyzer.getClassData(clazz);
         uniqueMethods(m, name + ".", cd.getStaticMethodMap());
       }
@@ -927,62 +1106,20 @@ public class JSONRPCBridge implements Serializable {
   }
 
   /**
-   * Apply one fixup assigment to the incoming json arguments.
-   *
-   * WARNING: the resultant "fixed up" arguments may contain circular references after this
-   * operation. That is the whole point of course-- but the JSONArray and JSONObject's themselves
-   * aren't aware of circular references when certain methods are called (e.g. toString) so be
-   * careful when handling these circular referenced json objects.
-   *
-   * @param object the object to apply fixups to.
-   * @param fixup the fixup entry.
-   * @param original the original value to assign to the fixup.
-   * @throws org.json.JSONException if invalid or unexpected fixup data is encountered.
-   */
-  public static void applyFixup(Object object, JSONArray fixup, JSONArray original)
-      throws JSONException {
-    int last = fixup.length() - 1;
-
-    if (last < 0) {
-      throw new JSONException("fixup path must contain at least 1 reference");
-    }
-
-    Object originalObject = traverse(object, original, false);
-    Object fixupParent = traverse(object, fixup, true);
-
-    // the last ref in the fixup needs to be created
-    // it will be either a string or number depending on if the fixupParent is a
-    // JSONObject or JSONArray
-
-    if (fixupParent instanceof JSONObject) {
-      String objRef = fixup.optString(last, null);
-      if (objRef == null) {
-        throw new JSONException("last fixup reference not a string");
-      }
-      ((JSONObject) fixupParent).put(objRef, originalObject);
-    } else {
-      int arrRef = fixup.optInt(last, -1);
-      if (arrRef == -1) {
-        throw new JSONException("last fixup reference not a valid array index");
-      }
-      ((JSONArray) fixupParent).put(arrRef, originalObject);
-    }
-  }
-
-  /**
    * Gets the methods that can be called on the given object
-   *
+   * 
    * @param objectID The id of the object or 0 if it is a class
    * @param className The name of the class of the object - only required if objectID==0
    * @param methodName The name of method in the request
    * @return A map of AccessibleObjectKeys to a Collection of AccessibleObjects
-   * @throws NoSuchMethodException If the method cannot be found in the class
+   * @throws NoSuchMethodException If methods cannot be found for the class
    */
-  private Map getAccessibleObjectMap(final int objectID, final String className,
-      final String methodName) throws NoSuchMethodException
+  private Map<AccessibleObjectKey, Set<AccessibleObject>> getAccessibleObjectMap(final int objectID,
+      final String className, final String methodName) throws NoSuchMethodException
 
   {
-    final Map methodMap = new HashMap();
+    final Map<AccessibleObjectKey, Set<AccessibleObject>> methodMap =
+        new HashMap<AccessibleObjectKey, Set<AccessibleObject>>();
     // if it is not an object
     if (objectID == 0) {
       final ObjectInstance oi = resolveObject(className);
@@ -997,21 +1134,21 @@ public class JSONRPCBridge implements Serializable {
         try {
           methodMap.putAll(ClassAnalyzer.getClassData(lookupClass(className)).getConstructorMap());
         } catch (Exception e) {
-          throw new NoSuchMethodException(JSONRPCResult.MSG_ERR_NOCONSTRUCTOR);
+          throw new NoSuchMethodException(FailedResult.MSG_ERR_NOCONSTRUCTOR);
         }
       }
       // else it must be static
       else if (classData != null) {
         methodMap.putAll(classData.getStaticMethodMap());
       } else {
-        throw new NoSuchMethodException(JSONRPCResult.MSG_ERR_NOMETHOD);
+        throw new NoSuchMethodException(FailedResult.MSG_ERR_NOMETHOD);
       }
     }
     // else it is an object, so we can get the member methods
     else {
       final ObjectInstance oi = resolveObject(new Integer(objectID));
       if (oi == null) {
-        throw new NoSuchMethodException();
+        throw new NoSuchMethodException("Object not found");
       }
       ClassData cd = ClassAnalyzer.getClassData(oi.getClazz());
       methodMap.putAll(cd.getMethodMap());
@@ -1021,7 +1158,7 @@ public class JSONRPCBridge implements Serializable {
 
   /**
    * Resolves an objectId to an actual object
-   *
+   * 
    * @param objectID The id of the object to resolve
    * @param className The name of the class of the object
    * @return The object requested
@@ -1047,56 +1184,17 @@ public class JSONRPCBridge implements Serializable {
   }
 
   /**
-   * Given a previous json object, find the next object under the given index.
-   *
-   * @param prev object to find subobject of.
-   * @param idx index of sub object to find.
-   * @return the next object in a fixup reference chain (prev[idx])
-   *
-   * @throws JSONException if something goes wrong.
-   */
-  private static Object next(Object prev, int idx) throws JSONException {
-    if (prev == null) {
-      throw new JSONException("cannot traverse- missing object encountered");
-    }
-
-    if (prev instanceof JSONArray) {
-      return ((JSONArray) prev).get(idx);
-    }
-    throw new JSONException("not an array");
-  }
-
-  /**
-   * Given a previous json object, find the next object under the given ref.
-   *
-   * @param prev object to find subobject of.
-   * @param ref reference of sub object to find.
-   * @return the next object in a fixup reference chain (prev[ref])
-   *
-   * @throws JSONException if something goes wrong.
-   */
-  private static Object next(Object prev, String ref) throws JSONException {
-    if (prev == null) {
-      throw new JSONException("cannot traverse- missing object encountered");
-    }
-    if (prev instanceof JSONObject) {
-      return ((JSONObject) prev).get(ref);
-    }
-    throw new JSONException("not an object");
-  }
-
-  /**
    * Resolves a string to a class
-   *
+   * 
    * @param className The name of the class to resolve
    * @return The data associated with the className
    */
   private ClassData resolveClass(String className) {
-    Class clazz;
+    Class<?> clazz;
     ClassData cd = null;
 
     synchronized (classMap) {
-      clazz = (Class) classMap.get(className);
+      clazz = classMap.get(className);
     }
 
     if (clazz != null) {
@@ -1123,7 +1221,7 @@ public class JSONRPCBridge implements Serializable {
    * <p/>
    * If the key is not found in this bridge or the global bridge, the requested key may be a class
    * method (static method) or may not exist (not registered under the requested key.)
-   *
+   * 
    * @param key registered object key being requested by caller.
    * @return ObjectInstance that has been registered under this key, in this bridge or the global
    *         bridge.
@@ -1131,7 +1229,7 @@ public class JSONRPCBridge implements Serializable {
   private ObjectInstance resolveObject(Object key) {
     ObjectInstance oi;
     synchronized (objectMap) {
-      oi = (ObjectInstance) objectMap.get(key);
+      oi = objectMap.get(key);
     }
     if (log.isDebugEnabled() && oi != null) {
       log.debug("found object " + oi.getObject().hashCode() + " of class " + oi.getClazz().getName()
@@ -1143,86 +1241,4 @@ public class JSONRPCBridge implements Serializable {
     return oi;
   }
 
-  /**
-   * Get list of system methods that can be invoked on this JSONRPCBridge.
-   *
-   * These are the methods that are retrieved via a system.listMethods call from the client (like
-   * when a new JSONRpcClient object is initialized by the browser side javascript.)
-   *
-   * @return A JSONArray of method names (in the format of Class.Method)
-   */
-  public JSONArray getSystemMethods() {
-    Set m = new TreeSet();
-    globalBridge.allInstanceMethods(m);
-    if (globalBridge != this) {
-      globalBridge.allStaticMethods(m);
-      globalBridge.allInstanceMethods(m);
-    }
-    allStaticMethods(m);
-    allInstanceMethods(m);
-    allCallableReferences(m);
-    JSONArray methods = new JSONArray();
-    Iterator i = m.iterator();
-    while (i.hasNext()) {
-      methods.put(i.next());
-    }
-    return methods;
-  }
-
-  /**
-   * Traverse a list of references to find the target reference in an original or fixup list.
-   *
-   * @param origin origin JSONArray (arguments) to begin traversing at.
-   * @param refs JSONArray containing array integer references and or String object references.
-   * @param fixup if true, stop one short of the traversal chain to return the parent of the fixup
-   *          rather than the fixup itself (which will be non-existant)
-   * @return either a JSONObject or JSONArray for the Object found at the end of the traversal.
-   * @throws JSONException if something unexpected is found in the data
-   */
-  private static Object traverse(Object origin, JSONArray refs, boolean fixup)
-      throws JSONException {
-    try {
-      JSONArray arr = null;
-      JSONObject obj = null;
-      if (origin instanceof JSONArray) {
-        arr = (JSONArray) origin;
-      } else {
-        obj = (JSONObject) origin;
-      }
-
-      // where to stop when traversing
-      int stop = refs.length();
-
-      // if looking for the fixup, stop short by one to find the parent of the
-      // fixup instead.
-      // because the fixup won't exist yet and needs to be created
-      if (fixup) {
-        stop--;
-      }
-
-      // find the target object by traversing the list of references
-      for (int i = 0; i < stop; i++) {
-        Object next;
-        if (arr == null) {
-          next = next(obj, refs.optString(i, null));
-        } else {
-          next = next(arr, refs.optInt(i, -1));
-        }
-        if (next instanceof JSONObject) {
-          obj = (JSONObject) next;
-          arr = null;
-        } else {
-          obj = null;
-          arr = (JSONArray) next;
-        }
-      }
-      if (arr == null) {
-        return obj;
-      }
-      return arr;
-    } catch (Exception e) {
-      log.error("unexpected exception", e);
-      throw new JSONException("unexpected exception");
-    }
-  }
 }

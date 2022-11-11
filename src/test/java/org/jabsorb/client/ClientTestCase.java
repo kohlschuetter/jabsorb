@@ -26,20 +26,14 @@ package org.jabsorb.client;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.jabsorb.test.BeanA;
 import org.jabsorb.test.ITest;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * This test implements some of Jabsorb tests.
@@ -50,10 +44,7 @@ public class ClientTestCase extends ServerTestBase {
 
   TransportRegistry registry;
 
-  public ClientTestCase() {
-
-  }
-
+  @Override
   protected void setUp() throws Exception {
     super.setUp(); // Makes sure jabsorb server tests are running at this URL
 
@@ -72,6 +63,7 @@ public class ClientTestCase extends ServerTestBase {
    * 
    * @deprecated since we are running the server in-process
    */
+  @Deprecated
   void setupServerTestEnvironment(String url) throws HttpException, IOException {
     HttpClient client = new HttpClient();
     state = new HttpState();
@@ -147,36 +139,6 @@ public class ClientTestCase extends ServerTestBase {
     assertEquals(floato, test.echoFloatObject(floato));
     Double doublo = new Double(3.1415926F);
     assertEquals(doublo, test.echoDoubleObject(doublo));
-
-    {
-      // Circ refs test
-      BeanA beana = test.aBean();
-      assertEquals(beana, beana.getBeanB().getBeanA());
-    }
-    {
-      // Duplicate test
-      Date d = new Date();
-      ArrayList l = new ArrayList();
-      l.add(d);
-      l.add(d);
-      List ll = test.echoList(l);
-      assertEquals(ll.get(0), ll.get(1));
-      assertNotNull(ll.get(0));
-    }
-    {
-      JSONObject o1 = new JSONObject();
-      JSONObject o2 = new JSONObject();
-      try {
-        o1.put("x", o2);
-        o2.put("y", o1);
-        JSONObject _o1 = test.echoRawJSON(o1);
-        JSONObject _o2 = _o1.getJSONObject("x");
-        JSONObject __o1 = _o2.getJSONObject("y");
-        assertEquals(_o1, __o1);
-      } catch (JSONException e) {
-        this.fail("problem with json manipulation");
-      }
-    }
   }
 
   // TODO run embedded proxy server (is Jetty capable of working like a proxy?) to really test

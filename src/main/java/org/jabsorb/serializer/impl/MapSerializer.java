@@ -24,19 +24,18 @@
  */
 package org.jabsorb.serializer.impl;
 
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
 import org.jabsorb.serializer.ObjectMatch;
 import org.jabsorb.serializer.SerializerState;
 import org.jabsorb.serializer.UnmarshallException;
-import org.jabsorb.JSONSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,59 +53,55 @@ public class MapSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class[] _serializableClasses = new Class[] {
+  private static Class<?>[] _serializableClasses = new Class[] {
       Map.class, HashMap.class, TreeMap.class, LinkedHashMap.class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class[] _JSONClasses = new Class[] {JSONObject.class};
+  private static Class<?>[] _JSONClasses = new Class[] {JSONObject.class};
 
-  public boolean canSerialize(Class clazz, Class jsonClazz) {
+  @Override
+  public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
     return (super.canSerialize(clazz, jsonClazz) || ((jsonClazz == null
         || jsonClazz == JSONObject.class) && Map.class.isAssignableFrom(clazz)));
   }
 
-  public Class[] getJSONClasses() {
+  public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
-  public Class[] getSerializableClasses() {
+  public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
-    Map map = (Map) o;
+    Map<?, ?> map = (Map<?, ?>) o;
     JSONObject obj = new JSONObject();
     JSONObject mapdata = new JSONObject();
-    if (ser.getMarshallClassHints()) {
-      try {
-        obj.put("javaClass", o.getClass().getName());
-      } catch (JSONException e) {
-        throw new MarshallException("javaClass not found!", e);
-      }
-    }
+    marshallHints(obj, o);
     try {
-      obj.put("map", mapdata);
-      state.push(o, mapdata, "map");
+      obj.put("map", state.push(o, mapdata, "map"));
+      state.getProcessedObject(mapdata).setSerialized(mapdata);
     } catch (JSONException e) {
       throw new MarshallException("Could not add map to object: " + e.getMessage(), e);
     }
     Object key = null;
     try {
-      Iterator i = map.entrySet().iterator();
+      Iterator<?> i = map.entrySet().iterator();
       while (i.hasNext()) {
-        Map.Entry ent = (Map.Entry) i.next();
+        Map.Entry<?, ?> ent = (Map.Entry<?, ?>) i.next();
         key = ent.getKey();
-        String keyString = key.toString(); // only support String keys
+        final String keyString;
+        if (key == null) {
+          keyString = "null";
+        } else {
+          keyString = key.toString(); // only support String keys
+        }
 
         Object json = ser.marshall(state, mapdata, ent.getValue(), keyString);
 
-        // omit the object entirely if it's a circular reference or duplicate
-        // it will be regenerated in the fixups phase
-        if (JSONSerializer.CIRC_REF_OR_DUPLICATE != json) {
-          mapdata.put(keyString, json);
-        }
+        mapdata.put(keyString, json);
       }
     } catch (MarshallException e) {
       throw new MarshallException("map key " + key + " " + e.getMessage(), e);
@@ -118,12 +113,12 @@ public class MapSerializer extends AbstractSerializer {
     return obj;
   }
 
-  public ObjectMatch tryUnmarshall(SerializerState state, Class clazz, Object o)
+  public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
     String java_class;
     try {
-      java_class = jso.getString("javaClass");
+      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
@@ -145,12 +140,12 @@ public class MapSerializer extends AbstractSerializer {
       throw new UnmarshallException("map missing");
     }
     ObjectMatch m = new ObjectMatch(-1);
-    Iterator i = jsonmap.keys();
+    Iterator<String> i = jsonmap.keys();
     String key = null;
     state.setSerialized(o, m);
     try {
       while (i.hasNext()) {
-        key = (String) i.next();
+        key = i.next();
         m.setMismatch(ser.tryUnmarshall(state, null, jsonmap.get(key)).max(m).getMismatch());
       }
     } catch (UnmarshallException e) {
@@ -161,26 +156,26 @@ public class MapSerializer extends AbstractSerializer {
     return m;
   }
 
-  public Object unmarshall(SerializerState state, Class clazz, Object o)
+  public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
     String java_class;
     try {
-      java_class = jso.getString("javaClass");
+      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
     if (java_class == null) {
       throw new UnmarshallException("no type hint");
     }
-    AbstractMap abmap;
+    Map<String, Object> abmap;
     if (java_class.equals("java.util.Map") || java_class.equals("java.util.AbstractMap")
         || java_class.equals("java.util.HashMap")) {
-      abmap = new HashMap();
+      abmap = new HashMap<String, Object>();
     } else if (java_class.equals("java.util.TreeMap")) {
-      abmap = new TreeMap();
+      abmap = new TreeMap<String, Object>();
     } else if (java_class.equals("java.util.LinkedHashMap")) {
-      abmap = new LinkedHashMap();
+      abmap = new LinkedHashMap<String, Object>();
     } else {
       throw new UnmarshallException("not a Map");
     }
@@ -194,11 +189,11 @@ public class MapSerializer extends AbstractSerializer {
       throw new UnmarshallException("map missing");
     }
     state.setSerialized(o, abmap);
-    Iterator i = jsonmap.keys();
+    Iterator<String> i = jsonmap.keys();
     String key = null;
     try {
       while (i.hasNext()) {
-        key = (String) i.next();
+        key = i.next();
         abmap.put(key, ser.unmarshall(state, null, jsonmap.get(key)));
       }
     } catch (UnmarshallException e) {

@@ -56,6 +56,7 @@ public class Definition implements Serializable {
     this.definition = definition;
   }
 
+  @Override
   public String toString() {
     return "definition: " + word + " \"" + database + "\"\n" + definition;
   }
