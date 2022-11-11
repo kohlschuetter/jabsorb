@@ -109,10 +109,11 @@ public class Client implements InvocationHandler {
 
   // This method is public because of the inheritance from the InvokationHandler.
   // It should never be called directly.
+  @Override
   public Object invoke(Object proxyObj, Method method, Object[] args) throws Exception {
     String methodName = method.getName();
     if (methodName.equals("hashCode")) {
-      return new Integer(System.identityHashCode(proxyObj));
+      return System.identityHashCode(proxyObj);
     } else if (methodName.equals("equals")) {
       return (proxyObj == args[0] ? Boolean.TRUE : Boolean.FALSE);
     } else if (methodName.equals("toString")) {
@@ -144,13 +145,13 @@ public class Client implements InvocationHandler {
   protected void processException(JSONObject responseMessage) throws JSONException {
     JSONObject error = (JSONObject) responseMessage.get("error");
     if (error != null) {
-      Integer code = new Integer(error.has("code") ? error.getInt("code") : 0);
+      Integer code = error.has("code") ? error.getInt("code") : 0;
       String trace = error.has("trace") ? error.getString("trace") : null;
       String msg = error.has("msg") ? error.getString("msg") : null;
       throw new ErrorResponse(code, msg, trace);
     }
-    throw new ErrorResponse(new Integer(FailedResult.CODE_ERR_PARSE), "Unknown response:"
-        + responseMessage.toString(2), null);
+    throw new ErrorResponse(FailedResult.CODE_ERR_PARSE, "Unknown response:" + responseMessage
+        .toString(2), null);
   }
 
   /**

@@ -91,6 +91,7 @@ public class FlatSerializerState implements SerializerState {
     this.index = 1;
   }
 
+  @Override
   public Object checkObject(Object parent, Object currentObject, Object ref)
       throws MarshallException {
     FlatProcessedObject o = getProcessedObject(currentObject);
@@ -101,6 +102,7 @@ public class FlatSerializerState implements SerializerState {
     return null;
   }
 
+  @Override
   public JSONObject createObject(String key, Object json) throws JSONException {
     final JSONObject toReturn = new JSONObject();
     if (json != null) {
@@ -109,6 +111,7 @@ public class FlatSerializerState implements SerializerState {
     return toReturn;
   }
 
+  @Override
   public SuccessfulResult createResult(Object requestId, Object json) {
     return new FlatResult(requestId, json, this.marshalledObjects);
   }
@@ -120,11 +123,12 @@ public class FlatSerializerState implements SerializerState {
    * @return A JSON object for the java object.
    */
   public JSONObject getJSONObject(Object o) {
-    JSONObject j = (JSONObject) marshalledObjects.get(new Integer(System.identityHashCode(o)))
+    JSONObject j = (JSONObject) marshalledObjects.get(System.identityHashCode(o))
         .getObject();
     return j;
   }
 
+  @Override
   public FlatProcessedObject getProcessedObject(Object object) {
     final int key = System.identityHashCode(object);
     if (this.marshalledObjects.containsKey(key)) {
@@ -133,12 +137,14 @@ public class FlatSerializerState implements SerializerState {
     return this.nonMarshalledObjects.get(key);
   }
 
+  @Override
   public void pop() throws MarshallException {
     // Nothing to do
   }
 
+  @Override
   public Object push(Object parent, Object obj, Object ref) {
-    final int identity = new Integer(System.identityHashCode(obj));
+    final int identity = System.identityHashCode(obj);
     final Object toReturn;
     final FlatProcessedObject po;
     if (obj instanceof JSONObject) {
@@ -161,6 +167,7 @@ public class FlatSerializerState implements SerializerState {
     // throw new MarshallException("Object already marshalled.");
   }
 
+  @Override
   public void setMarshalled(Object marshalledObject, Object java) {
     if (marshalledObject instanceof JSONObject) {
       FlatProcessedObject o = getProcessedObject(java);
@@ -172,6 +179,7 @@ public class FlatSerializerState implements SerializerState {
     }
   }
 
+  @Override
   public void setSerialized(Object source, Object target) throws UnmarshallException {
     final ProcessedObject po = this.getProcessedObject(source);
     if (po != null) {
@@ -179,6 +187,7 @@ public class FlatSerializerState implements SerializerState {
     }
   }
 
+  @Override
   public void store(Object object) {
     if (object instanceof JSONObject) {
       FlatProcessedObject p = new FlatProcessedObject(object, nextIndex());

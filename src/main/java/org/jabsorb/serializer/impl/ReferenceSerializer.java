@@ -83,17 +83,20 @@ public class ReferenceSerializer extends AbstractSerializer {
             || jsonClazz == JSONObject.class));
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     Class<?> clazz = o.getClass();
-    Integer identity = new Integer(System.identityHashCode(o));
+    Integer identity = System.identityHashCode(o);
     if (bridge.isReference(clazz)) {
       if (log.isDebugEnabled()) {
         log.debug("marshalling reference to object " + identity + " of class " + clazz.getName());
@@ -131,12 +134,14 @@ public class ReferenceSerializer extends AbstractSerializer {
     return null;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     state.setSerialized(o, ObjectMatch.OKAY);
     return ObjectMatch.OKAY;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;

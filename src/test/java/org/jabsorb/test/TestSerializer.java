@@ -27,19 +27,19 @@ package org.jabsorb.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.SerializerState;
 import org.jabsorb.serializer.request.fixups.FixupsCircularReferenceHandler;
 import org.jabsorb.serializer.response.fixups.FixupCircRefAndNonPrimitiveDupes;
 import org.json.JSONObject;
 
+import junit.framework.TestCase;
+
 public class TestSerializer extends TestCase {
   static final Map<Integer, String> TEST_MAP1 = new HashMap<Integer, String>();
   static {
-    TEST_MAP1.put(new Integer(1), "1");
-    TEST_MAP1.put(new Integer(2), "2");
+    TEST_MAP1.put(1, "1");
+    TEST_MAP1.put(2, "2");
   }
 
   JSONSerializer ser;
@@ -58,6 +58,7 @@ public class TestSerializer extends TestCase {
     JSONObject json = (JSONObject) ser.marshall(marshallerState, null, TEST_MAP1, "testMap1");
     System.out.println("Serialized: ");
     System.out.println(json.toString(2));
+    @SuppressWarnings("unchecked")
     HashMap<Integer, String> unmarshalled = (HashMap<Integer, String>) ser.unmarshall(HashMap.class,
         json);
     assertEquals(TEST_MAP1, unmarshalled);
@@ -65,14 +66,15 @@ public class TestSerializer extends TestCase {
 
   static final HashMap<Integer, String> TEST_MAP2 = new HashMap<Integer, String>();
   static {
-    TEST_MAP2.put(new Integer(1), "1");
-    TEST_MAP2.put(new Integer(2), "2");
+    TEST_MAP2.put(1, "1");
+    TEST_MAP2.put(2, "2");
   }
 
   public void dontTestMaps() throws Exception {
     JSONObject json = (JSONObject) ser.marshall(marshallerState, null, TEST_MAP2, "testMap2");
     System.out.println("Serialized: ");
     System.out.println(json.toString(2));
+    @SuppressWarnings("unchecked")
     HashMap<Integer, String> unmarshalled = (HashMap<Integer, String>) ser.unmarshall(HashMap.class,
         json);
     assertEquals(TEST_MAP2, unmarshalled);

@@ -131,13 +131,13 @@ public class ClientTestCase extends ServerTestBase {
     ITest.Waggle waggle = new ITest.Waggle(1);
     assertEquals(waggle.toString(), test.echo(waggle).toString());
     assertEquals('?', test.echoChar('?'));
-    Integer into = new Integer(1234567890);
+    Integer into = 1234567890;
     assertEquals(into, test.echoIntegerObject(into));
-    Long longo = new Long(1099511627776L);
+    Long longo = 1099511627776L;
     assertEquals(longo, test.echoLongObject(longo));
-    Float floato = new Float(3.3F);
+    Float floato = 3.3F;
     assertEquals(floato, test.echoFloatObject(floato));
-    Double doublo = new Double(3.1415926F);
+    Double doublo = 3.1415926;
     assertEquals(doublo, test.echoDoubleObject(doublo));
   }
 

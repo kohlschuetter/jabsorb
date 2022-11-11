@@ -154,14 +154,17 @@ public class BeanSerializer extends AbstractSerializer {
         || jsonClazz == JSONObject.class));
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     BeanData bd;
     try {
@@ -206,6 +209,7 @@ public class BeanSerializer extends AbstractSerializer {
     return val;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -273,6 +277,7 @@ public class BeanSerializer extends AbstractSerializer {
     return returnValue;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -287,15 +292,12 @@ public class BeanSerializer extends AbstractSerializer {
     }
     Object instance;
     try {
-      instance = clazz.newInstance();
-    } catch (InstantiationException e) {
+      instance = clazz.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException | InvocationTargetException | IllegalAccessException
+        | NoSuchMethodException | RuntimeException e) {
       throw new UnmarshallException("could not instantiate bean of type " + clazz.getName()
           + ", make sure it has a no argument " + "constructor and that it is not an interface or "
           + "abstract class", e);
-    } catch (IllegalAccessException e) {
-      throw new UnmarshallException("could not instantiate bean of type " + clazz.getName(), e);
-    } catch (RuntimeException e) {
-      throw new UnmarshallException("could not instantiate bean of type " + clazz.getName(), e);
     }
     state.setSerialized(o, instance);
     Object invokeArgs[] = new Object[1];

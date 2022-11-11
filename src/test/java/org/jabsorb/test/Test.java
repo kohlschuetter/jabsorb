@@ -55,6 +55,7 @@ public class Test implements Serializable, ITest {
 
   // Void test
 
+  @Override
   public void voidFunction() {
     // Void function does nothing
   }
@@ -67,92 +68,114 @@ public class Test implements Serializable, ITest {
 
   // Overload tests
 
+  @Override
   public String[] echo(String strings[]) {
     return strings;
   }
 
+  @Override
   public int echo(int i) {
     return i;
   }
 
+  @Override
   public int[] echo(int i[]) {
     return i;
   }
 
+  @Override
   public String echo(String message) {
     return message;
   }
 
   // Type tests
 
+  @Override
   public Object[] echoArray(Object[] object) {
     return object;
   }
 
+  @Override
   public List<?> echoList(List<?> l) {
     return l;
   }
 
+  @Override
   public byte[] echoByteArray(byte ba[]) {
     return ba;
   }
 
+  @Override
   public char[] echoCharArray(char ca[]) {
     return ca;
   }
 
+  @Override
   public char echoChar(char c) {
     return c;
   }
 
+  @Override
   public boolean echoBoolean(boolean b) {
     return b;
   }
 
+  @Override
   public boolean[] echoBooleanArray(boolean ba[]) {
     return ba;
   }
 
+  @Override
   public Integer[] echoIntegerArray(Integer i[]) {
     return i;
   }
 
+  @Override
   public Integer echoIntegerObject(Integer i) {
     return i;
   }
 
+  @Override
   public Long echoLongObject(Long l) {
     return l;
   }
 
+  @Override
   public Float echoFloatObject(Float f) {
     return f;
   }
 
+  @Override
   public Double echoDoubleObject(Double d) {
     return d;
   }
 
+  @Override
   public Date echoDateObject(Date d) {
     return d;
   }
 
+  @Override
   public java.sql.Date echoSQLDateObject(java.sql.Date d) {
     return d;
   }
 
+  @Override
   public Object echoObject(Object o) {
     return o;
   }
 
+  @Override
   public Object echoObjectArray(Object[] o) {
     return o;
   }
 
+  @Override
   public String echoOverloadedObject(Number i) {
     return "number method";
   }
 
+  @Override
   public String echoOverloadedObject(Boolean s) {
     return "boolean method";
   }
@@ -163,6 +186,7 @@ public class Test implements Serializable, ITest {
 
   // Container tests
 
+  @Override
   public int[] anArray() {
     int arr[] = new int[10];
     for (int i = 0; i < 10; i++) {
@@ -175,55 +199,62 @@ public class Test implements Serializable, ITest {
     CLUBS, DIAMONDS, HEARTS, SPADES
   }
 
+  @Override
   public Enum<?> anEnum() {
     return Suit.CLUBS;
   }
 
+  @Override
   public ArrayList<Integer> anArrayList() {
     ArrayList<Integer> al = new ArrayList<Integer>();
     for (int i = 10; i < 20; i++) {
-      al.add(new Integer(i));
+      al.add(i);
     }
     return al;
   }
 
+  @Override
   public Vector<Integer> aVector() {
     Vector<Integer> v = new Vector<Integer>();
     for (int i = 20; i < 30; i++) {
-      v.add(new Integer(i));
+      v.add(i);
     }
     return v;
   }
 
+  @Override
   public List<Integer> aList() {
     List<Integer> l = new Vector<Integer>();
     for (int i = 20; i < 30; i++) {
-      l.add(new Integer(i));
+      l.add(i);
     }
     return l;
   }
 
+  @Override
   public Set<Integer> aSet() {
     Set<Integer> s = new HashSet<Integer>();
     for (int i = 0; i < 5; i++) {
-      s.add(new Integer(i));
+      s.add(i);
     }
     return s;
   }
 
+  @Override
   public Hashtable<Integer, ITest.Wiggle> aHashtable() {
     Hashtable<Integer, ITest.Wiggle> ht = new Hashtable<Integer, ITest.Wiggle>();
     for (int i = 0; i < 3; i++) {
       ITest.Wiggle w = new ITest.Wiggle();
       w.setFoo("foo " + i);
       w.setBar(i);
-      ht.put(new Integer(i), w);
+      ht.put(i, w);
     }
     return ht;
   }
 
   // circular reference tests
 
+  @Override
   public BeanA aBean() {
     BeanA beanA = new BeanA();
     BeanB beanB = new BeanB();
@@ -244,14 +275,14 @@ public class Test implements Serializable, ITest {
 
   public List<Object> aCircRefList() {
     List<Object> list = new ArrayList<Object>();
-    list.add(new Integer(0));
-    Integer one = new Integer(1);
+    list.add(0);
+    Integer one = 1;
     list.add(one);
-    Integer two = new Integer(2);
+    Integer two = 2;
     list.add(two);
 
     Map<Object, Object> m = new HashMap<Object, Object>();
-    m.put(new Integer(0), "zero");
+    m.put(0, "zero");
     m.put(one, "one");
     m.put(two, "two");
     m.put("buckle_my_shoe", list);
@@ -388,6 +419,7 @@ public class Test implements Serializable, ITest {
     return l;
   }
 
+  @Override
   public Map<Object, Object> nullKeyedMap() {
     Map<Object, Object> m = new HashMap<Object, Object>();
     m.put("normalKey", "normal value");
@@ -397,24 +429,29 @@ public class Test implements Serializable, ITest {
 
   // Misc tests
 
+  @Override
   public String[] twice(String string) {
     return new String[] {string, string};
   }
 
+  @Override
   public String concat(String msg1, String msg2) {
     return msg1 + " and " + msg2;
   }
 
   // Bean tests
 
+  @Override
   public ITest.Wiggle echo(ITest.Wiggle wiggle) {
     return wiggle;
   }
 
+  @Override
   public ITest.Waggle echo(ITest.Waggle waggle) {
     return waggle;
   }
 
+  @Override
   public ArrayList<ITest.Wiggle> aWiggleArrayList(int numWiggles) {
     ArrayList<ITest.Wiggle> al = new ArrayList<ITest.Wiggle>();
     for (int i = 0; i < numWiggles; i++) {
@@ -423,6 +460,7 @@ public class Test implements Serializable, ITest {
     return al;
   }
 
+  @Override
   public ArrayList<ITest.Waggle> aWaggleArrayList(int numWaggles) {
     ArrayList<ITest.Waggle> al = new ArrayList<ITest.Waggle>();
     for (int i = 0; i < numWaggles; i++) {
@@ -431,6 +469,7 @@ public class Test implements Serializable, ITest {
     return al;
   }
 
+  @Override
   public String wigOrWag(ArrayList<?> al) {
     Iterator<?> i = al.iterator();
     StringBuffer buf = new StringBuffer();
@@ -468,6 +507,7 @@ public class Test implements Serializable, ITest {
       return r.toString();
     }
 
+    @Override
     public int compareTo(Object arg0) {
       return System.identityHashCode(this) - System.identityHashCode(arg0);
     }
@@ -538,6 +578,7 @@ public class Test implements Serializable, ITest {
 
     private final static long serialVersionUID = 2;
 
+    @Override
     public void preInvoke(Object context, Object instance, AccessibleObject m, Object arguments[])
         throws Exception {
       System.out.print("Test.preInvoke");
@@ -551,6 +592,7 @@ public class Test implements Serializable, ITest {
       System.out.println("");
     }
 
+    @Override
     public void postInvoke(Object context, Object instance, AccessibleObject m, Object result)
         throws Exception {
       // Nothing done
@@ -560,7 +602,7 @@ public class Test implements Serializable, ITest {
   /**
    * Count the number of true booleans in the Map.
    * 
-   * @param input map.
+   * @param in input map.
    * @return number of booleans in the map that were set to true.
    */
   public int trueBooleansInMap(Map<Object, Object> in) {
@@ -575,6 +617,7 @@ public class Test implements Serializable, ITest {
     return numTrue;
   }
 
+  @Override
   public Map<?, ?> complexKeyedMap() {
     Map<CallableRefTest, CallableRefTest> map = new HashMap<CallableRefTest, CallableRefTest>();
 

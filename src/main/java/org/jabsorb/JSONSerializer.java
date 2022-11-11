@@ -189,7 +189,7 @@ public class JSONSerializer implements Serializable {
    */
   public SerializerState createSerializerState() {
     try {
-      return this.serializerStateClass.newInstance();
+      return this.serializerStateClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
       // If it can't be instantiated (which should not happen!)
       return null;

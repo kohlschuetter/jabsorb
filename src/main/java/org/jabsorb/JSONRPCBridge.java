@@ -318,7 +318,7 @@ public class JSONRPCBridge implements Serializable {
         Class<?> superClass = clazz.getSuperclass();
         while (superClass != null) {
           if (superClass.equals(RequestParser.class)) {
-            return (RequestParser) clazz.newInstance();
+            return (RequestParser) clazz.getDeclaredConstructor().newInstance();
           }
           superClass = superClass.getSuperclass();
         }
@@ -348,7 +348,8 @@ public class JSONRPCBridge implements Serializable {
             final List<Serializer> serializers = new ArrayList<Serializer>();
             while ((line = reader.readLine()) != null) {
               log.info("Creating Serializer: " + line);
-              serializers.add((Serializer) Class.forName(line).newInstance());
+              serializers.add((Serializer) Class.forName(line).getDeclaredConstructor()
+                  .newInstance());
             }
             return serializers;
           }
@@ -534,7 +535,7 @@ public class JSONRPCBridge implements Serializable {
    */
   public void addReference(Object o) {
     synchronized (referenceMap) {
-      referenceMap.put(new Integer(System.identityHashCode(o)), o);
+      referenceMap.put(System.identityHashCode(o), o);
     }
   }
 
@@ -658,7 +659,7 @@ public class JSONRPCBridge implements Serializable {
    */
   public Object getReference(int objectId) {
     synchronized (referenceMap) {
-      return referenceMap.get(new Integer(objectId));
+      return referenceMap.get(objectId);
     }
   }
 
@@ -1146,7 +1147,7 @@ public class JSONRPCBridge implements Serializable {
     }
     // else it is an object, so we can get the member methods
     else {
-      final ObjectInstance oi = resolveObject(new Integer(objectID));
+      final ObjectInstance oi = resolveObject(objectID);
       if (oi == null) {
         throw new NoSuchMethodException("Object not found");
       }
@@ -1173,7 +1174,7 @@ public class JSONRPCBridge implements Serializable {
         objectContext = null;
       }
     } else {
-      final ObjectInstance oi = resolveObject(new Integer(objectID));
+      final ObjectInstance oi = resolveObject(objectID);
       if (oi != null) {
         objectContext = oi.getObject();
       } else {

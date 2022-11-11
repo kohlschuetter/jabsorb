@@ -26,7 +26,6 @@ package org.jabsorb;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jabsorb.serializer.FixUp;
@@ -117,7 +116,7 @@ public class JSONRPCResult {
    * 
    * @see FixUp
    */
-  private List fixUps;
+  private List<FixUp> fixUps;
 
   /**
    * An error code if a problem occured (CODE_SUCCESS otherwise)
@@ -146,7 +145,7 @@ public class JSONRPCResult {
    * @param o The result of the call
    * @param fixUps optional list of FixUp objects needed to resolve circular refs and duplicates.
    */
-  public JSONRPCResult(int errorCode, Object id, Object o, List fixUps) {
+  public JSONRPCResult(int errorCode, Object id, Object o, List<FixUp> fixUps) {
     this.errorCode = errorCode;
     this.id = id;
     this.result = o;
@@ -180,6 +179,7 @@ public class JSONRPCResult {
     return result;
   }
 
+  @Override
   public String toString() {
     JSONObject o = new JSONObject();
 
@@ -189,8 +189,7 @@ public class JSONRPCResult {
         o.put("result", result);
         if (fixUps != null && fixUps.size() > 0) {
           JSONArray fixups = new JSONArray();
-          for (Iterator i = fixUps.iterator(); i.hasNext();) {
-            FixUp fixup = (FixUp) i.next();
+          for (FixUp fixup : fixUps) {
             fixups.put(fixup.toJSONArray());
           }
           o.put("fixups", fixups);
@@ -202,7 +201,7 @@ public class JSONRPCResult {
           CharArrayWriter caw = new CharArrayWriter();
           e.printStackTrace(new PrintWriter(caw));
           JSONObject err = new JSONObject();
-          err.put("code", new Integer(errorCode));
+          err.put("code", errorCode);
           err.put("msg", e.getMessage());
           err.put("trace", caw.toString());
           o.put("error", err);
@@ -215,7 +214,7 @@ public class JSONRPCResult {
         }
       } else {
         JSONObject err = new JSONObject();
-        err.put("code", new Integer(errorCode));
+        err.put("code", errorCode);
         err.put("msg", result);
         o.put("id", id);
         o.put("error", err);

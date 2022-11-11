@@ -101,7 +101,7 @@ public class StringSerializer extends AbstractSerializer {
     Object returnValue;
     String val = jso instanceof String ? (String) jso : jso.toString();
     if (clazz == char.class) {
-      returnValue = new Character(val.charAt(0));
+      returnValue = Character.valueOf(val.charAt(0));
     } else if (clazz == byte[].class) {
       returnValue = val.getBytes(StandardCharsets.UTF_8);
     } else if (clazz == char[].class) {

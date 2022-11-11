@@ -56,10 +56,12 @@ public class ArraySerializer extends AbstractSerializer {
    */
   private final static Class<?>[] _JSONClasses = new Class[] {JSONArray.class};
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
@@ -72,6 +74,7 @@ public class ArraySerializer extends AbstractSerializer {
         || (clazz == java.lang.Object.class && jsonClazz == JSONArray.class));
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONArray jso = (JSONArray) o;
@@ -92,6 +95,7 @@ public class ArraySerializer extends AbstractSerializer {
     return m;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONArray jso = (JSONArray) o;
@@ -171,6 +175,7 @@ public class ArraySerializer extends AbstractSerializer {
     }
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     try {
       JSONArray arr = new JSONArray();
@@ -217,7 +222,7 @@ public class ArraySerializer extends AbstractSerializer {
       } else if (o instanceof Object[]) {
         Object a[] = (Object[]) o;
         for (int i = 0; i < a.length; i++) {
-          Object json = ser.marshall(state, o, a[i], new Integer(i));
+          Object json = ser.marshall(state, o, a[i], i);
           arr.put(json);
         }
       }

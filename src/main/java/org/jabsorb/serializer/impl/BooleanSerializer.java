@@ -49,18 +49,22 @@ public class BooleanSerializer extends AbstractSerializer {
    */
   private static Class<?>[] _JSONClasses = new Class[] {Boolean.class, String.class};
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     return o;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     final ObjectMatch toReturn;
@@ -83,13 +87,14 @@ public class BooleanSerializer extends AbstractSerializer {
     return toReturn;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     Boolean returnValue = Boolean.FALSE;
 
     if (jso instanceof String) {
       try {
-        returnValue = new Boolean((String) jso);
+        returnValue = Boolean.valueOf((String) jso);
       } catch (Exception e) {
         throw new UnmarshallException("Cannot convert " + jso + " to Boolean", e);
       }

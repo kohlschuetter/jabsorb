@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 /*
 Copyright (c) 2002 JSON.org
@@ -72,7 +73,7 @@ public class JSONTokener {
      * @param inputStream The source.
      */
     public JSONTokener(InputStream inputStream) throws JSONException {
-        this(new InputStreamReader(inputStream));
+        this(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
     }
 
 

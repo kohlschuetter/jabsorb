@@ -17,7 +17,7 @@ public class XMLTest extends TestCase {
 
         Object value = json.get("value");
         assertEquals(Long.class, value.getClass());
-        assertEquals(new Long("123"), value);
+        assertEquals(Long.valueOf("123"), value);
     }
 
     public void testSmallNegativeNumberBecomesLong() {
@@ -25,7 +25,7 @@ public class XMLTest extends TestCase {
 
         Object value = json.get("value");
         assertEquals(Long.class, value.getClass());
-        assertEquals(new Long("-123"), value);
+        assertEquals(Long.valueOf("-123"), value);
     }
 
     public void testSmallFractionNumberBecomesDouble() {
@@ -33,7 +33,7 @@ public class XMLTest extends TestCase {
 
         Object value = json.get("value");
         assertEquals(Double.class, value.getClass());
-        assertEquals(new Double("123.4"), value);
+        assertEquals(Double.valueOf("123.4"), value);
     }
 
     public void testSmallFractionNegativeNumberBecomesDouble() {
@@ -41,7 +41,7 @@ public class XMLTest extends TestCase {
 
         Object value = json.get("value");
         assertEquals(Double.class, value.getClass());
-        assertEquals(new Double("-123.4"), value);
+        assertEquals(Double.valueOf("-123.4"), value);
     }
 
     public void testMediumFractionNumberBecomesDouble() {
@@ -49,7 +49,7 @@ public class XMLTest extends TestCase {
 
         Object value = json.get("value");
         assertEquals(Double.class, value.getClass());
-        assertEquals(new Double("12162019091.2"), value);
+        assertEquals(Double.valueOf("12162019091.2"), value);
     }
     
     public void testMediumFractionNumberWithCommanAsDecimalStaysString() {
@@ -65,7 +65,7 @@ public class XMLTest extends TestCase {
 
         Object value = json.get("value");
         assertEquals(Double.class, value.getClass());
-        assertEquals(new Double("-12162019091.2"), value);
+        assertEquals(Double.valueOf("-12162019091.2"), value);
     }
 
     public void testLargeNumberStaysString() {

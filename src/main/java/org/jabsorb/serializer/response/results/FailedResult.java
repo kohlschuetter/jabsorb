@@ -121,7 +121,7 @@ public class FailedResult extends JSONRPCResult {
   protected JSONObject createOutput() throws JSONException {
     JSONObject o = super._createOutput();
     JSONObject err = new JSONObject();
-    err.put("code", new Integer(errorCode));
+    err.put("code", errorCode);
     err.put("msg", error);
     o.put("error", err);
     return o;

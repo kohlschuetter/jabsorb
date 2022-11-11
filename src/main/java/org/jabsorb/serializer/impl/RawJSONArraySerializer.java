@@ -51,14 +51,17 @@ public class RawJSONArraySerializer extends AbstractSerializer {
    */
   private static Class<?>[] _JSONClasses = new Class[] {JSONArray.class};
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     // reprocess the raw json in order to fixup circular references and duplicates
     JSONArray jsonIn = (JSONArray) o;
@@ -69,7 +72,7 @@ public class RawJSONArraySerializer extends AbstractSerializer {
       int j = jsonIn.length();
 
       for (i = 0; i < j; i++) {
-        Object json = ser.marshall(state, o, jsonIn.opt(i), new Integer(i));
+        Object json = ser.marshall(state, o, jsonIn.opt(i), i);
         jsonOut.put(i, json);
       }
     } catch (MarshallException e) {
@@ -80,12 +83,14 @@ public class RawJSONArraySerializer extends AbstractSerializer {
     return jsonOut;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     state.setSerialized(jso, ObjectMatch.OKAY);
     return ObjectMatch.OKAY;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     state.setSerialized(jso, jso);

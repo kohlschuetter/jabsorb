@@ -55,10 +55,12 @@ public class NumberSerializer extends AbstractSerializer {
       Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class,
       BigDecimal.class, String.class};
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
@@ -77,34 +79,34 @@ public class NumberSerializer extends AbstractSerializer {
     // the other
     if (clazz == Integer.class) {
       if (jso instanceof String) {
-        return new Integer((String) jso);
+        return Integer.valueOf((String) jso);
       }
-      return new Integer(((Number) jso).intValue());
+      return Integer.valueOf(((Number) jso).intValue());
     } else if (clazz == Long.class) {
       if (jso instanceof String) {
-        return new Long((String) jso);
+        return Long.valueOf((String) jso);
       }
-      return new Long(((Number) jso).longValue());
+      return Long.valueOf(((Number) jso).longValue());
     } else if (clazz == Short.class) {
       if (jso instanceof String) {
-        return new Short((String) jso);
+        return Short.valueOf((String) jso);
       }
-      return new Short(((Number) jso).shortValue());
+      return Short.valueOf(((Number) jso).shortValue());
     } else if (clazz == Byte.class) {
       if (jso instanceof String) {
-        return new Byte((String) jso);
+        return Byte.valueOf((String) jso);
       }
-      return new Byte(((Number) jso).byteValue());
+      return Byte.valueOf(((Number) jso).byteValue());
     } else if (clazz == Float.class) {
       if (jso instanceof String) {
-        return new Float((String) jso);
+        return Float.valueOf((String) jso);
       }
-      return new Float(((Number) jso).floatValue());
+      return Float.valueOf(((Number) jso).floatValue());
     } else if (clazz == Double.class) {
       if (jso instanceof String) {
-        return new Double((String) jso);
+        return Double.valueOf((String) jso);
       }
-      return new Double(((Number) jso).doubleValue());
+      return Double.valueOf(((Number) jso).doubleValue());
     } else if (clazz == BigDecimal.class) {
       if (jso instanceof String) {
         return new BigDecimal((String) jso);
@@ -114,6 +116,7 @@ public class NumberSerializer extends AbstractSerializer {
     return null;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     try {
@@ -125,6 +128,7 @@ public class NumberSerializer extends AbstractSerializer {
     return ObjectMatch.OKAY;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     try {
@@ -140,8 +144,8 @@ public class NumberSerializer extends AbstractSerializer {
     }
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     return o;
   }
-
 }

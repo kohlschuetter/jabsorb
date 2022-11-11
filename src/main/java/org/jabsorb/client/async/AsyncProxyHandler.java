@@ -75,6 +75,7 @@ public class AsyncProxyHandler implements InvocationHandler {
 
   private AsyncResultCallback<Object, Object, Method> resultCallback;
 
+  @Override
   @SuppressWarnings("unchecked")
   public Object invoke(final Object proxyObj, final Method method, final Object[] args)
       throws Exception {
@@ -83,7 +84,7 @@ public class AsyncProxyHandler implements InvocationHandler {
     final String methodName = method.getName();
 
     if (methodName.equals("hashCode")) {
-      return new Integer(System.identityHashCode(proxyObj));
+      return System.identityHashCode(proxyObj);
     } else if (methodName.equals("equals")) {
       return (proxyObj == args[0] ? Boolean.TRUE : Boolean.FALSE);
     } else if (methodName.equals("toString")) {
@@ -124,6 +125,7 @@ public class AsyncProxyHandler implements InvocationHandler {
 
     final AsyncResultCallback<AsyncSession, JSONObject, JSONObject> jsonResultCallback =
         new AsyncResultCallback<AsyncSession, JSONObject, JSONObject>() {
+          @Override
           public void onAsyncResult(final AsyncSession source, final Future<JSONObject> response,
               final JSONObject request) {
             // get the response
@@ -174,12 +176,12 @@ public class AsyncProxyHandler implements InvocationHandler {
   protected void processException(final JSONObject responseMessage) throws JSONException {
     final JSONObject error = (JSONObject) responseMessage.get("error");
     if (error != null) {
-      final Integer code = new Integer(error.has("code") ? error.getInt("code") : 0);
+      final Integer code = error.has("code") ? error.getInt("code") : 0;
       final String trace = error.has("trace") ? error.getString("trace") : null;
       final String msg = error.has("msg") ? error.getString("msg") : null;
       throw new ErrorResponse(code, msg, trace);
     }
-    throw new ErrorResponse(new Integer(FailedResult.CODE_ERR_PARSE), "Unknown response:"
+    throw new ErrorResponse(FailedResult.CODE_ERR_PARSE, "Unknown response:"
         + responseMessage.toString(2), null);
   }
 

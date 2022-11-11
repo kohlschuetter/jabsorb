@@ -300,7 +300,7 @@ public class JSONWriter {
      * @throws JSONException If the number is not finite.
      */
     public JSONWriter value(double d) throws JSONException {
-        return this.value(new Double(d));
+        return this.value((Double)(d));
     }
 
     /**
@@ -322,6 +322,6 @@ public class JSONWriter {
      * @throws JSONException If the value is out of sequence.
      */
     public JSONWriter value(Object object) throws JSONException {
-        return this.append(JSONObject.valueToString(object));
+      return this.append(JSONObject.valueToString(object));
     }
 }

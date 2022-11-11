@@ -51,10 +51,12 @@ public class PrimitiveSerializer extends AbstractSerializer {
   private static Class<?>[] _JSONClasses = new Class[] {
       Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class, String.class};
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
@@ -72,7 +74,7 @@ public class PrimitiveSerializer extends AbstractSerializer {
     if (int.class.equals(clazz)) {
       // TODO: Should something be done about these early returns?
       if (jso instanceof String) {
-        return new Integer((String) jso);
+        return Integer.valueOf((String) jso);
       }
       // Handle it if it is out of the range of the number
       Number n = (Number) jso;
@@ -82,19 +84,19 @@ public class PrimitiveSerializer extends AbstractSerializer {
       if (n.floatValue() != n.intValue()) {
         throw new NumberFormatException("number is not an integer");
       }
-      return new Integer(n.intValue());
+      return Integer.valueOf(n.intValue());
     } else if (long.class.equals(clazz)) {
       if (jso instanceof String) {
-        return new Long((String) jso);
+        return Long.valueOf((String) jso);
       }
       Number n = (Number) jso;
       if (n.floatValue() != n.longValue()) {
         throw new NumberFormatException("number is not an integer");
       }
-      return new Long(n.longValue());
+      return Long.valueOf(n.longValue());
     } else if (short.class.equals(clazz)) {
       if (jso instanceof String) {
-        return new Short((String) jso);
+        return Short.valueOf((String) jso);
       }
       // Handle it if it is out of the range of the number
       Number n = (Number) jso;
@@ -105,10 +107,10 @@ public class PrimitiveSerializer extends AbstractSerializer {
       if (n.floatValue() != n.shortValue()) {
         throw new NumberFormatException("number is not an integer");
       }
-      return new Short(n.shortValue());
+      return Short.valueOf(n.shortValue());
     } else if (byte.class.equals(clazz)) {
       if (jso instanceof String) {
-        return new Byte((String) jso);
+        return Byte.valueOf((String) jso);
       }
       // Handle it if it is out of the range of the number
       Number n = (Number) jso;
@@ -119,26 +121,27 @@ public class PrimitiveSerializer extends AbstractSerializer {
       if (n.floatValue() != n.byteValue()) {
         throw new NumberFormatException("number is not an integer");
       }
-      return new Byte(n.byteValue());
+      return Byte.valueOf(n.byteValue());
     } else if (float.class.equals(clazz)) {
       if (jso instanceof String) {
-        return new Float((String) jso);
+        return Float.valueOf((String) jso);
       }
       Number n = (Number) jso;
       if ((n.floatValue() > Float.MAX_VALUE) || (n.floatValue() < -Float.MAX_VALUE)) {
         throw new NumberFormatException("number is too large for a float");
       }
-      return new Float(((Number) jso).floatValue());
+      return Float.valueOf(((Number) jso).floatValue());
     } else if (double.class.equals(clazz)) {
       if (jso instanceof String) {
-        return new Double((String) jso);
+        return Double.valueOf((String) jso);
       }
-      return new Double(((Number) jso).doubleValue());
+      return Double.valueOf(((Number) jso).doubleValue());
     }
 
     return null;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     try {
@@ -152,6 +155,7 @@ public class PrimitiveSerializer extends AbstractSerializer {
     return ObjectMatch.OKAY;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     try {
@@ -164,8 +168,8 @@ public class PrimitiveSerializer extends AbstractSerializer {
     }
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     return o;
   }
-
 }

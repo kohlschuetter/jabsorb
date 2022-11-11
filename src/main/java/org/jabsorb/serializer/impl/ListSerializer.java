@@ -68,14 +68,17 @@ public class ListSerializer extends AbstractSerializer {
         || jsonClazz == JSONObject.class) && List.class.isAssignableFrom(clazz)));
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     List<?> list = (List<?>) o;
     JSONObject obj = new JSONObject();
@@ -92,7 +95,7 @@ public class ListSerializer extends AbstractSerializer {
     try {
       Iterator<?> i = list.iterator();
       while (i.hasNext()) {
-        Object json = ser.marshall(state, arr, i.next(), new Integer(index));
+        Object json = ser.marshall(state, arr, i.next(), index);
         arr.put(json);
         index++;
       }
@@ -108,6 +111,7 @@ public class ListSerializer extends AbstractSerializer {
   // intermediate function.
   // TODO: Also cache the result somehow so that an unmarshall
   // following a tryUnmarshall doesn't do the same work twice!
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -149,6 +153,7 @@ public class ListSerializer extends AbstractSerializer {
     return m;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;

@@ -57,7 +57,7 @@ public class RemoteException extends FailedResult {
       CharArrayWriter caw = new CharArrayWriter();
       e.printStackTrace(new PrintWriter(caw));
       JSONObject err = new JSONObject();
-      err.put("code", new Integer(CODE_REMOTE_EXCEPTION));
+      err.put("code", CODE_REMOTE_EXCEPTION);
       err.put("msg", e.getMessage());
       err.put("trace", caw.toString());
       o.put("error", err);
