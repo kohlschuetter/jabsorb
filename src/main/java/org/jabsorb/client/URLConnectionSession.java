@@ -40,28 +40,24 @@ import org.json.JSONTokener;
  * Transport based on URLConnection
  *
  */
-public class URLConnectionSession implements Session
-{
+public class URLConnectionSession implements Session {
   URL url;
 
   /**
    * Create a URLConnection transport
-   * @param url 
+   * 
+   * @param url
    */
-  URLConnectionSession(URL url)
-  {
+  URLConnectionSession(URL url) {
     this.url = url;
   }
 
-  public void close()
-  {
+  public void close() {
   }
 
-  public JSONObject sendAndReceive(JSONObject message)
-  {
-    try
-    {
-      URLConnection connection= url.openConnection();
+  public JSONObject sendAndReceive(JSONObject message) {
+    try {
+      URLConnection connection = url.openConnection();
       connection.setDoOutput(true);
       // As per http://java.sun.com/docs/books/tutorial/networking/urls/readingWriting.html
       Writer request = new OutputStreamWriter(connection.getOutputStream());
@@ -72,8 +68,7 @@ public class URLConnectionSession implements Session
       StringBuffer builder = new StringBuffer(1024);
       char[] buffer = new char[1024];
       Reader reader = new InputStreamReader(connection.getInputStream());
-      while (true)
-      {
+      while (true) {
         int bytesRead = reader.read(buffer);
         if (bytesRead < 0)
           break;
@@ -84,16 +79,11 @@ public class URLConnectionSession implements Session
       Object rawResponseMessage = tokener.nextValue();
       JSONObject responseMessage = (JSONObject) rawResponseMessage;
       if (responseMessage == null)
-        throw new ClientError("Invalid response type - "
-            + rawResponseMessage.getClass());
+        throw new ClientError("Invalid response type - " + rawResponseMessage.getClass());
       return responseMessage;
-    }
-    catch (IOException ex)
-    {
+    } catch (IOException ex) {
       throw new ClientError(ex);
-    }
-    catch (JSONException ex)
-    {
+    } catch (JSONException ex) {
       throw new ClientError(ex);
     }
   }

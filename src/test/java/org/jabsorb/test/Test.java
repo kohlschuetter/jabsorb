@@ -49,206 +49,166 @@ import org.json.JSONObject;
 /**
  * Server side unit tests, used by unit.jsp / unit.js.
  */
-public class Test implements Serializable, ITest
-{
-
+public class Test implements Serializable, ITest {
 
   private final static long serialVersionUID = 2;
 
   // Void test
 
-  public void voidFunction()
-  {
+  public void voidFunction() {
   }
 
   // Exception tests
 
-  public static void throwException() throws Exception
-  {
+  public static void throwException() throws Exception {
     throw new Exception("test exception");
   }
 
   // Overload tests
 
-  public String[] echo(String strings[])
-  {
+  public String[] echo(String strings[]) {
     return strings;
   }
 
-  public int echo(int i)
-  {
+  public int echo(int i) {
     return i;
   }
 
-  public int[] echo(int i[])
-  {
+  public int[] echo(int i[]) {
     return i;
   }
 
-  public String echo(String message)
-  {
+  public String echo(String message) {
     return message;
   }
 
   // Type tests
 
-  public Object[] echoArray(Object[] object)
-  {
+  public Object[] echoArray(Object[] object) {
     return object;
   }
 
-  public List echoList(List l)
-  {
+  public List echoList(List l) {
     return l;
   }
 
-  public byte[] echoByteArray(byte ba[])
-  {
+  public byte[] echoByteArray(byte ba[]) {
     return ba;
   }
 
-  public char[] echoCharArray(char ca[])
-  {
+  public char[] echoCharArray(char ca[]) {
     return ca;
   }
 
-  public char echoChar(char c)
-  {
+  public char echoChar(char c) {
     return c;
   }
 
-  public boolean echoBoolean(boolean b)
-  {
+  public boolean echoBoolean(boolean b) {
     return b;
   }
 
-  public boolean[] echoBooleanArray(boolean ba[])
-  {
+  public boolean[] echoBooleanArray(boolean ba[]) {
     return ba;
   }
 
-  public Integer[] echoIntegerArray(Integer i[])
-  {
+  public Integer[] echoIntegerArray(Integer i[]) {
     return i;
   }
 
-  public Integer echoIntegerObject(Integer i)
-  {
+  public Integer echoIntegerObject(Integer i) {
     return i;
   }
 
-  public Long echoLongObject(Long l)
-  {
+  public Long echoLongObject(Long l) {
     return l;
   }
 
-  public Float echoFloatObject(Float f)
-  {
+  public Float echoFloatObject(Float f) {
     return f;
   }
 
-  public Double echoDoubleObject(Double d)
-  {
+  public Double echoDoubleObject(Double d) {
     return d;
   }
 
-  public Date echoDateObject(Date d)
-  {
+  public Date echoDateObject(Date d) {
     return d;
   }
 
-  public java.sql.Date echoSQLDateObject(java.sql.Date d)
-  {
+  public java.sql.Date echoSQLDateObject(java.sql.Date d) {
     return d;
   }
 
-  public Object echoObject(Object o)
-  {
+  public Object echoObject(Object o) {
     return o;
   }
 
-  public Object echoObjectArray(Object[] o)
-  {
+  public Object echoObjectArray(Object[] o) {
     return o;
   }
 
-  public String echoOverloadedObject(Number i)
-  {
+  public String echoOverloadedObject(Number i) {
     return "number method";
   }
 
-  public String echoOverloadedObject(Boolean s)
-  {
+  public String echoOverloadedObject(Boolean s) {
     return "boolean method";
   }
 
-  public JSONObject echoRawJSON(JSONObject rawObject)
-  {
+  public JSONObject echoRawJSON(JSONObject rawObject) {
     return rawObject;
   }
 
-  public Map echoMap(Map map)
-  {
+  public Map echoMap(Map map) {
     return map;
   }
 
   // Container tests
 
-  public int[] anArray()
-  {
+  public int[] anArray() {
     int arr[] = new int[10];
-    for (int i = 0; i < 10; i++)
-    {
+    for (int i = 0; i < 10; i++) {
       arr[i] = i;
     }
     return arr;
   }
 
-  public ArrayList anArrayList()
-  {
+  public ArrayList anArrayList() {
     ArrayList al = new ArrayList();
-    for (int i = 10; i < 20; i++)
-    {
+    for (int i = 10; i < 20; i++) {
       al.add(new Integer(i));
     }
     return al;
   }
 
-  public Vector aVector()
-  {
+  public Vector aVector() {
     Vector v = new Vector();
-    for (int i = 20; i < 30; i++)
-    {
+    for (int i = 20; i < 30; i++) {
       v.add(new Integer(i));
     }
     return v;
   }
 
-  public List aList()
-  {
+  public List aList() {
     List l = new Vector();
-    for (int i = 20; i < 30; i++)
-    {
+    for (int i = 20; i < 30; i++) {
       l.add(new Integer(i));
     }
     return l;
   }
 
-  public Set aSet()
-  {
+  public Set aSet() {
     Set s = new HashSet();
-    for (int i = 0; i < 5; i++)
-    {
+    for (int i = 0; i < 5; i++) {
       s.add(new Integer(i));
     }
     return s;
   }
 
-  public Hashtable aHashtable()
-  {
+  public Hashtable aHashtable() {
     Hashtable ht = new Hashtable();
-    for (int i = 0; i < 3; i++)
-    {
+    for (int i = 0; i < 3; i++) {
       ITest.Wiggle w = new ITest.Wiggle();
       w.setFoo("foo " + i);
       w.setBar(i);
@@ -259,8 +219,7 @@ public class Test implements Serializable, ITest
 
   // circular reference tests
 
-  public BeanA aBean()
-  {
+  public BeanA aBean() {
     BeanA beanA = new BeanA();
     BeanB beanB = new BeanB();
 
@@ -272,15 +231,13 @@ public class Test implements Serializable, ITest
     return beanA;
   }
 
-  public Map aCircRefMap()
-  {
+  public Map aCircRefMap() {
     Map m = new HashMap();
-    m.put("me",m);
+    m.put("me", m);
     return m;
   }
 
-  public List aCircRefList()
-  {
+  public List aCircRefList() {
     ArrayList list = new ArrayList();
     list.add(new Integer(0));
     Integer one = new Integer(1);
@@ -292,15 +249,14 @@ public class Test implements Serializable, ITest
     m.put(new Integer(0), "zero");
     m.put(one, "one");
     m.put(two, "two");
-    m.put("buckle_my_shoe",list);
-
+    m.put("buckle_my_shoe", list);
 
     BeanA beanA = new BeanA();
     BeanB beanB = new BeanB();
     beanB.setBeanA(beanA);
     beanA.setBeanB(beanB);
 
-    m.put("aBean",beanA);
+    m.put("aBean", beanA);
 
     list.add(beanB);
     list.add(m);
@@ -308,14 +264,13 @@ public class Test implements Serializable, ITest
   }
 
   /**
-   * Test more than one duplicate, to make sure the fixups they generate
-   * all refer to the same object
+   * Test more than one duplicate, to make sure the fixups they generate all refer to the same
+   * object
+   * 
    * @return a List with some duplicates.
    */
-  public List aDupDup()
-  {
+  public List aDupDup() {
     List list = new ArrayList();
-
 
     BeanA a = new BeanA();
     BeanB b = new BeanB();
@@ -336,16 +291,16 @@ public class Test implements Serializable, ITest
 
   /**
    * Another duplicate with substantial savings to be gained by fixing it up
+   * 
    * @return aList with duplicates.
    */
-  public List aDupDupDup()
-  {
+  public List aDupDupDup() {
     Map m = new HashMap();
-    m.put("drink","soda");
-    m.put("tree","oak");
-    m.put("planet","jupiter");
-    m.put("art","painting");
-    m.put("animal","tiger");
+    m.put("drink", "soda");
+    m.put("tree", "oak");
+    m.put("planet", "jupiter");
+    m.put("art", "painting");
+    m.put("animal", "tiger");
     List list = new ArrayList();
 
     list.add(m);
@@ -354,11 +309,11 @@ public class Test implements Serializable, ITest
     list.add(m);
 
     Map m2 = new TreeMap();
-    m2.put("map",m);
-    m2.put("dup",m);
-    m2.put("copy",m);
-    m2.put("ditto",m);
-    m2.put("extra",m);
+    m2.put("map", m);
+    m2.put("dup", m);
+    m2.put("copy", m);
+    m2.put("ditto", m);
+    m2.put("extra", m);
 
     list.add(m2);
     return list;
@@ -366,10 +321,10 @@ public class Test implements Serializable, ITest
 
   /**
    * Test of duplicate Strings
+   * 
    * @return a List with 3 duplicate Strings.
    */
-  public List aStringListDup()
-  {
+  public List aStringListDup() {
     List list = new ArrayList();
 
     String dup = "Supercalifragilisticexpialidocious";
@@ -384,8 +339,7 @@ public class Test implements Serializable, ITest
    *
    * @return an array of 3 duplicate Strings.
    */
-  public String[] aStringArrayDup()
-  {
+  public String[] aStringArrayDup() {
     String[] arr = new String[3];
     String dup = "Supercalifragilisticexpialidocious";
     arr[0] = dup;
@@ -399,8 +353,7 @@ public class Test implements Serializable, ITest
    *
    * @return an array of 3 duplicate Beans.
    */
-  public BeanA[] aBeanArrayDup()
-  {
+  public BeanA[] aBeanArrayDup() {
     BeanB b = new BeanB();
     BeanA a = new BeanA();
     a.setBeanB(b);
@@ -412,12 +365,12 @@ public class Test implements Serializable, ITest
   }
 
   /**
-   * Return a List that has several Strings and a few nulls.
-   * We want make sure that the null objects don't get fixed up (as duplicates...)
+   * Return a List that has several Strings and a few nulls. We want make sure that the null objects
+   * don't get fixed up (as duplicates...)
+   * 
    * @return a List that has several Strings and a few nulls.
    */
-  public List listNull()
-  {
+  public List listNull() {
     List l = new ArrayList();
     l.add("one");
     l.add("two");
@@ -432,67 +385,52 @@ public class Test implements Serializable, ITest
 
   // Misc tests
 
-  public String[] twice(String string)
-  {
-    return new String[]{string, string};
+  public String[] twice(String string) {
+    return new String[] {string, string};
   }
 
-  public String concat(String msg1, String msg2)
-  {
+  public String concat(String msg1, String msg2) {
     return msg1 + " and " + msg2;
   }
 
   // Bean tests
 
-  public ITest.Wiggle echo(ITest.Wiggle wiggle)
-  {
+  public ITest.Wiggle echo(ITest.Wiggle wiggle) {
     return wiggle;
   }
 
-  public ITest.Waggle echo(ITest.Waggle waggle)
-  {
+  public ITest.Waggle echo(ITest.Waggle waggle) {
     return waggle;
   }
 
-  public ArrayList aWiggleArrayList(int numWiggles)
-  {
+  public ArrayList aWiggleArrayList(int numWiggles) {
     ArrayList al = new ArrayList();
-    for (int i = 0; i < numWiggles; i++)
-    {
+    for (int i = 0; i < numWiggles; i++) {
       al.add(new ITest.Wiggle(i));
     }
     return al;
   }
 
-  public ArrayList aWaggleArrayList(int numWaggles)
-  {
+  public ArrayList aWaggleArrayList(int numWaggles) {
     ArrayList al = new ArrayList();
-    for (int i = 0; i < numWaggles; i++)
-    {
+    for (int i = 0; i < numWaggles; i++) {
       al.add(new ITest.Waggle(i));
     }
     return al;
   }
 
-  public String wigOrWag(ArrayList al)
-  {
+  public String wigOrWag(ArrayList al) {
     Iterator i = al.iterator();
     StringBuffer buf = new StringBuffer();
-    while (i.hasNext())
-    {
+    while (i.hasNext()) {
       Object o = i.next();
-      if (o instanceof ITest.Wiggle)
-      {
+      if (o instanceof ITest.Wiggle) {
         ITest.Wiggle w = (ITest.Wiggle) o;
         buf.append(w + " ");
-      }
-      else if (o instanceof ITest.Waggle)
-      {
+      } else if (o instanceof ITest.Waggle) {
         ITest.Waggle w = (ITest.Waggle) o;
         buf.append(w + " ");
-      }
-      else
-      {
+      } else {
         buf.append("unknown object ");
       }
     }
@@ -500,70 +438,58 @@ public class Test implements Serializable, ITest
   }
 
   // Reference Tests
-  static public class CallableRefTest implements Serializable, Comparable
-  {
+  static public class CallableRefTest implements Serializable, Comparable {
 
     private final static long serialVersionUID = 2;
 
-    private static Test.RefTest    ref              = new Test.RefTest("a secret");
+    private static Test.RefTest ref = new Test.RefTest("a secret");
 
-    public String ping()
-    {
+    public String ping() {
       return "ping pong";
     }
 
-    public Test.RefTest getRef()
-    {
+    public Test.RefTest getRef() {
       return ref;
     }
 
-    public String whatsInside(Test.RefTest r)
-    {
+    public String whatsInside(Test.RefTest r) {
       return r.toString();
     }
 
-    public int compareTo(Object arg0)
-    {
+    public int compareTo(Object arg0) {
       return System.identityHashCode(this) - System.identityHashCode(arg0);
     }
   }
 
-
-  static public class RefTest implements Serializable
-  {
+  static public class RefTest implements Serializable {
 
     private final static long serialVersionUID = 2;
 
-    private String            s;
+    private String s;
 
-    public RefTest(String s)
-    {
+    public RefTest(String s) {
       this.s = s;
     }
 
-    public String toString()
-    {
+    public String toString() {
       return s;
     }
   }
 
+  private static CallableRefTest callableRef = new CallableRefTest();
 
-private static CallableRefTest callableRef = new CallableRefTest();
-
-  public CallableRefTest getCallableRef()
-  {
+  public CallableRefTest getCallableRef() {
     return callableRef;
   }
 
-  public Vector getCallableRefVector()
-  {
+  public Vector getCallableRefVector() {
     Vector v = new Vector();
     v.add(callableRef);
     v.add(callableRef);
     return v;
   }
-  public Vector getCallableRefInnerVector()
-  {
+
+  public Vector getCallableRefInnerVector() {
     Vector v1 = new Vector();
     Vector v = new Vector();
     v.add(callableRef);
@@ -571,57 +497,48 @@ private static CallableRefTest callableRef = new CallableRefTest();
     v1.add(v);
     return v1;
   }
-  public Map getCallableRefMap()
-  {
+
+  public Map getCallableRefMap() {
     Map m = new TreeMap();
-    m.put("a",callableRef);
-    m.put("b",callableRef);
+    m.put("a", callableRef);
+    m.put("b", callableRef);
     return m;
   }
-  public Set getCallableRefSet()
-  {
+
+  public Set getCallableRefSet() {
     Set s = new TreeSet();
     s.add(callableRef);
     return s;
   }
   // Callback tests
 
-  public void setCallback(JSONRPCBridge bridge, boolean flag)
-  {
-    if (flag)
-    {
+  public void setCallback(JSONRPCBridge bridge, boolean flag) {
+    if (flag) {
       bridge.registerCallback(cb, HttpServletRequest.class);
-    }
-    else
-    {
+    } else {
       bridge.unregisterCallback(cb, HttpServletRequest.class);
     }
   }
 
-  public static InvocationCallback cb = new InvocationCallback()
-  {
+  public static InvocationCallback cb = new InvocationCallback() {
 
     private final static long serialVersionUID = 2;
 
-    public void preInvoke(Object context, Object instance, AccessibleObject m,
-                          Object arguments[]) throws Exception
-    {
+    public void preInvoke(Object context, Object instance, AccessibleObject m, Object arguments[])
+        throws Exception {
       System.out.print("Test.preInvoke");
-      if (instance != null)
-      {
+      if (instance != null) {
         System.out.print(" instance=" + instance);
       }
-      System.out.print(" method=" + ((Method)m).getName());
-      for (int i = 0; i < arguments.length; i++)
-      {
+      System.out.print(" method=" + ((Method) m).getName());
+      for (int i = 0; i < arguments.length; i++) {
         System.out.print(" arg[" + i + "]=" + arguments[i]);
       }
       System.out.println("");
     }
 
-    public void postInvoke(Object context, Object instance, AccessibleObject m,
-                           Object result) throws Exception
-    {
+    public void postInvoke(Object context, Object instance, AccessibleObject m, Object result)
+        throws Exception {
     }
   };
 
@@ -631,17 +548,14 @@ private static CallableRefTest callableRef = new CallableRefTest();
    * @param input map.
    * @return number of booleans in the map that were set to true.
    */
-  public int trueBooleansInMap (Map in)
-  {
+  public int trueBooleansInMap(Map in) {
     int numTrue = 0;
     Set keys = in.keySet();
-    for (Iterator i=keys.iterator(); i.hasNext();)
-    {
+    for (Iterator i = keys.iterator(); i.hasNext();) {
       Object key = i.next();
       Object value = in.get(key);
-      if (value instanceof Boolean && ((Boolean) value).booleanValue())
-      {
-        numTrue ++;
+      if (value instanceof Boolean && ((Boolean) value).booleanValue()) {
+        numTrue++;
       }
     }
     return numTrue;

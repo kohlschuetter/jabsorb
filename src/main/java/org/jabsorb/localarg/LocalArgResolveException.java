@@ -25,11 +25,10 @@
 package org.jabsorb.localarg;
 
 /**
- * Thrown by LocalArgResolver objects when they are unable to resolve context
- * information into the local argument object.
+ * Thrown by LocalArgResolver objects when they are unable to resolve context information into the
+ * local argument object.
  */
-public class LocalArgResolveException extends Exception
-{
+public class LocalArgResolveException extends Exception {
   /**
    * Unique serialisation id.
    */
@@ -40,8 +39,7 @@ public class LocalArgResolveException extends Exception
    * 
    * @param msg The message to display
    */
-  public LocalArgResolveException(String msg)
-  {
+  public LocalArgResolveException(String msg) {
     super(msg);
   }
 }

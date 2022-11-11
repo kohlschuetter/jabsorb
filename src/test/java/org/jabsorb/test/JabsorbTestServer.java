@@ -34,8 +34,7 @@ import org.mortbay.jetty.servlet.ServletHolder;
 /**
  * A basic embedded jetty implementation which runs the jabsorb webapp
  */
-public class JabsorbTestServer
-{
+public class JabsorbTestServer {
   /**
    * The directory on which the webapp is found
    */
@@ -44,19 +43,14 @@ public class JabsorbTestServer
   /**
    * Runs the webserver on port 8084
    *
-   * @param args
-   *          Not used
+   * @param args Not used
    */
-  public static void main(String args[])
-  {
+  public static void main(String args[]) {
     int port;
-    try
-    {
-      port=Integer.parseInt(args[0]);
-    }
-    catch(Exception e)
-    {
-      port=8084;
+    try {
+      port = Integer.parseInt(args[0]);
+    } catch (Exception e) {
+      port = 8084;
     }
     new JabsorbTestServer(port);
   }
@@ -64,31 +58,26 @@ public class JabsorbTestServer
   /**
    * The port the server runs on
    */
-  private final int          port;
+  private final int port;
 
   /**
    * The web server
    */
-  private Server             server;
+  private Server server;
 
   /**
    * Creates a new webserver and starts it
    *
-   * @param port
-   *          The port the server runs on
+   * @param port The port the server runs on
    */
-  public JabsorbTestServer(int port)
-  {
+  public JabsorbTestServer(int port) {
     this.port = port;
 
-    try
-    {
+    try {
       this.server = new Server(port);
       createBaseContext();
       this.server.start();
-    }
-    catch (Exception e)
-    {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -96,8 +85,7 @@ public class JabsorbTestServer
   /**
    * Puts the necessary servlets on the server
    */
-  private void createBaseContext()
-  {
+  private void createBaseContext() {
     Context context = new Context(this.server, BASE_CONTEXT, Context.SESSIONS);
     context.setContextPath(BASE_CONTEXT);
     context.setResourceBase("webapps/jsonrpc/");
@@ -119,11 +107,9 @@ public class JabsorbTestServer
   /**
    * Stops the server
    *
-   * @throws Exception
-   *           if jetty has issues stopping
+   * @throws Exception if jetty has issues stopping
    */
-  public void stop() throws Exception
-  {
+  public void stop() throws Exception {
     this.server.stop();
   }
 

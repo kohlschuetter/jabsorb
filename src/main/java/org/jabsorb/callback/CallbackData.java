@@ -27,11 +27,9 @@ package org.jabsorb.callback;
 import java.io.Serializable;
 
 /**
- * Container class for information about callbacks and the transport they are
- * associated with.
+ * Container class for information about callbacks and the transport they are associated with.
  */
-public class CallbackData implements Serializable
-{
+public class CallbackData implements Serializable {
   /**
    * Generated version id.
    */
@@ -52,12 +50,10 @@ public class CallbackData implements Serializable
    * Creates a new Callback data holder
    * 
    * @param cb The object implementing the InvocationCallback Interface
-   * @param contextInterface The type of transport Context interface the
-   *          callback is interested in eg. HttpServletRequest.class for the
-   *          servlet transport.
+   * @param contextInterface The type of transport Context interface the callback is interested in
+   *          eg. HttpServletRequest.class for the servlet transport.
    */
-  public CallbackData(InvocationCallback cb, Class contextInterface)
-  {
+  public CallbackData(InvocationCallback cb, Class contextInterface) {
     this.cb = cb;
     this.contextInterface = contextInterface;
   }
@@ -68,8 +64,7 @@ public class CallbackData implements Serializable
    * @param o The object to compare with this one.
    * @return true If they share the same callback and contextInterface
    */
-  public boolean equals(Object o)
-  {
+  public boolean equals(Object o) {
     CallbackData cmp = (CallbackData) o;
     return (cb.equals(cmp.cb) && contextInterface.equals(cmp.contextInterface));
   }
@@ -79,8 +74,7 @@ public class CallbackData implements Serializable
    * 
    * @return InvocationCallback
    */
-  public InvocationCallback getCallback()
-  {
+  public InvocationCallback getCallback() {
     return cb;
   }
 
@@ -89,8 +83,7 @@ public class CallbackData implements Serializable
    * 
    * @return a unique key.
    */
-  public int hashCode()
-  {
+  public int hashCode() {
     return cb.hashCode() * contextInterface.hashCode();
   }
 
@@ -98,11 +91,9 @@ public class CallbackData implements Serializable
    * Whether the context for this object can be used with the given object
    * 
    * @param context The object to test
-   * @return Whether the context for this object is assignable from the given
-   *         object.
+   * @return Whether the context for this object is assignable from the given object.
    */
-  public boolean understands(Object context)
-  {
+  public boolean understands(Object context) {
     return contextInterface.isAssignableFrom(context.getClass());
   }
 }

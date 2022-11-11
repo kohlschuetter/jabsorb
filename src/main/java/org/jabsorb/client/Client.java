@@ -43,63 +43,53 @@ import org.slf4j.LoggerFactory;
 /**
  * [START HERE] A factory to create proxies for access to remote Jabsorb services.
  */
-public class Client implements InvocationHandler
-{
+public class Client implements InvocationHandler {
   private static Logger log = LoggerFactory.getLogger(Client.class);
 
   private Session session;
 
   private JSONSerializer serializer;
-  
+
   /**
    * Maintain a unique id for each message
    */
   private int id = 0;
-  
+
   /**
    * Allow access to the serializer
    * 
    * @return The serializer for this class
    */
-  public JSONSerializer getSerializer()
-  {
+  public JSONSerializer getSerializer() {
     return serializer;
   }
+
   /**
    * Create a client given a session
    * 
-   * @param session --
-   *          transport session to use for this connection
+   * @param session -- transport session to use for this connection
    */
-  public Client(Session session)
-  {
-    try
-    {
+  public Client(Session session) {
+    try {
       this.session = session;
       serializer = new JSONSerializer();
       serializer.registerDefaultSerializers();
-    }
-    catch (Exception e)
-    {
+    } catch (Exception e) {
       throw new ClientError(e);
     }
   }
 
-  private synchronized int getId()
-  {
+  private synchronized int getId() {
     return id++;
   }
 
   /** Manual instantiation of HashMap<String, Object> */
-  private static class ProxyMap extends HashMap
-  {
-    public String getString(Object key)
-    {
+  private static class ProxyMap extends HashMap {
+    public String getString(Object key) {
       return (String) super.get(key);
     }
 
-    public Object putString(String key, Object value)
-    {
+    public Object putString(String key, Object value) {
       return super.put(key, value);
     }
   }
@@ -109,16 +99,13 @@ public class Client implements InvocationHandler
   /**
    * Create a proxy for communicating with the remote service.
    * 
-   * @param key
-   *          the remote object key
-   * @param klass
-   *          the class of the interface the remote object should adhere to
+   * @param key the remote object key
+   * @param klass the class of the interface the remote object should adhere to
    * @return created proxy
    */
-  public Object openProxy(String key, Class klass)
-  {
-    Object result = java.lang.reflect.Proxy.newProxyInstance(klass
-        .getClassLoader(), new Class[] { klass }, this);
+  public Object openProxy(String key, Class klass) {
+    Object result = java.lang.reflect.Proxy.newProxyInstance(klass.getClassLoader(), new Class[] {
+        klass}, this);
     proxyMap.put(result, key);
     return result;
   }
@@ -128,38 +115,28 @@ public class Client implements InvocationHandler
    * 
    * @param proxy
    */
-  public void closeProxy(Object proxy)
-  {
+  public void closeProxy(Object proxy) {
     proxyMap.remove(proxy);
   }
 
   /**
-   * This method is public because of the inheritance from the
-   * InvokationHandler -- should never be called directly.
+   * This method is public because of the inheritance from the InvokationHandler -- should never be
+   * called directly.
    */
-  public Object invoke(Object proxyObj, Method method, Object[] args)
-      throws Exception
-  {
+  public Object invoke(Object proxyObj, Method method, Object[] args) throws Exception {
     String methodName = method.getName();
-    if (methodName.equals("hashCode"))
-    {
+    if (methodName.equals("hashCode")) {
       return new Integer(System.identityHashCode(proxyObj));
-    }
-    else if (methodName.equals("equals"))
-    {
+    } else if (methodName.equals("equals")) {
       return (proxyObj == args[0] ? Boolean.TRUE : Boolean.FALSE);
-    }
-    else if (methodName.equals("toString"))
-    {
-      return proxyObj.getClass().getName() + '@'
-          + Integer.toHexString(proxyObj.hashCode());
+    } else if (methodName.equals("toString")) {
+      return proxyObj.getClass().getName() + '@' + Integer.toHexString(proxyObj.hashCode());
     }
     return invoke(proxyMap.getString(proxyObj), method.getName(), args, method.getReturnType());
   }
 
-  private Object invoke(String objectTag, String methodName, Object[] args,
-      Class returnType) throws Exception
-  {
+  private Object invoke(String objectTag, String methodName, Object[] args, Class returnType)
+      throws Exception {
     final int id = getId();
     JSONObject message = new JSONObject();
     String methodTag = objectTag == null ? "" : objectTag + ".";
@@ -169,26 +146,21 @@ public class Client implements InvocationHandler
     {
       SerializerState state = new SerializerState();
 
-      if (args != null)
-      {
+      if (args != null) {
 
         JSONArray params = (JSONArray) serializer.marshall(state, /* parent */
-        null, args, "params");
+            null, args, "params");
 
-        if ((state.getFixUps() != null) && (state.getFixUps().size() > 0))
-        {
+        if ((state.getFixUps() != null) && (state.getFixUps().size() > 0)) {
           JSONArray fixups = new JSONArray();
-          for (Iterator i = state.getFixUps().iterator(); i.hasNext();)
-          {
+          for (Iterator i = state.getFixUps().iterator(); i.hasNext();) {
             FixUp fixup = (FixUp) i.next();
             fixups.put(fixup.toJSONArray());
           }
           message.put("fixups", fixups);
         }
         message.put("params", params);
-      }
-      else
-      {
+      } else {
         message.put("params", new JSONArray());
       }
     }
@@ -196,27 +168,22 @@ public class Client implements InvocationHandler
 
     JSONObject responseMessage = session.sendAndReceive(message);
 
-    if (!responseMessage.has("result"))
-    {
+    if (!responseMessage.has("result")) {
       processException(responseMessage);
     }
     Object rawResult = responseMessage.get("result");
-    if (rawResult == null)
-    {
+    if (rawResult == null) {
       processException(responseMessage);
     }
-    if (returnType.equals(Void.TYPE))
-    {
+    if (returnType.equals(Void.TYPE)) {
       return null;
     }
 
     {
       JSONArray fixups = responseMessage.optJSONArray("fixups");
 
-      if (fixups != null)
-      {
-        for (int i = 0; i < fixups.length(); i++)
-        {
+      if (fixups != null) {
+        for (int i = 0; i < fixups.length(); i++) {
           JSONArray assignment = fixups.getJSONArray(i);
           JSONArray fixup = assignment.getJSONArray(0);
           JSONArray original = assignment.getJSONArray(1);
@@ -230,20 +197,16 @@ public class Client implements InvocationHandler
   /**
    * Generate and throw exception based on the data in the 'responseMessage'
    */
-  protected void processException(JSONObject responseMessage)
-      throws JSONException
-  {
+  protected void processException(JSONObject responseMessage) throws JSONException {
     JSONObject error = (JSONObject) responseMessage.get("error");
-    if (error != null)
-    {
+    if (error != null) {
       Integer code = new Integer(error.has("code") ? error.getInt("code") : 0);
       String trace = error.has("trace") ? error.getString("trace") : null;
       String msg = error.has("msg") ? error.getString("msg") : null;
       throw new ErrorResponse(code, msg, trace);
-    }
-    else
-      throw new ErrorResponse(new Integer(JSONRPCResult.CODE_ERR_PARSE),
-          "Unknown response:" + responseMessage.toString(2), null);
+    } else
+      throw new ErrorResponse(new Integer(JSONRPCResult.CODE_ERR_PARSE), "Unknown response:"
+          + responseMessage.toString(2), null);
   }
 
 }

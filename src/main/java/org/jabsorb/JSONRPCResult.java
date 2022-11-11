@@ -35,11 +35,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Container for a JSON-RPC result message. This includes successful results,
- * error results, and remote exceptions results.
+ * Container for a JSON-RPC result message. This includes successful results, error results, and
+ * remote exceptions results.
  */
-public class JSONRPCResult
-{
+public class JSONRPCResult {
   /**
    * Denotes that the call was a success
    */
@@ -56,17 +55,16 @@ public class JSONRPCResult
   public final static int CODE_ERR_PARSE = 590;
 
   /**
-   * Denotes (when calling a constructor) that no method was found with the
-   * given name/arguments.
+   * Denotes (when calling a constructor) that no method was found with the given name/arguments.
    */
   public final static int CODE_ERR_NOCONSTRUCTOR = 594;
-  
+
   /**
-   * Denotes (when using a callable reference) that no method was found with the
-   * given name and number of arguments.
+   * Denotes (when using a callable reference) that no method was found with the given name and
+   * number of arguments.
    */
   public final static int CODE_ERR_NOMETHOD = 591;
- 
+
   /**
    * Denotes that an error occured while unmarshalling the request.
    */
@@ -86,17 +84,17 @@ public class JSONRPCResult
    * The error method shown when an error occured while parsing the request.
    */
   public final static String MSG_ERR_PARSE = "couldn't parse request arguments";
-  
+
   /**
    * The error method shown when no constructor was found with the given name.
    */
   public static final String MSG_ERR_NOCONSTRUCTOR = "constructor not found";
-  
+
   /**
    * The error method shown when no method was found with the given name and number of arguments.
    */
-  public final static String MSG_ERR_NOMETHOD = "method with the requested number of arguments not found (session may" +
-      " have timed out)";
+  public final static String MSG_ERR_NOMETHOD =
+      "method with the requested number of arguments not found (session may" + " have timed out)";
 
   /**
    * The error method shown when something in the fixups was amiss.
@@ -114,9 +112,9 @@ public class JSONRPCResult
   private Object id;
 
   /**
-   * Optional fixup entries to run against the result in order to reconstitute duplicate and / or circular references
-   * that were detected.
-   * This is a List of FixUp objects.
+   * Optional fixup entries to run against the result in order to reconstitute duplicate and / or
+   * circular references that were detected. This is a List of FixUp objects.
+   * 
    * @see FixUp
    */
   private List fixUps;
@@ -127,15 +125,14 @@ public class JSONRPCResult
   private int errorCode;
 
   /**
-   * Creates a new JSONRPCResult without fixups (for backward compatibility to json-rpc and json-rpc-java.
+   * Creates a new JSONRPCResult without fixups (for backward compatibility to json-rpc and
+   * json-rpc-java.
    *
-   * @param errorCode An error code if a problem occured (CODE_SUCCESS
-   *          otherwise)
+   * @param errorCode An error code if a problem occured (CODE_SUCCESS otherwise)
    * @param id The id of the response.
    * @param o The result of the call
    */
-  public JSONRPCResult(int errorCode, Object id, Object o)
-  {
+  public JSONRPCResult(int errorCode, Object id, Object o) {
     this.errorCode = errorCode;
     this.id = id;
     this.result = o;
@@ -144,14 +141,12 @@ public class JSONRPCResult
   /**
    * Creates a new JSONRPCResult with fixUps.
    * 
-   * @param errorCode An error code if a problem occured (CODE_SUCCESS
-   *          otherwise)
+   * @param errorCode An error code if a problem occured (CODE_SUCCESS otherwise)
    * @param id The id of the response.
    * @param o The result of the call
    * @param fixUps optional list of FixUp objects needed to resolve circular refs and duplicates.
    */
-  public JSONRPCResult(int errorCode, Object id, Object o, List fixUps)
-  {
+  public JSONRPCResult(int errorCode, Object id, Object o, List fixUps) {
     this.errorCode = errorCode;
     this.id = id;
     this.result = o;
@@ -163,8 +158,7 @@ public class JSONRPCResult
    * 
    * @return the error code
    */
-  public int getErrorCode()
-  {
+  public int getErrorCode() {
     return errorCode;
   }
 
@@ -173,8 +167,7 @@ public class JSONRPCResult
    * 
    * @return the id of the response.
    */
-  public Object getId()
-  {
+  public Object getId() {
     return id;
   }
 
@@ -183,37 +176,28 @@ public class JSONRPCResult
    * 
    * @return the result
    */
-  public Object getResult()
-  {
+  public Object getResult() {
     return result;
   }
 
-  public String toString()
-  {
+  public String toString() {
     JSONObject o = new JSONObject();
 
-    try
-    {
-      if (errorCode == CODE_SUCCESS)
-      {
+    try {
+      if (errorCode == CODE_SUCCESS) {
         o.put("id", id);
         o.put("result", result);
-        if (fixUps != null && fixUps.size()>0)
-        {
+        if (fixUps != null && fixUps.size() > 0) {
           JSONArray fixups = new JSONArray();
-          for (Iterator i=fixUps.iterator(); i.hasNext();)
-          {
+          for (Iterator i = fixUps.iterator(); i.hasNext();) {
             FixUp fixup = (FixUp) i.next();
             fixups.put(fixup.toJSONArray());
           }
-          o.put("fixups",fixups);
+          o.put("fixups", fixups);
         }
-      }
-      else if (errorCode == CODE_REMOTE_EXCEPTION)
-      {
-        o.put("id", id); 
-        if (result instanceof Throwable)
-        {
+      } else if (errorCode == CODE_REMOTE_EXCEPTION) {
+        o.put("id", id);
+        if (result instanceof Throwable) {
           Throwable e = (Throwable) result;
           CharArrayWriter caw = new CharArrayWriter();
           e.printStackTrace(new PrintWriter(caw));
@@ -222,27 +206,21 @@ public class JSONRPCResult
           err.put("msg", e.getMessage());
           err.put("trace", caw.toString());
           o.put("error", err);
-        }
-        else
-        {
+        } else {
           // When using a customized implementation of ExceptionTransformer
           // an error result may be something other than Throwable. In this
           // case, it has to be a JSON compatible object, we will just store it
-          // to the 'error' property of the response. 
+          // to the 'error' property of the response.
           o.put("error", result);
         }
-      }
-      else
-      {
+      } else {
         JSONObject err = new JSONObject();
         err.put("code", new Integer(errorCode));
         err.put("msg", result);
         o.put("id", id);
         o.put("error", err);
       }
-    }
-    catch (JSONException e)
-    {
+    } catch (JSONException e) {
       // this would have been a null pointer exception in the previous json.org library.
       throw (RuntimeException) new RuntimeException(e.getMessage()).initCause(e);
     }

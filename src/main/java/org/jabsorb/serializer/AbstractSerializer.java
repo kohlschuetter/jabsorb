@@ -27,11 +27,10 @@ package org.jabsorb.serializer;
 import org.jabsorb.JSONSerializer;
 
 /**
- * Convenience class for implementing Serializers providing default setOwner and
- * canSerialize implementations.
+ * Convenience class for implementing Serializers providing default setOwner and canSerialize
+ * implementations.
  */
-public abstract class AbstractSerializer implements Serializer
-{
+public abstract class AbstractSerializer implements Serializer {
 
   /**
    * Main serialiser
@@ -39,40 +38,30 @@ public abstract class AbstractSerializer implements Serializer
   protected JSONSerializer ser;
 
   /**
-   * Default check that simply tests the given serializeable class arrays to
-   * determine if the pair of classes can be serialized/deserialized from this
-   * Serializer.
+   * Default check that simply tests the given serializeable class arrays to determine if the pair
+   * of classes can be serialized/deserialized from this Serializer.
    * 
    * @param clazz Java type to check if this Serializer can handle.
    * @param jsonClazz JSON type to check this Serializer can handle.
    * 
-   * @return true If this Serializer can serialize/deserialize the given
-   *         java,json pair.
+   * @return true If this Serializer can serialize/deserialize the given java,json pair.
    */
-  public boolean canSerialize(Class clazz, Class jsonClazz)
-  {
+  public boolean canSerialize(Class clazz, Class jsonClazz) {
     boolean canJava = false, canJSON = false;
 
     Class serializableClasses[] = getSerializableClasses();
-    for (int i = 0; i < serializableClasses.length; i++)
-    {
-      if (clazz == serializableClasses[i])
-      {
+    for (int i = 0; i < serializableClasses.length; i++) {
+      if (clazz == serializableClasses[i]) {
         canJava = true;
       }
     }
 
-    if (jsonClazz == null)
-    {
+    if (jsonClazz == null) {
       canJSON = true;
-    }
-    else
-    {
+    } else {
       Class jsonClasses[] = getJSONClasses();
-      for (int i = 0; i < jsonClasses.length; i++)
-      {
-        if (jsonClazz == jsonClasses[i])
-        {
+      for (int i = 0; i < jsonClasses.length; i++) {
+        if (jsonClazz == jsonClasses[i]) {
           canJSON = true;
         }
       }
@@ -86,8 +75,7 @@ public abstract class AbstractSerializer implements Serializer
    * 
    * @param ser The parent serialiser.
    */
-  public void setOwner(JSONSerializer ser)
-  {
+  public void setOwner(JSONSerializer ser) {
     this.ser = ser;
   }
 }

@@ -35,19 +35,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-public class Unicode implements Serializable
-{
+public class Unicode implements Serializable {
   private final static long serialVersionUID = 2;
 
-  private static InputStream getResourceStream(String rsrcName)
-    throws IOException
-  {
+  private static InputStream getResourceStream(String rsrcName) throws IOException {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
     return loader.getResourceAsStream("unicode/" + rsrcName);
   }
 
-  public static class UnicodeTest implements Serializable
-  {
+  public static class UnicodeTest implements Serializable {
 
     private final static long serialVersionUID = 2;
 
@@ -58,63 +54,51 @@ public class Unicode implements Serializable
 
     private boolean compares = false;
 
-    public void setDescription(String desc)
-    {
+    public void setDescription(String desc) {
       this.desc = desc;
     }
 
-    public void setCharset(String charset)
-    {
+    public void setCharset(String charset) {
       this.charset = charset;
     }
 
-    public void setResource(String rsrc)
-    {
+    public void setResource(String rsrc) {
       this.rsrc = rsrc;
     }
 
-    public void setData(String data)
-    {
+    public void setData(String data) {
       this.data = data;
     }
 
-    private void setCompares(boolean b)
-    {
+    private void setCompares(boolean b) {
       compares = b;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
       return desc;
     }
 
-    public String getCharSet()
-    {
+    public String getCharSet() {
       return charset;
     }
 
-    public boolean getCompares()
-    {
+    public boolean getCompares() {
       return compares;
     }
 
-    public synchronized String getData() throws IOException
-    {
-      if (data == null)
-      {
+    public synchronized String getData() throws IOException {
+      if (data == null) {
         loadData();
       }
       return data;
     }
 
-    protected void loadData() throws IOException
-    {
-      BufferedReader in = new BufferedReader(new InputStreamReader(
-        getResourceStream(rsrc), charset));
+    protected void loadData() throws IOException {
+      BufferedReader in = new BufferedReader(new InputStreamReader(getResourceStream(rsrc),
+          charset));
       StringBuffer sb = new StringBuffer();
       String line;
-      while ((line = in.readLine()) != null)
-      {
+      while ((line = in.readLine()) != null) {
         sb.append(line);
       }
       in.close();
@@ -122,8 +106,7 @@ public class Unicode implements Serializable
     }
   }
 
-  protected static class UnicodeTestStore implements Serializable
-  {
+  protected static class UnicodeTestStore implements Serializable {
 
     private final static long serialVersionUID = 2;
 
@@ -131,85 +114,64 @@ public class Unicode implements Serializable
 
     private Properties testProps = new Properties();
 
-    protected UnicodeTestStore(String indexName)
-    {
-      try
-      {
+    protected UnicodeTestStore(String indexName) {
+      try {
         InputStream in = getResourceStream(indexName);
         testProps.load(in);
         in.close();
         Iterator i = testProps.entrySet().iterator();
-        while (i.hasNext())
-        {
+        while (i.hasNext()) {
           Map.Entry m = (Map.Entry) i.next();
           String key = (String) m.getKey();
           String value = (String) m.getValue();
           StringTokenizer tok = new StringTokenizer(key, ".");
           String testName = tok.nextToken();
-          if (!tok.hasMoreElements())
-          {
+          if (!tok.hasMoreElements()) {
             throw new Exception("invalid syntax: " + key);
           }
           String testAttr = tok.nextToken();
           UnicodeTest test = (UnicodeTest) tests.get(testName);
-          if (test == null)
-          {
+          if (test == null) {
             test = new UnicodeTest();
             tests.put(testName, test);
           }
-          if (testAttr.equals("description"))
-          {
+          if (testAttr.equals("description")) {
             test.setDescription(value);
-          }
-          else if (testAttr.equals("charset"))
-          {
+          } else if (testAttr.equals("charset")) {
             test.setCharset(value);
-          }
-          else if (testAttr.equals("resource"))
-          {
+          } else if (testAttr.equals("resource")) {
             test.setResource(value);
-          }
-          else
-          {
+          } else {
             throw new Exception("invalid attribute: " + key);
           }
         }
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
         System.out.println("UnicodeTestStore(): " + e);
       }
     }
 
-    public HashMap getTests()
-    {
+    public HashMap getTests() {
       return tests;
     }
   }
 
   private UnicodeTestStore store = new UnicodeTestStore("00index.properties");
 
-  public HashMap getTests()
-  {
+  public HashMap getTests() {
     return store.getTests();
   }
 
-  public HashMap compareTests(HashMap remoteTests) throws Exception
-  {
+  public HashMap compareTests(HashMap remoteTests) throws Exception {
     Iterator i = remoteTests.entrySet().iterator();
-    while (i.hasNext())
-    {
+    while (i.hasNext()) {
       Map.Entry m = (Map.Entry) i.next();
       String testName = (String) m.getKey();
       UnicodeTest remoteTest = (UnicodeTest) m.getValue();
-      UnicodeTest localTest = (UnicodeTest) store.getTests()
-        .get(testName);
-      if (localTest == null)
-      {
+      UnicodeTest localTest = (UnicodeTest) store.getTests().get(testName);
+      if (localTest == null) {
         throw new Exception("test not found");
       }
-      remoteTest.setCompares(localTest.getData().equals(
-        remoteTest.getData()));
+      remoteTest.setCompares(localTest.getData().equals(remoteTest.getData()));
     }
     return remoteTests;
   }

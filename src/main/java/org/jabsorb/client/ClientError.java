@@ -25,18 +25,15 @@
 package org.jabsorb.client;
 
 /**
- * A class to wrap client exception. Derives from RuntimeException to allow
- * InvokationHandler handle it.
+ * A class to wrap client exception. Derives from RuntimeException to allow InvokationHandler handle
+ * it.
  */
-public class ClientError extends RuntimeException
-{
-  public ClientError(String message)
-  {
+public class ClientError extends RuntimeException {
+  public ClientError(String message) {
     super(message);
   }
 
-  public ClientError(Throwable ex)
-  {
+  public ClientError(Throwable ex) {
     super(ex);
   }
 }

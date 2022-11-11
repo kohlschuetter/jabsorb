@@ -34,10 +34,8 @@ import java.util.Vector;
 
 import org.json.JSONObject;
 
-public interface ITest
-{
-  static public class Waggle implements Serializable
-  {
+public interface ITest {
+  static public class Waggle implements Serializable {
 
     private final static long serialVersionUID = 2;
 
@@ -47,54 +45,44 @@ public interface ITest
 
     Integer bork;
 
-    public Waggle()
-    {
+    public Waggle() {
     }
 
-    public Waggle(int i)
-    {
+    public Waggle(int i) {
       baz = i;
       bang = "!";
     }
 
-    public int getBaz()
-    {
+    public int getBaz() {
       return baz;
     }
 
-    public void setBaz(int baz)
-    {
+    public void setBaz(int baz) {
       this.baz = baz;
     }
 
-    public String getBang()
-    {
+    public String getBang() {
       return bang;
     }
 
-    public void setBang(String bang)
-    {
+    public void setBang(String bang) {
       this.bang = bang;
     }
 
-    public Integer getBork()
-    {
+    public Integer getBork() {
       return bork;
     }
 
-    public void setBork(Integer bork)
-    {
+    public void setBork(Integer bork) {
       this.bork = bork;
     }
 
-    public String toString()
-    {
+    public String toString() {
       return "waggle " + baz + " and " + bang;
     }
   }
 
-  static public class Wiggle implements Serializable
-  {
+  static public class Wiggle implements Serializable {
 
     private final static long serialVersionUID = 2;
 
@@ -102,38 +90,31 @@ public interface ITest
 
     private int bar;
 
-    public Wiggle()
-    {
+    public Wiggle() {
     }
 
-    public Wiggle(int i)
-    {
+    public Wiggle(int i) {
       bar = i;
       foo = "foo";
     }
 
-    public String getFoo()
-    {
+    public String getFoo() {
       return foo;
     }
 
-    public void setFoo(String foo)
-    {
+    public void setFoo(String foo) {
       this.foo = foo;
     }
 
-    public int getBar()
-    {
+    public int getBar() {
       return bar;
     }
 
-    public void setBar(int bar)
-    {
+    public void setBar(int bar) {
       this.bar = bar;
     }
 
-    public String toString()
-    {
+    public String toString() {
       return "wiggle " + foo + " and " + bar;
     }
   }
