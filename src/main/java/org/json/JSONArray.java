@@ -1021,7 +1021,7 @@ public class JSONArray implements Iterable<Object> {
      *            If the value is non-finite number.
      */
     public JSONArray put(Object value) {
-        JSONObject.testValidity(value);
+        value = JSONObject.makeValid(value);
         this.myArrayList.add(value);
         return this;
     }
@@ -1168,7 +1168,7 @@ public class JSONArray implements Iterable<Object> {
             throw new JSONException("JSONArray[" + index + "] not found.");
         }
         if (index < this.length()) {
-            JSONObject.testValidity(value);
+            value = JSONObject.makeValid(value);
             this.myArrayList.set(index, value);
             return this;
         }

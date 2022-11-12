@@ -480,7 +480,7 @@ public class JSONObject {
      *            If the key is <code>null</code>.
      */
     public JSONObject accumulate(String key, Object value) throws JSONException {
-        testValidity(value);
+        value = makeValid(value);
         Object object = this.opt(key);
         if (object == null) {
             this.put(key,
@@ -512,7 +512,7 @@ public class JSONObject {
      *            If the key is <code>null</code>.
      */
     public JSONObject append(String key, Object value) throws JSONException {
-        testValidity(value);
+        value = makeValid(value);
         Object object = this.opt(key);
         if (object == null) {
             this.put(key, new JSONArray().put(value));
@@ -1015,11 +1015,10 @@ public class JSONObject {
         if (number == null) {
             throw new JSONException("Null pointer");
         }
-        testValidity(number);
 
         // Shave off trailing zeros and decimal point, if possible.
 
-        String string = number.toString();
+        String string = makeValid(number).toString();
         if (string.indexOf('.') > 0 && string.indexOf('e') < 0
                 && string.indexOf('E') < 0) {
             while (string.endsWith("0")) {
@@ -1867,7 +1866,7 @@ public class JSONObject {
             throw new NullPointerException("Null key.");
         }
         if (value != null) {
-            testValidity(value);
+            value = makeValid(value);
             this.map.put(key, value);
         } else {
             this.remove(key);
@@ -2324,6 +2323,40 @@ public class JSONObject {
         if (o instanceof Number && !numberIsFinite((Number) o)) {
             throw new JSONException("JSON does not allow non-finite numbers.");
         }
+    }
+
+    /**
+     * Make an object valid for JSON (i.e., fix NaN and Infinity).
+     *
+     * @param o
+     *            The object to test.
+     * @return The object, or a converted form.
+     * @throws JSONException
+     *             If o is a non-finite number.
+     */
+    public static Object makeValid(Object o) throws JSONException {
+      if (o instanceof Number && !numberIsFinite((Number) o)) {
+        if (o instanceof Double) {
+          Double d = (Double) o;
+          if (d.isNaN()) {
+            return "NaN";
+          } else if (d.isInfinite()) {
+            return d.doubleValue() < 0 ? "-Infinity" : "Infinity";
+          }
+        } else if (o instanceof Float) {
+          Float d = (Float) o;
+          if (d.isNaN()) {
+            return "NaN";
+          } else if (d.isInfinite()) {
+            return d.doubleValue() < 0 ? "-Infinity" : "Infinity";
+          }
+        }
+        throw new JSONException(
+            "JSON does not allow non-finite numbers, and no conversion is implemented for type: "
+                + o.getClass());
+      } else {
+        return o;
+      }
     }
 
     /**
