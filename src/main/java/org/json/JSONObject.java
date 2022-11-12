@@ -145,6 +145,7 @@ public class JSONObject {
      */
     private final Map<String, Object> map;
 
+    @SuppressWarnings("rawtypes")
     public Class<? extends Map> getMapType() {
         return map.getClass();
     }
@@ -1053,6 +1054,7 @@ public class JSONObject {
      *            A key string.
      * @return The enum value associated with the key or null if not found
      */
+    @SuppressWarnings("null")
     public <E extends Enum<E>> E optEnum(Class<E> clazz, String key) {
         return this.optEnum(clazz, key, null);
     }
@@ -1626,6 +1628,7 @@ public class JSONObject {
      * @return the {@link Annotation} if the annotation exists on the current method
      *         or one of its super class definitions
      */
+    @SuppressWarnings("null")
     private static <A extends Annotation> A getAnnotation(final Method m, final Class<A> annotationClass) {
         // if we have invalid data the result is null
         if (m == null || annotationClass == null) {

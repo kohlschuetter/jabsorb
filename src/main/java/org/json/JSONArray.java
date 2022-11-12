@@ -714,6 +714,7 @@ public class JSONArray implements Iterable<Object> {
      *            The index must be between 0 and length() - 1.
      * @return The enum value at the index location or null if not found
      */
+    @SuppressWarnings("null")
     public <E extends Enum<E>> E optEnum(Class<E> clazz, int index) {
         return this.optEnum(clazz, index, null);
     }
