@@ -24,8 +24,8 @@
  */
 package org.jabsorb.serializer.impl;
 
-import java.sql.Timestamp;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.jabsorb.JSONSerializer;
@@ -57,14 +57,17 @@ public class DateSerializer extends AbstractSerializer {
    */
   private static Class<?>[] _JSONClasses = new Class[] {JSONObject.class};
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     long time;
     if (o instanceof Date) {
@@ -82,6 +85,7 @@ public class DateSerializer extends AbstractSerializer {
     return obj;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -102,6 +106,7 @@ public class DateSerializer extends AbstractSerializer {
     return ObjectMatch.OKAY;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     Class<?> realClazz = clazz;

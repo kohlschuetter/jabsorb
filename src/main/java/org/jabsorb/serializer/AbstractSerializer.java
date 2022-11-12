@@ -51,6 +51,7 @@ public abstract class AbstractSerializer implements Serializer {
    * @param jsonClazz JSON type to check this Serializer can handle.
    * @return true If this Serializer can serialize/deserialize the given java,json pair.
    */
+  @Override
   public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
     boolean canJava = false, canJSON = false;
 
@@ -80,6 +81,7 @@ public abstract class AbstractSerializer implements Serializer {
    * 
    * @param ser The parent serialiser.
    */
+  @Override
   public void setOwner(JSONSerializer ser) {
     this.ser = ser;
   }

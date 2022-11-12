@@ -181,8 +181,8 @@ public class AsyncProxyHandler implements InvocationHandler {
       final String msg = error.has("msg") ? error.getString("msg") : null;
       throw new ErrorResponse(code, msg, trace);
     }
-    throw new ErrorResponse(FailedResult.CODE_ERR_PARSE, "Unknown response:"
-        + responseMessage.toString(2), null);
+    throw new ErrorResponse(FailedResult.CODE_ERR_PARSE, "Unknown response:" + responseMessage
+        .toString(2), null);
   }
 
   protected JSONObject createInvokeMessage(final String objectTag, final String methodName,

@@ -67,6 +67,7 @@ public class MapSerializer extends AbstractSerializer {
         || jsonClazz == JSONObject.class) && Map.class.isAssignableFrom(clazz)));
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
@@ -118,6 +119,7 @@ public class MapSerializer extends AbstractSerializer {
     return obj;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -161,6 +163,7 @@ public class MapSerializer extends AbstractSerializer {
     return m;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;

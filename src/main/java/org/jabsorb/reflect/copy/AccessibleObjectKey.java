@@ -49,10 +49,12 @@ public class AccessibleObjectKey {
     this.numArgs = numArgs;
   }
 
+  @Override
   public String toString() {
     return methodName + "(" + numArgs + ")";
   }
 
+  @Override
   public boolean equals(Object o) {
     if (!(o instanceof AccessibleObjectKey)) {
       return false;
@@ -79,8 +81,8 @@ public class AccessibleObjectKey {
     return numArgs;
   }
 
+  @Override
   public int hashCode() {
     return methodName.hashCode() * numArgs;
   }
-
 }

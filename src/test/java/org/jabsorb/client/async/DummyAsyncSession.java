@@ -42,10 +42,12 @@ class DummyAsyncSession implements AsyncSession {
     this.response = response;
   }
 
+  @Override
   public void close() {
     // nothing
   }
 
+  @Override
   public Future<JSONObject> send(final JSONObject request,
       final AsyncResultCallback<AsyncSession, JSONObject, JSONObject> callback) {
     final SettableFuture<JSONObject> future = new SettableFuture<JSONObject>();
@@ -60,10 +62,10 @@ class DummyAsyncSession implements AsyncSession {
         }
 
         try {
-          final JSONObject response = new SuccessfulResult("1", DummyAsyncSession.this.response)
+          final JSONObject resp = new SuccessfulResult("1", DummyAsyncSession.this.response)
               .createOutput();
 
-          future.set(response);
+          future.set(resp);
           if (callback != null) {
             callback.onAsyncResult(DummyAsyncSession.this, future, request);
           }
@@ -76,6 +78,7 @@ class DummyAsyncSession implements AsyncSession {
     return future;
   }
 
+  @Override
   public Future<JSONObject> send(final JSONObject request) {
     return send(request, null);
   }

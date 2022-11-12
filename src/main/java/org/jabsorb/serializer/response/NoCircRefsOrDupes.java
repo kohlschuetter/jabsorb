@@ -68,6 +68,7 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
     currentLocation = new LinkedList<Object>();
   }
 
+  @Override
   public Object checkObject(Object parent, Object java, Object ref) throws MarshallException {
     {
       // check for duplicate objects or circular references
@@ -97,32 +98,38 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
     }
   }
 
+  @Override
   public Object circularReferenceFound(List<Object> originalLocation, Object ref, Object java)
       throws MarshallException {
     throw new MarshallException("Circular Reference");
   }
 
+  @Override
   public JSONObject createObject(String key, Object json) throws JSONException {
     final JSONObject toReturn = new JSONObject();
     toReturn.put(key, json);
     return toReturn;
   }
 
+  @Override
   public SuccessfulResult createResult(Object requestId, Object json) {
     return new SuccessfulResult(requestId, json);
   }
 
+  @Override
   public Object duplicateFound(List<Object> originalLocation, Object ref, Object java)
       throws MarshallException {
     return null;
   }
 
+  @Override
   public FixupProcessedObject getProcessedObject(Object object) {
     // get unique key for this object
     // this is the basis for determining if we have already processed the object or not.
     return processedObjects.get(object);
   }
 
+  @Override
   public void pop() throws MarshallException {
     if (currentLocation.size() == 0) {
       // this is a sanity check
@@ -131,6 +138,7 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
     currentLocation.removeLast();
   }
 
+  @Override
   public Object push(Object parent, Object obj, Object ref) {
     FixupProcessedObject parentProcessedObject = null;
 
@@ -154,10 +162,12 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
     return obj;
   }
 
+  @Override
   public void setMarshalled(Object marshalledObject, Object java) {
     // Nothing to do
   }
 
+  @Override
   public void setSerialized(Object source, Object target) throws UnmarshallException {
     if (source == null) {
       throw new UnmarshallException("source object may not be null");
@@ -171,6 +181,7 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
     p.setSerialized(target);
   }
 
+  @Override
   public void store(Object obj) {
     FixupProcessedObject p = new FixupProcessedObject(obj, null);
     processedObjects.put(obj, p);

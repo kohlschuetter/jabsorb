@@ -35,6 +35,7 @@ import org.jabsorb.localarg.LocalArgResolver;
  * exists, a session will be created.
  */
 public class HttpSessionArgResolver implements LocalArgResolver {
+  @Override
   public Object resolveArg(Object context) throws LocalArgResolveException {
     if (!(context instanceof HttpServletRequest)) {
       throw new LocalArgResolveException("invalid context");

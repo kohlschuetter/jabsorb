@@ -34,6 +34,7 @@ import org.jabsorb.localarg.LocalArgResolver;
  * replace an HttpServletResponse argument on a called method with the current request object.
  */
 public class HttpServletResponseArgResolver implements LocalArgResolver {
+  @Override
   public Object resolveArg(Object context) throws LocalArgResolveException {
     if (!(context instanceof HttpServletResponse)) {
       throw new LocalArgResolveException("invalid context");

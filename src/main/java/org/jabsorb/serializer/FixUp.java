@@ -38,13 +38,13 @@ public class FixUp {
    * A List of String|Integer's representing references to locate the place where this fixup entry
    * needs to be created.
    */
-  private List fixupLocation;
+  private List<?> fixupLocation;
 
   /**
    * List of String|Integer's representing references to locate the original location of the
    * circular reference or duplicate that this FixUp applies to.
    */
-  private List originalLocation;
+  private List<?> originalLocation;
 
   /**
    * Create a FixUp for a duplicate or circular reference.
@@ -55,13 +55,13 @@ public class FixUp {
    * @param originalLocation List of String|Integer's representing references to locate the original
    *          location of the circular reference or duplicate that this FixUp applies to.
    */
-  public FixUp(List fixupLocation, List originalLocation) {
-    this.fixupLocation = new ArrayList(fixupLocation);
+  public FixUp(List<?> fixupLocation, List<?> originalLocation) {
+    this.fixupLocation = new ArrayList<>(fixupLocation);
     // pop root object that won't be used in the fixup off the stack
     if (this.fixupLocation.size() > 0) {
       this.fixupLocation.remove(0);
     }
-    this.originalLocation = new ArrayList(originalLocation);
+    this.originalLocation = new ArrayList<>(originalLocation);
     // pop root object that won't be used in the fixup off the stack
     if (this.originalLocation.size() > 0) {
       this.originalLocation.remove(0);

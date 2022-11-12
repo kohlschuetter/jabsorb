@@ -54,14 +54,17 @@ public class EnumSerializer extends AbstractSerializer {
     return clazz.isEnum();
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     if (o instanceof Enum) {
       return o.toString();
@@ -69,9 +72,9 @@ public class EnumSerializer extends AbstractSerializer {
     return null;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object json)
       throws UnmarshallException {
-
     final Class<?> classes[] = json.getClass().getClasses();
     for (int i = 0; i < classes.length; i++) {
       if (classes[i].isEnum()) {
@@ -84,8 +87,10 @@ public class EnumSerializer extends AbstractSerializer {
     return ObjectMatch.SIMILAR;
   }
 
-  public Object unmarshall(SerializerState state, Class clazz, Object json)
-      throws UnmarshallException {
+  @SuppressWarnings("unchecked")
+  @Override
+  public Object unmarshall(SerializerState state, @SuppressWarnings("rawtypes") Class clazz,
+      Object json) throws UnmarshallException {
     String val = json.toString();
     if (clazz.isEnum()) {
       return Enum.valueOf(clazz, val);

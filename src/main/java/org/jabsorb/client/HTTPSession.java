@@ -80,6 +80,7 @@ public class HTTPSession implements Session {
    */
   static final String JSON_CONTENT_TYPE = "application/json";
 
+  @Override
   public JSONObject sendAndReceive(JSONObject message) {
     try {
       if (log.isDebugEnabled()) {
@@ -132,12 +133,14 @@ public class HTTPSession implements Session {
     return client;
   }
 
+  @Override
   public void close() {
     state.clear();
     state = null;
   }
 
   static class Factory implements SessionFactory {
+    @Override
     public Session newSession(URI uri) {
       return new HTTPSession(uri);
     }

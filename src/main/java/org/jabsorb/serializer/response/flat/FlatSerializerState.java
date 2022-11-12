@@ -123,8 +123,7 @@ public class FlatSerializerState implements SerializerState {
    * @return A JSON object for the java object.
    */
   public JSONObject getJSONObject(Object o) {
-    JSONObject j = (JSONObject) marshalledObjects.get(System.identityHashCode(o))
-        .getObject();
+    JSONObject j = (JSONObject) marshalledObjects.get(System.identityHashCode(o)).getObject();
     return j;
   }
 

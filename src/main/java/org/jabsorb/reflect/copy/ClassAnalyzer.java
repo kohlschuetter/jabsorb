@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -53,10 +52,8 @@ public class ClassAnalyzer {
 
   /**
    * Classes that have been analysed
-   * 
-   * key: Clazz, val ClassData
    */
-  private static Map classCache = new HashMap();
+  private static Map<Class<?>, ClassData> classCache = new HashMap<>();
 
   /**
    * <p>
@@ -71,10 +68,10 @@ public class ClassAnalyzer {
    * 
    * @return ClassData object for the given class.
    */
-  public static ClassData getClassData(Class clazz) {
+  public static ClassData getClassData(Class<?> clazz) {
     ClassData cd;
     synchronized (classCache) {
-      cd = (ClassData) classCache.get(clazz);
+      cd = classCache.get(clazz);
       if (cd == null) {
         cd = analyzeClass(clazz);
         classCache.put(clazz, cd);
@@ -87,7 +84,7 @@ public class ClassAnalyzer {
    * Empty the internal cache of ClassData information.
    */
   public static void invalidateCache() {
-    classCache = new HashMap();
+    classCache = new HashMap<>();
   }
 
   /**
@@ -99,11 +96,12 @@ public class ClassAnalyzer {
    * @return a ClassData object containing all the public static and non-static methods that can be
    *         invoked on the class.
    */
-  private static ClassData analyzeClass(Class clazz) {
+  private static ClassData analyzeClass(Class<?> clazz) {
     log.info("analyzing " + clazz.getName());
-    final List constructors = new ArrayList(Arrays.asList(clazz.getConstructors()));
-    final List memberMethods = new ArrayList();
-    final List staticMethods = new ArrayList();
+    final List<Constructor<?>> constructors = new ArrayList<>(Arrays.asList(clazz
+        .getConstructors()));
+    final List<Method> memberMethods = new ArrayList<>();
+    final List<Method> staticMethods = new ArrayList<>();
     {
       final Method methods[] = clazz.getMethods();
       for (int i = 0; i < methods.length; i++) {
@@ -115,8 +113,8 @@ public class ClassAnalyzer {
       }
     }
 
-    ClassData cd = new ClassData(clazz, createMap(memberMethods, false), createMap(staticMethods,
-        false), createMap(constructors, true));
+    ClassData cd = new ClassData(clazz, createMap(memberMethods, Method.class), createMap(
+        staticMethods, Method.class), createMap(constructors, Constructor.class));
 
     return cd;
   }
@@ -130,12 +128,13 @@ public class ClassAnalyzer {
    * @param isConstructor Whether the objects are methods or constructors
    * @return Map of AccessibleObjectKey to a Collection of AccessibleObjects
    */
-  private static Map createMap(Collection accessibleObjects, boolean isConstructor) {
-    final Map map = new HashMap();
-    for (final Iterator i = accessibleObjects.iterator(); i.hasNext();) {
-      final Member accessibleObject = (Member) i.next();
+  private static <T extends Member> Map<AccessibleObjectKey, List<T>> createMap(
+      Collection<T> accessibleObjects, Class<?> memberType) {
+    boolean isConstructor = (memberType == Constructor.class);
 
-      if (!Modifier.isPublic(accessibleObject.getModifiers()))
+    final Map<AccessibleObjectKey, List<T>> map = new HashMap<>();
+    for (T accessibleObject : accessibleObjects) {
+      if (accessibleObject == null || !Modifier.isPublic(accessibleObject.getModifiers()))
         continue;
 
       final AccessibleObjectKey accessibleObjectKey;
@@ -144,9 +143,9 @@ public class ClassAnalyzer {
         int argCount = 0;
         {
           // The parameters determine the size of argCount
-          final Class[] param;
+          final Class<?>[] param;
           if (isConstructor) {
-            param = ((Constructor) accessibleObject).getParameterTypes();
+            param = ((Constructor<?>) accessibleObject).getParameterTypes();
           } else {
             // If it is a method and the method was defined in Object(), skip
             // it.
@@ -173,9 +172,9 @@ public class ClassAnalyzer {
           }
         }
       }
-      List marr = (ArrayList) map.get(accessibleObjectKey);
+      List<T> marr = map.get(accessibleObjectKey);
       if (marr == null) {
-        marr = new ArrayList();
+        marr = new ArrayList<>();
         map.put(accessibleObjectKey, marr);
       }
 

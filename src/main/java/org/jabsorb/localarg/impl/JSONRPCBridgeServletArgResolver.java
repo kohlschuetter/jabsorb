@@ -35,6 +35,7 @@ import org.jabsorb.localarg.LocalArgResolver;
  * replace an JSONRPCBridge argument on a called method with the session specific bridge object.
  */
 public class JSONRPCBridgeServletArgResolver implements LocalArgResolver {
+  @Override
   public Object resolveArg(Object context) throws LocalArgResolveException {
     if (!(context instanceof HttpServletRequest)) {
       throw new LocalArgResolveException("invalid context");

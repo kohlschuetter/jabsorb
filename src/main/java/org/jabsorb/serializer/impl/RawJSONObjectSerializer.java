@@ -53,14 +53,17 @@ public class RawJSONObjectSerializer extends AbstractSerializer {
    */
   private static Class<?>[] _JSONClasses = new Class[] {JSONObject.class};
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     // reprocess the raw json in order to fixup circular references and duplicates
     JSONObject jsonIn = (JSONObject) o;
@@ -82,12 +85,14 @@ public class RawJSONObjectSerializer extends AbstractSerializer {
     return jsonOut;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     state.setSerialized(jso, ObjectMatch.OKAY);
     return ObjectMatch.OKAY;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object jso)
       throws UnmarshallException {
     state.setSerialized(jso, jso);

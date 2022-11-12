@@ -31,9 +31,9 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Map.Entry;
 
 public class Unicode implements Serializable {
   private final static long serialVersionUID = 2;
@@ -97,15 +97,15 @@ public class Unicode implements Serializable {
     }
 
     protected void loadData() throws IOException {
-      BufferedReader in = new BufferedReader(new InputStreamReader(getResourceStream(rsrc),
-          charset));
-      StringBuffer sb = new StringBuffer();
-      String line;
-      while ((line = in.readLine()) != null) {
-        sb.append(line);
+      try (BufferedReader in = new BufferedReader(new InputStreamReader(getResourceStream(rsrc),
+          charset))) {
+        StringBuffer sb = new StringBuffer();
+        String line;
+        while ((line = in.readLine()) != null) {
+          sb.append(line);
+        }
+        data = sb.toString();
       }
-      in.close();
-      data = sb.toString();
     }
   }
 
@@ -119,9 +119,9 @@ public class Unicode implements Serializable {
 
     protected UnicodeTestStore(String indexName) {
       try {
-        InputStream in = getResourceStream(indexName);
-        testProps.load(in);
-        in.close();
+        try (InputStream in = getResourceStream(indexName)) {
+          testProps.load(in);
+        }
         for (Entry<Object, Object> m : testProps.entrySet()) {
           String key = (String) m.getKey();
           String value = (String) m.getValue();

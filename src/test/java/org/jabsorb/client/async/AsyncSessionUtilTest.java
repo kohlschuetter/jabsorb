@@ -29,11 +29,11 @@ package org.jabsorb.client.async;
 
 import java.util.concurrent.Future;
 
-import junit.framework.TestCase;
-
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.client.Session;
 import org.json.JSONObject;
+
+import junit.framework.TestCase;
 
 /**
  * @author matthijs
@@ -43,7 +43,7 @@ public class AsyncSessionUtilTest extends TestCase {
 
   /**
    * Test method for
-   * {@link org.jabsorb.client.async.AsyncSessionUtil#ToSyncSession(org.jabsorb.client.async.AsyncSession)}.
+   * {@link org.jabsorb.client.async.AsyncSessionUtil#toSyncSession(org.jabsorb.client.async.AsyncSession)}.
    */
   public void testToSyncSession() throws Exception {
     final AsyncSession asyncSession = new DummyAsyncSession(1000, "testToSyncSession");
@@ -61,7 +61,7 @@ public class AsyncSessionUtilTest extends TestCase {
 
   /**
    * Test method for
-   * {@link org.jabsorb.client.async.AsyncSessionUtil#ToAsyncSession(org.jabsorb.client.Session)}.
+   * {@link org.jabsorb.client.async.AsyncSessionUtil#toAsyncSession(org.jabsorb.client.Session)}.
    * 
    * @throws Exception
    */
@@ -84,7 +84,7 @@ public class AsyncSessionUtilTest extends TestCase {
 
   /**
    * Test method for
-   * {@link org.jabsorb.client.async.AsyncSessionUtil#ToAsyncSession(org.jabsorb.client.Session)}.
+   * {@link org.jabsorb.client.async.AsyncSessionUtil#toAsyncSession(org.jabsorb.client.Session)}.
    * 
    * @throws Exception
    */
@@ -99,6 +99,7 @@ public class AsyncSessionUtilTest extends TestCase {
 
     final Future<JSONObject> future = asyncSession.send(null,
         new AsyncResultCallback<AsyncSession, JSONObject, JSONObject>() {
+          @Override
           public void onAsyncResult(final AsyncSession source, final Future<JSONObject> result,
               final JSONObject context) {
             try {

@@ -74,6 +74,7 @@ public class AsyncSessionUtil {
       return asyncSession;
     }
 
+    @Override
     public JSONObject sendAndReceive(final JSONObject message) {
       final Future<JSONObject> result = asyncSession.send(message);
 
@@ -89,6 +90,7 @@ public class AsyncSessionUtil {
       return response;
     }
 
+    @Override
     public void close() {
       asyncSession.close();
     }
@@ -108,10 +110,12 @@ public class AsyncSessionUtil {
       return session;
     }
 
+    @Override
     public Future<JSONObject> send(final JSONObject request) {
       return send(request, null);
     }
 
+    @Override
     public Future<JSONObject> send(final JSONObject request,
         final AsyncResultCallback<AsyncSession, JSONObject, JSONObject> callback) {
       final SettableFuture<JSONObject> result = new SettableFuture<JSONObject>();
@@ -136,6 +140,7 @@ public class AsyncSessionUtil {
       return result;
     }
 
+    @Override
     public void close() {
       session.close();
     }

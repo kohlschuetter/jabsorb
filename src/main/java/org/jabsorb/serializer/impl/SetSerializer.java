@@ -67,14 +67,17 @@ public class SetSerializer extends AbstractSerializer {
         || jsonClazz == JSONObject.class) && Set.class.isAssignableFrom(clazz)));
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     Set<?> set = (Set<?>) o;
 
@@ -110,6 +113,7 @@ public class SetSerializer extends AbstractSerializer {
     return obj;
   }
 
+  @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -156,6 +160,7 @@ public class SetSerializer extends AbstractSerializer {
     return m;
   }
 
+  @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
