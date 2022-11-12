@@ -14,7 +14,7 @@
     <artifactId>jabsorb</artifactId>
     <version>1.3.2-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Jabsorb (+ modified org.json) for Osgi</name>
+    <name>Jabsorb</name>
     <url>http://jabsorb.org</url>
 
     <parent>
@@ -236,6 +236,13 @@ org.slf4j</Import-Package>
             <groupId>com.kohlschutter</groupId>
             <artifactId>compiler-annotations</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20220924</version>
+            <type>bundle</type>
         </dependency>
     </dependencies>
 </project>
