@@ -65,14 +65,17 @@ public class DictionarySerializer extends AbstractSerializer {
         || jsonClazz == JSONObject.class) && Dictionary.class.isAssignableFrom(clazz)));
   }
 
+  @Override
   public Class<?>[] getJSONClasses() {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     Dictionary<?, ?> ht = (Dictionary<?, ?>) o;
     JSONObject obj = new JSONObject();
@@ -91,6 +94,9 @@ public class DictionarySerializer extends AbstractSerializer {
       Enumeration<?> en = ht.keys();
       while (en.hasMoreElements()) {
         key = en.nextElement();
+        if (key == null) {
+          continue;
+        }
         String keyString = key.toString(); // only support String keys
 
         Object json = ser.marshall(state, mapdata, ht.get(key), keyString);

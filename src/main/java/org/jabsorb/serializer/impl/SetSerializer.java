@@ -93,6 +93,9 @@ public class SetSerializer extends AbstractSerializer {
     try {
       while (i.hasNext()) {
         key = i.next();
+        if (key == null) {
+          continue;
+        }
         String keyString = key.toString(); // only support String keys
         Object json = ser.marshall(state, setdata, key, keyString);
         setdata.put(keyString, json);

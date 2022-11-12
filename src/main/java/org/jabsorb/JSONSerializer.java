@@ -48,7 +48,6 @@ import org.jabsorb.serializer.impl.EnumSerializer;
 import org.jabsorb.serializer.impl.ListSerializer;
 import org.jabsorb.serializer.impl.MapSerializer;
 import org.jabsorb.serializer.impl.NumberSerializer;
-import org.jabsorb.serializer.impl.MapSerializer;
 import org.jabsorb.serializer.impl.PrimitiveSerializer;
 import org.jabsorb.serializer.impl.RawJSONArraySerializer;
 import org.jabsorb.serializer.impl.RawJSONObjectSerializer;

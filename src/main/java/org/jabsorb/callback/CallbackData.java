@@ -66,6 +66,9 @@ public class CallbackData implements Serializable {
    */
   @Override
   public boolean equals(Object o) {
+    if (o == null) {
+      return false;
+    }
     CallbackData cmp = (CallbackData) o;
     return (cb.equals(cmp.cb) && contextInterface.equals(cmp.contextInterface));
   }

@@ -66,6 +66,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * <p>
  * This class implements a bridge that unmarshalls JSON objects in JSON-RPC request format, invokes
@@ -256,6 +258,7 @@ public class JSONRPCBridge implements Serializable {
    * 
    * @return returns the global bridge object.
    */
+  @SuppressFBWarnings("MS_EXPOSE_REP")
   public static JSONRPCBridge getGlobalBridge() {
     return globalBridge;
   }
@@ -337,6 +340,7 @@ public class JSONRPCBridge implements Serializable {
    *          Class.forName() mechanism. One class name should occur per line
    * @return A list of serializers to be loaded at the construction of the bridge.
    */
+  @SuppressFBWarnings("REC_CATCH_EXCEPTION")
   private static List<Serializer> getInitSerializers(final String filename) {
     if (filename != null) {
       final File serializersFile = new File(filename);
@@ -394,6 +398,7 @@ public class JSONRPCBridge implements Serializable {
    * @param propertiesFilename The name of the file to load the properties from.
    * @return An initialised properties.
    */
+  @SuppressFBWarnings("OS_OPEN_STREAM")
   private static Properties loadProperties(final String propertiesFilename) {
     final Properties p = new Properties();
     try {
@@ -668,6 +673,7 @@ public class JSONRPCBridge implements Serializable {
    * 
    * @return the global JSONSerializer object.
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public JSONSerializer getSerializer() {
     return ser;
   }

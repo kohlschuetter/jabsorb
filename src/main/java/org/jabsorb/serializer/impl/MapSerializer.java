@@ -71,10 +71,12 @@ public class MapSerializer extends AbstractSerializer {
     return _JSONClasses;
   }
 
+  @Override
   public Class<?>[] getSerializableClasses() {
     return _serializableClasses;
   }
 
+  @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     Map<?, ?> map = (Map<?, ?>) o;
     JSONObject obj = new JSONObject();
@@ -91,6 +93,9 @@ public class MapSerializer extends AbstractSerializer {
       Iterator<?> i = map.entrySet().iterator();
       while (i.hasNext()) {
         Map.Entry<?, ?> ent = (Map.Entry<?, ?>) i.next();
+        if (ent == null) {
+          continue;
+        }
         key = ent.getKey();
         final String keyString;
         if (key == null) {

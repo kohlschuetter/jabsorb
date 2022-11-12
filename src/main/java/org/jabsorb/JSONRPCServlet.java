@@ -128,7 +128,7 @@ public class JSONRPCServlet extends HttpServlet {
    * be for potential responses from your application. You can set this to -1 if you want to turn
    * off gzip encoding for some reason.
    */
-  private static int GZIP_THRESHOLD = 200;
+  private int gzipThreshold = 200;
 
   /**
    * The logger for this class
@@ -206,20 +206,20 @@ public class JSONRPCServlet extends HttpServlet {
     String gzipThresh = config.getInitParameter("gzip_threshold");
     if (gzipThresh != null && gzipThresh.length() > 0) {
       try {
-        JSONRPCServlet.GZIP_THRESHOLD = Integer.parseInt(gzipThresh);
+        gzipThreshold = Integer.parseInt(gzipThresh);
       } catch (NumberFormatException n) {
         log.debug("could not parse " + gzipThresh
             + " as an integer... defaulting to -1 (gzip compression off)");
-        JSONRPCServlet.GZIP_THRESHOLD = -1;
+        gzipThreshold = -1;
       }
     }
 
-    log.debug("GZIP_THRESHOLD is " + JSONRPCServlet.GZIP_THRESHOLD);
+    log.debug("GZIP_THRESHOLD is " + gzipThreshold);
 
-    if (JSONRPCServlet.GZIP_THRESHOLD == -1) {
+    if (gzipThreshold == -1) {
       log.debug("Gzipping is turned OFF.  "
           + "No attempts will be made to gzip content from this servlet.");
-    } else if (JSONRPCServlet.GZIP_THRESHOLD == 0) {
+    } else if (gzipThreshold == 0) {
       log.debug("All responses will be Gzipped "
           + "when gzipping results in a smaller response size.");
     } else {
@@ -308,14 +308,14 @@ public class JSONRPCServlet extends HttpServlet {
     byte[] bout = sendString.getBytes("UTF-8");
 
     // handle gzipping of the response if it is turned on
-    if (JSONRPCServlet.GZIP_THRESHOLD != -1) {
+    if (gzipThreshold != -1) {
       // if the request header says that the browser can take gzip compressed output, then gzip the
       // output
       // but only if the response is large enough to warrant it and if the resultant compressed
       // output is
       // actually smaller.
       if (acceptsGzip(request)) {
-        if (bout.length > JSONRPCServlet.GZIP_THRESHOLD) {
+        if (bout.length > gzipThreshold) {
           byte[] gzippedOut = gzip(bout);
           log.debug("gzipping! original size =  " + bout.length + "  gzipped size = "
               + gzippedOut.length);
@@ -333,7 +333,7 @@ public class JSONRPCServlet extends HttpServlet {
           }
         } else {
           log.debug("not gzipping because size is " + bout.length
-              + " (less than the GZIP_THRESHOLD of " + JSONRPCServlet.GZIP_THRESHOLD + " bytes)");
+              + " (less than the GZIP_THRESHOLD of " + gzipThreshold + " bytes)");
         }
       } else {
         // this should be rare with modern user agents
@@ -347,13 +347,12 @@ public class JSONRPCServlet extends HttpServlet {
     // needed to support naughty browsers such as Konqueror and Safari
     // which do not honour the charset set in the response
     response.setContentType("application/json;charset=utf-8");
-    OutputStream out = response.getOutputStream();
 
-    response.setIntHeader("Content-Length", bout.length);
-
-    out.write(bout);
-    out.flush();
-    out.close();
+    try (OutputStream out = response.getOutputStream()) {
+      response.setIntHeader("Content-Length", bout.length);
+      out.write(bout);
+      out.flush();
+    }
   }
 
   /**
@@ -404,10 +403,10 @@ public class JSONRPCServlet extends HttpServlet {
       long tstart = System.currentTimeMillis();
       ByteArrayOutputStream bout = new ByteArrayOutputStream();
       try {
-        GZIPOutputStream gout = new GZIPOutputStream(bout);
-        gout.write(in);
-        gout.flush();
-        gout.close();
+        try (GZIPOutputStream gout = new GZIPOutputStream(bout)) {
+          gout.write(in);
+          gout.flush();
+        }
         if (log.isDebugEnabled()) {
           log.debug("gzipping took " + (System.currentTimeMillis() - tstart) + " msec");
         }

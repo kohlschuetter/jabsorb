@@ -33,6 +33,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * Container for a JSON-RPC result message. This includes successful results, error results, and
  * remote exceptions results.
@@ -145,6 +147,7 @@ public class JSONRPCResult {
    * @param o The result of the call
    * @param fixUps optional list of FixUp objects needed to resolve circular refs and duplicates.
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public JSONRPCResult(int errorCode, Object id, Object o, List<FixUp> fixUps) {
     this.errorCode = errorCode;
     this.id = id;
