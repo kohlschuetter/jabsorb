@@ -52,7 +52,7 @@ import java.util.concurrent.TimeoutException;
  *
  * System.out.println(future.get()); // blocks for three seconds
  * </pre>
- * 
+ *
  * @author matthijs
  *
  */
@@ -64,7 +64,7 @@ public class SettableFuture<T> implements Future<T> {
 
   /**
    * Set the result of the completed operation
-   * 
+   *
    * @param result the result
    */
   public synchronized void set(final T result) {

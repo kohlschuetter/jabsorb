@@ -41,7 +41,7 @@ import org.json.JSONObject;
 /**
  * Serializer State which can handle neither circular references or duplicates. An exception is
  * thrown when circular references are found and duplicates are ignored.
- * 
+ *
  * @author William Becker
  */
 public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHandler,
@@ -191,7 +191,7 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
    * Determine if a duplicate child object of the given parentis a circular reference with the given
    * ProcessedObject. We know it's a circular reference if we can walk up the parent chain and find
    * the ProcessedObject. If instead we find null, then it's a duplicate instead of a circular ref.
-   * 
+   *
    * @param dup the duplicate object that might also be the original reference in a circular
    *          reference.
    * @param parent the parent of an object that might be a circular reference.

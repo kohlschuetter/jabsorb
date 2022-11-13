@@ -302,7 +302,7 @@ public class Test implements Serializable, ITest {
   /**
    * Test more than one duplicate, to make sure the fixups they generate all refer to the same
    * object
-   * 
+   *
    * @return a List with some duplicates.
    */
   public List<Object> aDupDup() {
@@ -327,7 +327,7 @@ public class Test implements Serializable, ITest {
 
   /**
    * Another duplicate with substantial savings to be gained by fixing it up
-   * 
+   *
    * @return aList with duplicates.
    */
   public List<Map<String, Object>> aDupDupDup() {
@@ -357,7 +357,7 @@ public class Test implements Serializable, ITest {
 
   /**
    * Test of duplicate Strings
-   * 
+   *
    * @return a List with 3 duplicate Strings.
    */
   public List<String> aStringListDup() {
@@ -372,7 +372,7 @@ public class Test implements Serializable, ITest {
 
   /**
    * Test an array of 3 duplicate Strings.
-   * 
+   *
    * @return an array of 3 duplicate Strings.
    */
   public String[] aStringArrayDup() {
@@ -386,7 +386,7 @@ public class Test implements Serializable, ITest {
 
   /**
    * Test an array of 3 duplicate Beans.
-   * 
+   *
    * @return an array of 3 duplicate Beans.
    */
   public BeanA[] aBeanArrayDup() {
@@ -403,7 +403,7 @@ public class Test implements Serializable, ITest {
   /**
    * Return a List that has several Strings and a few nulls. We want make sure that the null objects
    * don't get fixed up (as duplicates...)
-   * 
+   *
    * @return a List that has several Strings and a few nulls.
    */
   public List<String> listNull() {
@@ -601,7 +601,7 @@ public class Test implements Serializable, ITest {
 
   /**
    * Count the number of true booleans in the Map.
-   * 
+   *
    * @param in input map.
    * @return number of booleans in the map that were set to true.
    */

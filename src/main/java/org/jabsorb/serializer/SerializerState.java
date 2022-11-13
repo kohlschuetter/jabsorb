@@ -37,7 +37,7 @@ public interface SerializerState {
   /**
    * Checks whether the current object being parsed needs action taken upon it or is ok to marshal.
    * If any value is returned except null, it means that it should not be marshalled.
-   * 
+   *
    * @param parent The parent of the current object
    * @param currentObject The current object being marshalled
    * @param ref additional reference (String|Integer) to add on to the scope's current location.
@@ -50,7 +50,7 @@ public interface SerializerState {
 
   /**
    * Creates a json object with the data in <code>json</code> stored at <code>key</code>
-   * 
+   *
    * @param key The key in which the data should be stored
    * @param json The data to store
    * @return A new JSONObject with the data stored within it.
@@ -60,7 +60,7 @@ public interface SerializerState {
 
   /**
    * Creates a result to be returned to the jabsorb client.
-   * 
+   *
    * @param requestId The id of the request for which this result is to be mad e
    * @param json The serialized object
    * @return Some kind of SuccessfulResult
@@ -70,7 +70,7 @@ public interface SerializerState {
   /**
    * If the given object has already been processed, return the ProcessedObject wrapper for that
    * object which will indicate the original location from where that Object was processed from.
-   * 
+   *
    * @param object Object to check.
    * @return ProcessedObject wrapper for the given object or null if the object hasn't been
    *         processed yet in this SerializerState.
@@ -80,7 +80,7 @@ public interface SerializerState {
   /**
    * Pop off one level from the scope stack of the current location during processing. If we are
    * already at the lowest level of scope, then this has no action.
-   * 
+   *
    * @throws MarshallException If called when currentLocation is empty
    */
   public void pop() throws MarshallException;
@@ -88,7 +88,7 @@ public interface SerializerState {
   /**
    * Record the given object as a ProcessedObject and push into onto the scope stack. This is only
    * used for marshalling. The store method should be used for unmarshalling.
-   * 
+   *
    * @param parent parent of object to process. Can be null if it's the root object being processed.
    *          it should be an object that was already processed via a previous call to
    *          processObject.
@@ -102,7 +102,7 @@ public interface SerializerState {
 
   /**
    * Tells the serializer state that marshalling for the given object has been completed
-   * 
+   *
    * @param marshalledObject What the object was marshalled into
    * @param java The object that was marshalled
    */
@@ -114,7 +114,7 @@ public interface SerializerState {
    * unmarshall or tryUnmarshall recurses into child objects to unmarshall them. The purpose is to
    * stop the recursion that can take place when circular references/duplicates are in the input
    * json being unmarshalled.
-   * 
+   *
    * @param source source object being unmarshalled.
    * @param target target serialized representation of the object that the source object is being
    *          unmarshalled to.
@@ -127,7 +127,7 @@ public interface SerializerState {
    * Much simpler version of push to just account for the fact that an object has been processed
    * (used for unmarshalling where we just need to re-hook up circ refs and duplicates and not
    * generate fixups.)
-   * 
+   *
    * @param obj Object to account for as being processed.
    */
   public void store(Object obj);

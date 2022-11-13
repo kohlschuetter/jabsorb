@@ -62,7 +62,7 @@ public class AsyncSessionUtilTest extends TestCase {
   /**
    * Test method for
    * {@link org.jabsorb.client.async.AsyncSessionUtil#toAsyncSession(org.jabsorb.client.Session)}.
-   * 
+   *
    * @throws Exception
    */
   public void testToAsyncSession() throws Exception {
@@ -85,7 +85,7 @@ public class AsyncSessionUtilTest extends TestCase {
   /**
    * Test method for
    * {@link org.jabsorb.client.async.AsyncSessionUtil#toAsyncSession(org.jabsorb.client.Session)}.
-   * 
+   *
    * @throws Exception
    */
   public void testToAsyncSessionCallback() throws Exception {

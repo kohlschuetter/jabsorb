@@ -48,7 +48,7 @@ public class CallbackData implements Serializable {
 
   /**
    * Creates a new Callback data holder
-   * 
+   *
    * @param cb The object implementing the InvocationCallback Interface
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
@@ -60,7 +60,7 @@ public class CallbackData implements Serializable {
 
   /**
    * Whether two CallbackDatas are the same.
-   * 
+   *
    * @param o The object to compare with this one.
    * @return true If they share the same callback and contextInterface
    */
@@ -75,7 +75,7 @@ public class CallbackData implements Serializable {
 
   /**
    * Gets the callback
-   * 
+   *
    * @return InvocationCallback
    */
   public InvocationCallback getCallback() {
@@ -84,7 +84,7 @@ public class CallbackData implements Serializable {
 
   /**
    * Creates a hash for this object.
-   * 
+   *
    * @return a unique key.
    */
   @Override
@@ -94,7 +94,7 @@ public class CallbackData implements Serializable {
 
   /**
    * Whether the context for this object can be used with the given object
-   * 
+   *
    * @param context The object to test
    * @return Whether the context for this object is assignable from the given object.
    */

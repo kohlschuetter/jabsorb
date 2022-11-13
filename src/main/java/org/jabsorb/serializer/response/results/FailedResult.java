@@ -29,13 +29,13 @@ import org.json.JSONObject;
 
 /**
  * Use this result for sending messages to client containing errors.
- * 
+ *
  * @author William Becker
  */
 public class FailedResult extends JSONRPCResult {
   /**
    * Gets the error that caused the failure.
-   * 
+   *
    * @return The error object
    */
   public Object getError() {
@@ -106,7 +106,7 @@ public class FailedResult extends JSONRPCResult {
 
   /**
    * Creates a new FailedResult.
-   * 
+   *
    * @param errorCode The error code. This should be one of the error codes defined in this class.
    * @param id The id of the response.
    * @param error The error that caused the failure.

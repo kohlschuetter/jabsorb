@@ -39,13 +39,13 @@ import org.json.JSONObject;
 /**
  * Reads a "flattened" json message, in which all objects exist as seperate keys on the main object,
  * to allow circular references, eg: {"result":"_1","_1":{"circRef":"_1"}}.
- * 
+ *
  * @author William Becker
  */
 public class FlatRequestParser extends RequestParser {
   /**
    * Parses an array
-   * 
+   *
    * @author William Becker
    */
   private class FlatParser {
@@ -63,7 +63,7 @@ public class FlatRequestParser extends RequestParser {
 
     /**
      * Gets an object by its index
-     * 
+     *
      * @param index The index of the object
      * @param jsonReq The object which maps indexes to objects
      * @return The object requested
@@ -83,7 +83,7 @@ public class FlatRequestParser extends RequestParser {
     /**
      * Reads an array with (potentially) indexes which point to objects and returns a properly
      * constructed array;
-     * 
+     *
      * @param array The array to parse
      * @param jsonReq The main object that contains indexes mapped to objects
      * @return An array that has all objects constructed
@@ -103,7 +103,7 @@ public class FlatRequestParser extends RequestParser {
 
     /**
      * Gets an object by its index
-     * 
+     *
      * @param index The index of the object
      * @param jsonReq The object which maps indexes to objects
      * @return The object requested
@@ -136,7 +136,7 @@ public class FlatRequestParser extends RequestParser {
 
   /**
    * Is the given object an index which is mapped to an object?
-   * 
+   *
    * @param o The object to test
    * @return Whether the object is an index
    */

@@ -55,7 +55,7 @@ public class ClassAnalyzer {
 
   /**
    * Classes that have been analysed
-   * 
+   *
    * key: Clazz, val ClassData
    */
   private final static Map<Class<?>, ClassData> classCache;
@@ -72,9 +72,9 @@ public class ClassAnalyzer {
    * The ClassData will be cached, and multiple calls to getClassData for the same class will return
    * the same cached ClassData object (unless invalidateCache is called to clear the cache.)
    * </p>
-   * 
+   *
    * @param clazz class to get ClassData for.
-   * 
+   *
    * @return ClassData object for the given class.
    */
   public static ClassData getClassData(Class<?> clazz) {
@@ -99,9 +99,9 @@ public class ClassAnalyzer {
   /**
    * Analyze a class and create a ClassData object containing all of the public methods (both static
    * and non-static) in the class.
-   * 
+   *
    * @param clazz class to be analyzed.
-   * 
+   *
    * @return a ClassData object containing all the public static and non-static methods that can be
    *         invoked on the class.
    */
@@ -132,7 +132,7 @@ public class ClassAnalyzer {
    * Creates a mapping of AccessibleObjectKey to a Collection which contains all the
    * AccessibleObjects which have the same amount of arguments. This takes into account
    * LocalArgResolvers, discounting them from the argument size.
-   * 
+   *
    * @param accessibleObjects The objects to put into the map
    * @param isConstructor Whether the objects are methods or constructors
    * @return Map of AccessibleObjectKey to a Collection of AccessibleObjects

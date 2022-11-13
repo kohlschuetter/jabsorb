@@ -38,7 +38,7 @@ import org.json.JSONObject;
 /**
  * Serializes objects into a flat style. This means that all JSONObjects exist at the top level.
  * This prevents duplication and circular references from occuring.
- * 
+ *
  * @author William Becker
  */
 public class FlatSerializerState implements SerializerState {
@@ -49,7 +49,7 @@ public class FlatSerializerState implements SerializerState {
 
   /**
    * Adds the values contained in map, to the object o.
-   * 
+   *
    * @param o The object to which the values are added
    * @param result The primary value
    * @param key The key under which the primary value is to be stored
@@ -118,7 +118,7 @@ public class FlatSerializerState implements SerializerState {
 
   /**
    * Get the JSONObject for the given marshalled object
-   * 
+   *
    * @param o The java object
    * @return A JSON object for the java object.
    */
@@ -199,7 +199,7 @@ public class FlatSerializerState implements SerializerState {
 
   /**
    * Creates the next index value
-   * 
+   *
    * @return The next index value
    */
   private String nextIndex() {

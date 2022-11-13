@@ -30,7 +30,7 @@ import org.jabsorb.serializer.MarshallException;
 
 /**
  * Use this class to make fixups for all duplicates (primitive and non-primitive).
- * 
+ *
  * @author William Becker
  */
 public class FixupDupesOnly extends UsingFixups {

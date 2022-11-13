@@ -134,7 +134,7 @@ public interface ITest {
 
   /**
    * Made to test issue 47
-   * 
+   *
    * @param object the array to echo
    * @return the same array given.
    */
@@ -194,7 +194,7 @@ public interface ITest {
 
   /**
    * Checks bug #18 is fixed
-   * 
+   *
    * @return A map with a null key.
    */
   Map<?, ?> nullKeyedMap();

@@ -30,13 +30,13 @@ import org.jabsorb.serializer.MarshallException;
 
 /**
  * Allows circular references to be signalled when found in Java code.
- * 
+ *
  * @author William Becker
  */
 public interface CircularReferenceHandler {
   /**
    * Signals that a circular reference was found.
-   * 
+   *
    * @param originalLocation The location where it first appeared
    * @param ref The reference of from the current location where it next appeared
    * @param java The object which is refered to from within itself.

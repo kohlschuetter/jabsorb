@@ -49,7 +49,7 @@ public class FixupsCircularReferenceHandler extends RequestParser {
 
   /**
    * Applies fixups to an JSONObject or JSONArray
-   * 
+   *
    * @param data The object which holds the Object/array and the fixup info
    * @param key The Key in data for the object/array
    * @return The Object/Array
@@ -83,7 +83,7 @@ public class FixupsCircularReferenceHandler extends RequestParser {
    * course-- but the JSONArray and JSONObject's themselves aren't aware of circular references when
    * certain methods are called (e.g. toString) so be careful when handling these circular
    * referenced json objects.
-   * 
+   *
    * @param toFix the element to apply the fixup to.
    * @param fixup the fixup entry.
    * @param original the original value to assign to the fixup.
@@ -120,7 +120,7 @@ public class FixupsCircularReferenceHandler extends RequestParser {
 
   /**
    * Given a previous json object, find the next object under the given index.
-   * 
+   *
    * @param prev object to find subobject of.
    * @param idx index of sub object to find.
    * @return the next object in a fixup reference chain (prev[idx])
@@ -139,7 +139,7 @@ public class FixupsCircularReferenceHandler extends RequestParser {
 
   /**
    * Given a previous json object, find the next object under the given ref.
-   * 
+   *
    * @param prev object to find subobject of.
    * @param ref reference of sub object to find.
    * @return the next object in a fixup reference chain (prev[ref])
@@ -157,7 +157,7 @@ public class FixupsCircularReferenceHandler extends RequestParser {
 
   /**
    * Traverse a list of references to find the target reference in an original or fixup list.
-   * 
+   *
    * @param origin origin JSONArray (arguments) to begin traversing at.
    * @param refs JSONArray containing array integer references and or String object references.
    * @param fixup if true, stop one short of the traversal chain to return the parent of the fixup

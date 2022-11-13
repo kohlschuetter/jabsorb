@@ -67,7 +67,7 @@ public class NumberSerializer extends AbstractSerializer {
 
   /**
    * Converts a javascript object to a Java number
-   * 
+   *
    * @param clazz The class of the Java object that it should be converted to
    * @param jso The javascript object
    * @return A Java primitive type in its java.lang wrapper.

@@ -49,7 +49,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Test a boolean constructor
-   * 
+   *
    * @param b unused
    */
   public ConstructorTest(boolean b) {
@@ -58,7 +58,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Test a double constructor
-   * 
+   *
    * @param l unused
    */
   public ConstructorTest(double l) {
@@ -67,7 +67,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Test a float constructor
-   * 
+   *
    * @param l unused
    */
   public ConstructorTest(float l) {
@@ -76,7 +76,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Used for testing argument overloading
-   * 
+   *
    * @param i not used
    */
 
@@ -86,7 +86,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Used for testing multiple argument overloading
-   * 
+   *
    * @param i not used
    * @param j not used
    */
@@ -96,7 +96,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Used for testing multiple argument overloading
-   * 
+   *
    * @param i not used
    * @param s not used
    */
@@ -111,7 +111,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Test a long constructor
-   * 
+   *
    * @param l unused
    */
   public ConstructorTest(long l) {
@@ -120,7 +120,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Test an object constructor
-   * 
+   *
    * @param o unused
    */
   public ConstructorTest(Object o) {
@@ -129,7 +129,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Test a string constructor
-   * 
+   *
    * @param s unused
    */
   public ConstructorTest(String s) {
@@ -138,7 +138,7 @@ public class ConstructorTest implements Serializable {
 
   /**
    * Gets the message produced by the constructor
-   * 
+   *
    * @return A message that specifies what the arguments were that were given to the constructor
    */
   public String getMessage() {

@@ -60,7 +60,7 @@ public class ClientTestCase extends ServerTestBase {
   /**
    * JSON-RPC tests need this setup to operate propely. This call invokes registerObject("test",
    * ...) from the JSP
-   * 
+   *
    * @deprecated since we are running the server in-process
    */
   @Deprecated

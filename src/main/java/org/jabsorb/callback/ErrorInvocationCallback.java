@@ -33,7 +33,7 @@ import java.lang.reflect.AccessibleObject;
 public interface ErrorInvocationCallback extends InvocationCallback {
   /**
    * Listener for exceptions thrown from an RPC service.
-   * 
+   *
    * @param context The transport context (the HttpServletRequest object in the case of the HTTP
    *          transport).
    * @param instance The object instance or null if it is a static method.

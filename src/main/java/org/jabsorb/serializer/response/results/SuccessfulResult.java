@@ -30,7 +30,7 @@ import org.json.JSONObject;
 
 /**
  * Use this for all successful results to be returned from the server to the client.
- * 
+ *
  * @author William Becker
  */
 public class SuccessfulResult extends JSONRPCResult {
@@ -41,7 +41,7 @@ public class SuccessfulResult extends JSONRPCResult {
 
   /**
    * Creates a new SuccessfulResult
-   * 
+   *
    * @param id The id of the response
    * @param result The result of the call
    */
@@ -52,7 +52,7 @@ public class SuccessfulResult extends JSONRPCResult {
 
   /**
    * Gets the result of the call.
-   * 
+   *
    * @return The result of the call
    */
   protected Object getResult() {

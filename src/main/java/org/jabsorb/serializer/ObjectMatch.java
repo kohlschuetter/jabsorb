@@ -71,7 +71,7 @@ public class ObjectMatch {
 
   /**
    * Create a new ObjectMatch object with the given number of mismatches.
-   * 
+   *
    * @param mismatch the number of mismatched fields that occured on a tryUnmarshall call.
    */
   public ObjectMatch(int mismatch) {
@@ -80,7 +80,7 @@ public class ObjectMatch {
 
   /**
    * Get the number of mismatched fields that occured on a tryUnmarshall call.
-   * 
+   *
    * @return the number of mismatched fields that occured on a tryUnmarshall call.
    */
   public int getMismatch() {
@@ -101,9 +101,9 @@ public class ObjectMatch {
   /**
    * Compare another ObjectMatch with this ObjectMatch and return the one that has the most
    * mismatches.
-   * 
+   *
    * @param m ObjectMatch to compare this ObjectMatch to.
-   * 
+   *
    * @return this ObjectMatch if it has more mismatches, else the passed in ObjectMatch.
    */
   public ObjectMatch max(ObjectMatch m) {

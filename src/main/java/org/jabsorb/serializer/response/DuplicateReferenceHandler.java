@@ -30,13 +30,13 @@ import org.jabsorb.serializer.MarshallException;
 
 /**
  * Allows duplicate references to be signalled when found in Java code.
- * 
+ *
  * @author William Becker
  */
 public interface DuplicateReferenceHandler {
   /**
    * Signals that a duplicate reference was found.
-   * 
+   *
    * @param originalLocation The location where it first appeared
    * @param ref The reference of from the current location where it next appeared
    * @param java The object which appears twice

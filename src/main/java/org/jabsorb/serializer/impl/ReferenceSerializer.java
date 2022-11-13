@@ -67,9 +67,9 @@ public class ReferenceSerializer extends AbstractSerializer {
 
   /**
    * Creates a new ReferenceSerializer
-   * 
+   *
    * @param bridge The bridge to determine if a class is a reference.
-   * 
+   *
    *          TODO: Should reference detection be abstracted out into another class?
    */
   public ReferenceSerializer(JSONRPCBridge bridge) {

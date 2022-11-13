@@ -42,7 +42,7 @@ public abstract class JSONRPCResult {
   /**
    * Creates a new JSONRPCResult without fixups (for backward compatibility to json-rpc and
    * json-rpc-java.
-   * 
+   *
    * @param id The id of the response.
    */
   public JSONRPCResult(Object id) {
@@ -51,7 +51,7 @@ public abstract class JSONRPCResult {
 
   /**
    * Creates a object for a result.
-   * 
+   *
    * @return A JSONObject which will be sent to the client
    * @throws JSONException If a problem occurs creating the object.
    */
@@ -59,7 +59,7 @@ public abstract class JSONRPCResult {
 
   /**
    * CreateOuput implementation for this class.
-   * 
+   *
    * @return An object which will be sent to the client.
    * @throws JSONException If a problem occurs creating the object.
    */
@@ -71,7 +71,7 @@ public abstract class JSONRPCResult {
 
   /**
    * Gets the id of the response.
-   * 
+   *
    * @return the id of the response.
    */
   public Object getId() {

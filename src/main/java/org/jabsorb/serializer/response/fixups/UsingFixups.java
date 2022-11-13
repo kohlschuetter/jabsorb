@@ -38,7 +38,7 @@ import org.json.JSONObject;
 
 /**
  * This is the superclass of all "fixup" generating circular reference / duplicate object resolvers.
- * 
+ *
  * @author William Becker
  */
 public abstract class UsingFixups extends NoCircRefsOrDupes {
@@ -52,7 +52,7 @@ public abstract class UsingFixups extends NoCircRefsOrDupes {
 
   /**
    * Adds fixups to a JSONObject
-   * 
+   *
    * @param o The object to which the fixups are to be added.
    * @param fixUps The fixups to add.
    * @return The object to which the fixups have been added.
@@ -73,7 +73,7 @@ public abstract class UsingFixups extends NoCircRefsOrDupes {
    * Determine if this serializer considers the given Object to be a primitive wrapper type Object.
    * This is used to determine which types of Objects should be fixed up as duplicates if the
    * fixupDuplicatePrimitives flag is false.
-   * 
+   *
    * @param o Object to test for primitive.
    * @return True if the object is a primi
    */
@@ -112,7 +112,7 @@ public abstract class UsingFixups extends NoCircRefsOrDupes {
 
   /**
    * Adds a fixup to the list of known fixups.
-   * 
+   *
    * @param originalLocation The location of the original version of the object.
    * @param ref The reference by which the current object is denoted.
    * @return The object to put in the place of the current object.

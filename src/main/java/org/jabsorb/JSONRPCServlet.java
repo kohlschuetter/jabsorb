@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * The following can be added to your web.xml to export the servlet under the URI
  * &quot;<code>/JSON-RPC</code>&quot;
  * </p>
- * 
+ *
  * <pre>
  * &lt;servlet&gt;
  *   &lt;servlet-name&gt;org.jabsorb.JSONRPCServlet&lt;/servlet-name&gt;
@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
  *   &lt;url-pattern&gt;/JSON-RPC&lt;/url-pattern&gt;
  * &lt;/servlet-mapping&gt;
  * </pre>
- * 
+ *
  * </p>
  * The JSONRPCServlet looks for a session specific bridge object under the attribute
  * <code>"JSONRPCBridge"</code> in the HttpSession associated with the request (without creating a
@@ -154,7 +154,7 @@ public class JSONRPCServlet extends HttpServlet {
 
   /**
    * Creates a new JSONRPCServlet
-   * 
+   *
    * @param bridgeLocation The location of the JSONRPCBridge variable in the session
    */
   public JSONRPCServlet(String bridgeLocation) {
@@ -195,7 +195,7 @@ public class JSONRPCServlet extends HttpServlet {
    * of this setting, so it is very reasonable idea to set this to 0 for maximum bandwidth savings,
    * at the (very minor) expense of having the server attempt to gzip all responses.
    * </p>
-   * 
+   *
    * @param config ServletConfig from container.
    * @throws ServletException if something goes wrong during initialization.
    */
@@ -232,7 +232,7 @@ public class JSONRPCServlet extends HttpServlet {
    * Called when a JSON-RPC requests comes in. Looks in the session for a JSONRPCBridge and if not
    * found there, uses the global bridge; then passes off the JSON-PRC call to be handled by the
    * JSONRPCBridge found.
-   * 
+   *
    * @param request servlet request from browser.
    * @param response servlet response to browser.
    * @throws IOException if an IOException occurs during processing.
@@ -358,7 +358,7 @@ public class JSONRPCServlet extends HttpServlet {
   /**
    * Find the JSONRPCBridge from the current session. If it can't be found in the session, or there
    * is no session, then return the global bridge.
-   * 
+   *
    * @param request The message received
    * @return the JSONRPCBridge to use for this request
    */
@@ -382,7 +382,7 @@ public class JSONRPCServlet extends HttpServlet {
 
   /**
    * Can browser accept gzip encoding?
-   * 
+   *
    * @param request browser request object.
    * @return true if gzip encoding accepted.
    */
@@ -394,7 +394,7 @@ public class JSONRPCServlet extends HttpServlet {
 
   /**
    * Gzip something.
-   * 
+   *
    * @param in original content
    * @return size gzipped content
    */
@@ -421,7 +421,7 @@ public class JSONRPCServlet extends HttpServlet {
   /**
    * Format (pretty print) json nicely for debugging output. If the pretty printing fails for any
    * reason (this is not expected) then the original, unformatted json will be returned.
-   * 
+   *
    * @param unformattedJSON a json string.
    * @return a String containing the formatted json text for the passed in json object.
    */

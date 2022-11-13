@@ -46,7 +46,7 @@ public class URLConnectionSession implements Session {
 
   /**
    * Create a URLConnection transport
-   * 
+   *
    * @param url
    */
   URLConnectionSession(URL url) {

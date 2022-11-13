@@ -26,7 +26,7 @@ package org.jabsorb.serializer.response.flat;
 
 /**
  * Allows for late allocation of an object's index
- * 
+ *
  * @author William Becker
  */
 class Index {
@@ -44,7 +44,7 @@ class Index {
 
   /**
    * Creates a new index
-   * 
+   *
    * @param index The index of the object
    */
   public Index(String index) {
@@ -53,7 +53,7 @@ class Index {
 
   /**
    * Gets the index
-   * 
+   *
    * @return The index
    */
   public String getIndex() {
@@ -62,7 +62,7 @@ class Index {
 
   /**
    * Sets the index
-   * 
+   *
    * @param index The value to set
    */
   public void setIndex(String index) {

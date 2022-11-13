@@ -37,7 +37,7 @@ public interface Serializer extends Serializable {
   /**
    * Determine if the given java,json class pair can be handled by this serializer. Both for
    * serialzing from java => json and deserializing from json => java.
-   * 
+   *
    * @param clazz java Class type.
    * @param jsonClazz json Class wrapper type.
    * @return true if this serializer can serialize/deserialize the given pair.
@@ -49,7 +49,7 @@ public interface Serializer extends Serializable {
    * deserialize into json from java.
    * <p/>
    * These will typically be primitive class type wrappers or JSONObject, JSONArray.
-   * 
+   *
    * @return json side java classes that can be serialized/deserialized by this serializer.
    */
   public Class<?>[] getJSONClasses();
@@ -57,14 +57,14 @@ public interface Serializer extends Serializable {
   /**
    * Get the java classes that this Serializer is able to serialize from java into json and
    * deserialize into java from json.
-   * 
+   *
    * @return java side classes that can be serialized/deserialized by this serializer.
    */
   public Class<?>[] getSerializableClasses();
 
   /**
    * Marshall a java object into an equivalent json object.
-   * 
+   *
    * @param state can be used to hold state while unmarshalling through recursive levels.
    * @param p parent of java object being marshalled into json (can be null if the object is the
    *          root object being marshalled.
@@ -77,14 +77,14 @@ public interface Serializer extends Serializable {
 
   /**
    * Set the owning JSONSerializer of this Serializer instance.
-   * 
+   *
    * @param ser the owning JSONSerializer of this Serializer instance.
    */
   public void setOwner(JSONSerializer ser);
 
   /**
    * Attempts to unmarshal a javascript object
-   * 
+   *
    * @param state The state of the serialiser
    * @param clazz The class to unmarhall to
    * @param json The object to unmarshal
@@ -96,7 +96,7 @@ public interface Serializer extends Serializable {
 
   /**
    * Unmarshall json into an equivalent java object.
-   * 
+   *
    * @param state can be used to hold state while unmarshalling through recursive levels.
    * @param clazz optional java class to unmarshall to.
    * @param json JSONObject or JSONArray that contains the json to unmarshall.

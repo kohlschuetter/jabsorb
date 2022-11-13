@@ -53,7 +53,7 @@ public class FixUp {
 
   /**
    * Create a FixUp for a duplicate or circular reference.
-   * 
+   *
    * @param fixupLocation a List of String|Integer's representing references to locate the place
    *          where this fixup entry needs to be created.
    * @param originalLocation List of String|Integer's representing references to locate the original
@@ -77,7 +77,7 @@ public class FixUp {
    * Convert this FixUp to a JSONArray for transmission over JSON-RPC. The JSONArray will contain
    * two sub JSONArrays, the first one representing the fixup location and the 2nd one representing
    * the original location.
-   * 
+   *
    * @return the FixUp represented as a JSONArray.
    */
   public JSONArray toJSONArray() {

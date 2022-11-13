@@ -115,7 +115,7 @@ public class JSONRPCResult {
   /**
    * Optional fixup entries to run against the result in order to reconstitute duplicate and / or
    * circular references that were detected. This is a List of FixUp objects.
-   * 
+   *
    * @see FixUp
    */
   private List<FixUp> fixUps;
@@ -141,7 +141,7 @@ public class JSONRPCResult {
 
   /**
    * Creates a new JSONRPCResult with fixUps.
-   * 
+   *
    * @param errorCode An error code if a problem occured (CODE_SUCCESS otherwise)
    * @param id The id of the response.
    * @param o The result of the call
@@ -157,7 +157,7 @@ public class JSONRPCResult {
 
   /**
    * Gets the error code
-   * 
+   *
    * @return the error code
    */
   public int getErrorCode() {
@@ -166,7 +166,7 @@ public class JSONRPCResult {
 
   /**
    * Gets the id of the response.
-   * 
+   *
    * @return the id of the response.
    */
   public Object getId() {
@@ -175,7 +175,7 @@ public class JSONRPCResult {
 
   /**
    * Gets the result of the call
-   * 
+   *
    * @return the result
    */
   public Object getResult() {

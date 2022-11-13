@@ -47,7 +47,7 @@ class LocalArgResolverData {
 
   /**
    * Create a new data holder
-   * 
+   *
    * @param argResolver The user defined class that resolves the and returns the method argument
    *          using transport context information
    * @param argClazz The class to be resolved locally
@@ -75,7 +75,7 @@ class LocalArgResolverData {
 
   /**
    * Whether this object's context can understand the given object
-   * 
+   *
    * @param context The object to test
    * @return Whether the contextInterface isAssignableFrom the given object
    */
@@ -85,7 +85,7 @@ class LocalArgResolverData {
 
   /**
    * Gets the argResolver
-   * 
+   *
    * @return LocalArgResolver
    */
   LocalArgResolver getArgResolver() {

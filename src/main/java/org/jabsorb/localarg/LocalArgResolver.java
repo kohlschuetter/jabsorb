@@ -32,10 +32,10 @@ package org.jabsorb.localarg;
 public interface LocalArgResolver {
   /**
    * Resolve an argument locally using the given context information.
-   * 
+   *
    * @param context The transport context (the HttpServletRequest object in the case of the HTTP
    *          transport).
-   * 
+   *
    * @return The run time instance that is resolved
    * @throws LocalArgResolveException when unable to resolve context information into the local
    *           argument object.

@@ -34,7 +34,7 @@ import org.json.JSONObject;
 public abstract class RequestParser {
   /**
    * Unmarshalls an value from a JSONObject stored under a specific key.
-   * 
+   *
    * @param object The object which contains the value to unmarshall.
    * @param key The key under which the object stores the value to unmarshall.
    * @return An unmarshalled Object
@@ -52,7 +52,7 @@ public abstract class RequestParser {
 
   /**
    * Unmarshalls an array from a JSONObject
-   * 
+   *
    * @param object The object to unmarshall
    * @param key The key in which the array exists within the JSONObject
    * @return An array of values which may contian circular references. Warning: do not call toString
@@ -64,7 +64,7 @@ public abstract class RequestParser {
 
   /**
    * Unmarshalls an inner JSONObject from within another JSONObject
-   * 
+   *
    * @param object The request from the client may contain circular references
    * @param key The key in which the object exists within the JSONObject
    * @return An object which may contian circular references. Warning: do not call toString on this

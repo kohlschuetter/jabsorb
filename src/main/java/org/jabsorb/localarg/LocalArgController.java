@@ -73,7 +73,7 @@ public class LocalArgController {
   /**
    * Determine if an argument of the specified class type can be resolved to a local argument that
    * is filled in on the server prior to being invoked.
-   * 
+   *
    * @param param local argument class.
    * @return true if the class can be resolved to a local argument.
    */
@@ -87,7 +87,7 @@ public class LocalArgController {
    * Registers a Class to be removed from the exported method signatures and instead be resolved
    * locally using context information from the transport. TODO: make the order that the variables
    * are given to this function the same as the variables are given to LocalArgResolverData
-   * 
+   *
    * @param argClazz The class to be resolved locally
    * @param argResolver The user defined class that resolves the and returns the method argument
    *          using transport context information
@@ -111,7 +111,7 @@ public class LocalArgController {
 
   /**
    * Using the caller's context, resolve a given method call parameter to a local argument.
-   * 
+   *
    * @param context callers context. In an http servlet environment, this will contain the servlet
    *          request and response objects.
    * @param param class type parameter to resolve to a local argument.
@@ -137,7 +137,7 @@ public class LocalArgController {
 
   /**
    * Unregisters a LocalArgResolver</b>.
-   * 
+   *
    * @param argClazz The previously registered local class
    * @param argResolver The previously registered LocalArgResolver object
    * @param contextInterface The previously registered transport Context interface.

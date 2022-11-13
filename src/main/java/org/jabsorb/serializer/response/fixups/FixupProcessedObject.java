@@ -36,7 +36,7 @@ import org.jabsorb.serializer.ProcessedObject;
 public class FixupProcessedObject extends ProcessedObject {
   /**
    * Create a new FixupProcessedObject
-   * 
+   *
    * @param object The processed incoming object. When marshalling, this is the java object that is
    *          being marshalled to json, when unmarshalling, this is the json object being marshalled
    *          to java.
@@ -61,7 +61,7 @@ public class FixupProcessedObject extends ProcessedObject {
   /**
    * Get the parent ProcessedObject of this ProcessedObject. It can be null if this is the root of
    * the JSON Object being processed.
-   * 
+   *
    * @return the parent ProcessedObject of this ProcessedObject or null if this is the root of the
    *         Object hierarchy being processed.
    */
@@ -72,7 +72,7 @@ public class FixupProcessedObject extends ProcessedObject {
   /**
    * Get the reference name String | Integer of this ProcessedObject. This is the reference such
    * that parent[ref] refers to this object.
-   * 
+   *
    * @return the reference Integer|String identifying this Object in its parent.
    */
   public Object getRef() {
@@ -82,7 +82,7 @@ public class FixupProcessedObject extends ProcessedObject {
   /**
    * Set the reference name String | Integer of this ProcessedObject. This is the reference such
    * that parent[ref] refers to this object.
-   * 
+   *
    * @param ref the reference Integer|String identifying this Object in its parent.
    */
   public void setRef(Object ref) {
@@ -91,7 +91,7 @@ public class FixupProcessedObject extends ProcessedObject {
 
   /**
    * Get the reference "path" location for where this object was originally located.
-   * 
+   *
    * @return a List of Integer | String objects representing the path to the location of this object
    *         in the JSON hierarchy.
    */

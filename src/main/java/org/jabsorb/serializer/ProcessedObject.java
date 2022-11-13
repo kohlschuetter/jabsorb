@@ -37,7 +37,7 @@ public class ProcessedObject {
 
   /**
    * Creates a new ProcessedObject
-   * 
+   *
    * @param object The processed incoming object. When marshalling, this is the java object that is
    *          being marshalled to json, when unmarshalling, this is the json object being marshalled
    *          to java.
@@ -57,7 +57,7 @@ public class ProcessedObject {
   /**
    * Set the serialized java Object that this ProcessedObject represents. Only used when
    * unmarshalling, to re-connect circular references/duplicates that were fixed up.
-   * 
+   *
    * @param serialized java Object that the json object represented by this ProcessedObject is being
    *          serialized to.
    */
@@ -68,7 +68,7 @@ public class ProcessedObject {
   /**
    * Get the serialized java Object that this ProcessedObject represents. Only used when
    * unmarshalling, to re-connect circular references/duplicates that were fixed up.
-   * 
+   *
    * @return java Object that the json object represented by this ProcessedObject is being
    *         serialized to.
    */
@@ -78,7 +78,7 @@ public class ProcessedObject {
 
   /**
    * Get the actual Object that this ProcessedObject wraps.
-   * 
+   *
    * @return the actual Object that this ProcessedObject wraps.
    */
   public Object getObject() {

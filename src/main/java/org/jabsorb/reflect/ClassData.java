@@ -59,7 +59,7 @@ public class ClassData {
 
   /**
    * Creates a new ClassData
-   * 
+   *
    * @param clazz The class that this ClassData maps.
    * @param methodMap Map of public instance methods. Static methods do not go here. Key is a
    *          AccessibleObjectKey object, value is an List of Method.
@@ -80,7 +80,7 @@ public class ClassData {
 
   /**
    * Get the class that this ClassData maps.
-   * 
+   *
    * @return the class that this ClassData maps.
    */
   public Class<?> getClazz() {
@@ -90,7 +90,7 @@ public class ClassData {
   /**
    * Get the Map of public constructors that can be invoked for the class. The key of the Map is a
    * AccessibleObjectKey object and the value is a list of Constructor objects.
-   * 
+   *
    * @return Map of static methods that can be invoked for the class.
    */
   public Map<AccessibleObjectKey, Set<AccessibleObject>> getConstructorMap() {
@@ -102,7 +102,7 @@ public class ClassData {
    * This is *NOT* just the method map that was passed in the constructor, but is concatenated with
    * the static methods as well. The keys of the Map will be AccessibleObjectKey objects and the
    * values will be a List of Method objects.
-   * 
+   *
    * @return Map of public instance methods which can be invoked for the class. this ClassData.
    */
   public Map<AccessibleObjectKey, Set<AccessibleObject>> getMethodMap() {
@@ -112,7 +112,7 @@ public class ClassData {
   /**
    * Get the Map of public static methods that can be invoked for the class. The key of the Map is a
    * AccessibleObjectKey object and the value is a list of Method objects.
-   * 
+   *
    * @return Map of static methods that can be invoked for the class.
    */
   public Map<AccessibleObjectKey, Set<AccessibleObject>> getStaticMethodMap() {

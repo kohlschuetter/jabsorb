@@ -41,7 +41,7 @@ public class RemoteException extends FailedResult {
 
   /**
    * Creates a new RemoteException
-   * 
+   *
    * @param id The id of the response
    * @param error The Exception which was thrown.
    */

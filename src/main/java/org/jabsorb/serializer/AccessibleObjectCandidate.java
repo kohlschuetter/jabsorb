@@ -89,7 +89,7 @@ public class AccessibleObjectCandidate {
 
   /**
    * Gets the parameter types for the method/constructor
-   * 
+   *
    * @return The parameter types
    */
   public Class<?>[] getParameterTypes() {
@@ -98,7 +98,7 @@ public class AccessibleObjectCandidate {
 
   /**
    * Gets the method/constructor
-   * 
+   *
    * @return Method or Constructor
    */
   public AccessibleObject getAccessibleObject() {

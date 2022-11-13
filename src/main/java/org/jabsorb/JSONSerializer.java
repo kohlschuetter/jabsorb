@@ -246,7 +246,7 @@ public class JSONSerializer implements Serializable {
 
   /**
    * Sets the request parser
-   * 
+   *
    * @param requestParser The new request parser
    */
   public void setRequestParser(final RequestParser requestParser) {

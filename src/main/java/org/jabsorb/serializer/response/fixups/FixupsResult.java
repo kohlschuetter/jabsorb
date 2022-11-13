@@ -33,21 +33,21 @@ import org.json.JSONObject;
 
 /**
  * A successful result that contains fixups.
- * 
+ *
  * @author William Becker
  */
 public class FixupsResult extends SuccessfulResult {
   /**
    * Optional fixup entries to run against the result in order to reconstitute duplicate and / or
    * circular references that were detected. This is a List of FixUp objects.
-   * 
+   *
    * @see FixUp
    */
   private final Collection<FixUp> fixUps;
 
   /**
    * Creates a new FixupsResult
-   * 
+   *
    * @param id The id of the response.
    * @param o The main data to return.
    * @param fixups The fixups to return.

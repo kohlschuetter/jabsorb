@@ -30,7 +30,7 @@ import org.jabsorb.serializer.MarshallException;
 
 /**
  * Use this class to make fixups for circluar references and non-primative duplicates.
- * 
+ *
  * @author William Becker
  */
 public class FixupCircRefAndNonPrimitiveDupes extends FixupCircRefAndDup {

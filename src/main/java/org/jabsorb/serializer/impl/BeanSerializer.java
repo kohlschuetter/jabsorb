@@ -88,21 +88,21 @@ public class BeanSerializer extends AbstractSerializer {
 
   /**
    * Classes that this can serialise.
-   * 
+   *
    * TODO: Yay for bloat!
    */
   private static Class<?>[] _serializableClasses = new Class[] {};
 
   /**
    * Classes that this can serialise to.
-   * 
+   *
    * TODO: Yay for bloat!
    */
   private static Class<?>[] _JSONClasses = new Class[] {};
 
   /**
    * Analyses a bean, returning a BeanData with the data extracted from it.
-   * 
+   *
    * @param clazz The class of the bean to analyse
    * @return A populated BeanData
    * @throws IntrospectionException If a problem occurs during getting the bean info.
@@ -131,7 +131,7 @@ public class BeanSerializer extends AbstractSerializer {
 
   /**
    * Gets the bean data from cache if possible, otherwise analyses the bean.
-   * 
+   *
    * @param clazz The class of the bean to analyse
    * @return A populated BeanData
    * @throws IntrospectionException If a problem occurs during getting the bean info.

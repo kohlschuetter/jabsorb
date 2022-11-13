@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 /**
  * Contains data for each flatten object
- * 
+ *
  * @author William Becker
  */
 class FlatProcessedObject extends ProcessedObject {
@@ -40,7 +40,7 @@ class FlatProcessedObject extends ProcessedObject {
 
   /**
    * Creates a new FlatProcessedObject
-   * 
+   *
    * @param object The object that is being processed
    * @param index The unique identifier for the object
    */
@@ -51,7 +51,7 @@ class FlatProcessedObject extends ProcessedObject {
 
   /**
    * Creates a new FlatProcessedObject. The index must be set later.
-   * 
+   *
    * @param object The object that is being processed
    */
   public FlatProcessedObject(Object object) {
@@ -61,7 +61,7 @@ class FlatProcessedObject extends ProcessedObject {
 
   /**
    * Sets the index
-   * 
+   *
    * @param index The value the index should take
    */
   public void setIndexValue(String index) {
@@ -70,7 +70,7 @@ class FlatProcessedObject extends ProcessedObject {
 
   /**
    * Gets the index for the object. Note that it may not be set yet.
-   * 
+   *
    * @return The index for the object
    */
   public Index getIndex() {
@@ -89,7 +89,7 @@ class FlatProcessedObject extends ProcessedObject {
   /**
    * Since getSerialized() gets the index if necessary, this is used to get the real serialized
    * value when it is directly needed.
-   * 
+   *
    * @return The actual serialized value.
    */
   public Object getActualSerialized() {

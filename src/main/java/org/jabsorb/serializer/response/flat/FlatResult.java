@@ -33,7 +33,7 @@ import org.json.JSONObject;
 
 /**
  * Puts all the objects and indexes into a results
- * 
+ *
  * @author William Becker
  */
 class FlatResult extends SuccessfulResult {
@@ -44,7 +44,7 @@ class FlatResult extends SuccessfulResult {
 
   /**
    * Creates a new FlatResult
-   * 
+   *
    * @param id The id of the message
    * @param jsonResult The main message to send
    * @param map Contains the other objects to put in the result

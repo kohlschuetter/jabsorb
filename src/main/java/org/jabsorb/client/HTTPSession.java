@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Transport session straightforwardly implemented in HTTP. As compared to the built-in
  * URLConnectionSession, it allows more control over HTTP transport parameters, for example, proxies
  * and the support for HTTPS.
- * 
+ *
  * <p>
  * To use this transport you need to first register it in the TransportRegistry, for example:
  * <p>
@@ -115,7 +115,7 @@ public class HTTPSession implements Session {
 
   /**
    * Expose commons-httpclient host configuration, for setting configuration parameters like proxy.
-   * 
+   *
    * @return host configuration of the current HttpClient object
    */
   public HostConfiguration getHostConfiguration() {

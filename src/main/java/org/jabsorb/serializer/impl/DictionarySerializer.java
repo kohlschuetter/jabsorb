@@ -40,7 +40,7 @@ import org.json.JSONObject;
 
 /**
  * Serialises Hashtables
- * 
+ *
  * TODO: why not use a map serialiser?
  */
 public class DictionarySerializer extends AbstractSerializer {

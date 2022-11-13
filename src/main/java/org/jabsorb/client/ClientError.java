@@ -36,7 +36,7 @@ public class ClientError extends RuntimeException {
 
   /**
    * Creates a new ClientError
-   * 
+   *
    * @param message the detail message.
    */
   public ClientError(String message) {
@@ -45,7 +45,7 @@ public class ClientError extends RuntimeException {
 
   /**
    * Creates a new ClientError
-   * 
+   *
    * @param ex the underlying cause of the exception
    */
   public ClientError(Throwable ex) {

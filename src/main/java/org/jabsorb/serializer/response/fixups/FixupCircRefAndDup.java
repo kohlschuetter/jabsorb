@@ -31,7 +31,7 @@ import org.jabsorb.serializer.MarshallException;
 /**
  * Use this class to make fixups for circular references and all duplicates (primitive and
  * non-primitive).
- * 
+ *
  * @author William Becker
  */
 public class FixupCircRefAndDup extends FixupCircRefOnly {

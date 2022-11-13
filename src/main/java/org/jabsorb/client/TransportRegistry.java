@@ -39,7 +39,7 @@ public class TransportRegistry {
   public interface SessionFactory {
     /**
      * Creates the new session
-     * 
+     *
      * @param uri URI used to open this session
      * @return The new session
      */
@@ -53,7 +53,7 @@ public class TransportRegistry {
 
   /**
    * Use this function when there is no IOC container to rely on creating the factory.
-   * 
+   *
    * @return singleton instance of the class, created if necessary.
    */
   public synchronized static TransportRegistry i() {
@@ -77,7 +77,7 @@ public class TransportRegistry {
 
   /**
    * Create a session from 'uriString' using one of registered transports.
-   * 
+   *
    * @param uriString The uri of the session
    * @return a URLConnectionSession
    */
@@ -97,7 +97,7 @@ public class TransportRegistry {
 
   /**
    * Register a factory for a transport type
-   * 
+   *
    * @param scheme The transport type
    * @param factory The session factory for the scheme
    */

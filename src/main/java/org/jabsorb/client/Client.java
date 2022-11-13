@@ -49,7 +49,7 @@ public class Client implements InvocationHandler {
 
   /**
    * Gets the id of the next message
-   * 
+   *
    * @return The id for the next message.
    */
   private synchronized int getId() {
@@ -73,7 +73,7 @@ public class Client implements InvocationHandler {
 
   /**
    * Create a client given a session
-   * 
+   *
    * @param session transport session to use for this connection
    */
   public Client(Session session) {
@@ -91,7 +91,7 @@ public class Client implements InvocationHandler {
 
   /**
    * Dispose of the proxy that is no longer needed
-   * 
+   *
    * @param proxy The proxy to close
    */
   public void closeProxy(Object proxy) {
@@ -100,7 +100,7 @@ public class Client implements InvocationHandler {
 
   /**
    * Allow access to the serializer
-   * 
+   *
    * @return The serializer for this class
    */
   public JSONSerializer getSerializer() {
@@ -124,7 +124,7 @@ public class Client implements InvocationHandler {
 
   /**
    * Create a proxy for communicating with the remote service.
-   * 
+   *
    * @param key the remote object key
    * @param klass the class of the interface the remote object should adhere to
    * @return created proxy
@@ -138,7 +138,7 @@ public class Client implements InvocationHandler {
 
   /**
    * Generate and throw exception based on the data in the 'responseMessage'
-   * 
+   *
    * @param responseMessage The error message
    * @throws JSONException Rethrows the exception in the repsonse.
    */
@@ -156,7 +156,7 @@ public class Client implements InvocationHandler {
 
   /**
    * Invokes a method for the ciient.
-   * 
+   *
    * @param objectTag (optional) the name of the object to invoke the method on. May be null.
    * @param methodName The name of the method to call.
    * @param args The arguments to the method.

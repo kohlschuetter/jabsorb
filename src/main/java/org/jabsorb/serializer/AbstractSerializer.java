@@ -46,7 +46,7 @@ public abstract class AbstractSerializer implements Serializer {
   /**
    * Default check that simply tests the given serializeable class arrays to determine if the pair
    * of classes can be serialized/deserialized from this Serializer.
-   * 
+   *
    * @param clazz Java type to check if this Serializer can handle.
    * @param jsonClazz JSON type to check this Serializer can handle.
    * @return true If this Serializer can serialize/deserialize the given java,json pair.
@@ -78,7 +78,7 @@ public abstract class AbstractSerializer implements Serializer {
 
   /**
    * Set the JSONSerialiser that spawned this object.
-   * 
+   *
    * @param ser The parent serialiser.
    */
   @Override
@@ -89,7 +89,7 @@ public abstract class AbstractSerializer implements Serializer {
   /**
    * Marshalls class hints onto an object, if appropriate (ie check
    * <code>getMarshallClassHints()</code>).
-   * 
+   *
    * @param toAddTo The object to add the hints to.
    * @param objectWithClass The object from which the class should be taken
    * @return the object to which the hints were added, for use with chaining.

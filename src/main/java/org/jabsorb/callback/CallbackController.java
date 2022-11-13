@@ -61,7 +61,7 @@ public class CallbackController implements Serializable {
 
   /**
    * Calls the 'invocation Error' callback handler.
-   * 
+   *
    * @param context The transport context (the HttpServletRequest object in the case of the HTTP
    *          transport).
    * @param instance The object instance or null if it is a static method.
@@ -88,7 +88,7 @@ public class CallbackController implements Serializable {
 
   /**
    * Calls the 'postInvoke' callback handler.
-   * 
+   *
    * @param context The transport context (the HttpServletRequest object in the case of the HTTP
    *          transport).
    * @param instance The object instance or null if it is a static method.
@@ -109,7 +109,7 @@ public class CallbackController implements Serializable {
 
   /**
    * Calls the 'preInvoke' callback handler.
-   * 
+   *
    * @param context The transport context (the HttpServletRequest object in the case of the HTTP
    *          transport).
    * @param instance The object instance or null if it is a static method.
@@ -130,7 +130,7 @@ public class CallbackController implements Serializable {
 
   /**
    * Registers a callback to be called before and after method invocation
-   * 
+   *
    * @param callback The object implementing the InvocationCallback Interface
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
@@ -148,7 +148,7 @@ public class CallbackController implements Serializable {
 
   /**
    * Unregisters a callback
-   * 
+   *
    * @param callback The previously registered InvocationCallback object
    * @param contextInterface The previously registered transport Context interface.
    */

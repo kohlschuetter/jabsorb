@@ -40,7 +40,7 @@ public class SettableFutureTest extends TestCase {
 
   /**
    * Test method for {@link org.jabsorb.client.async.SettableFuture#get()}.
-   * 
+   *
    * @throws Exception
    */
   public void testGet() throws Exception {

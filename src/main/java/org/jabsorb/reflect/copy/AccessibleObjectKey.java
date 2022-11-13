@@ -40,7 +40,7 @@ public class AccessibleObjectKey {
 
   /**
    * Create a MethodKey for a given method name and the number of arguments that that method takes.
-   * 
+   *
    * @param methodName Method name.
    * @param numArgs The number of arguments the method takes.
    */
@@ -65,7 +65,7 @@ public class AccessibleObjectKey {
 
   /**
    * Get the method name.
-   * 
+   *
    * @return the method name.
    */
   public String getMethodName() {
@@ -74,7 +74,7 @@ public class AccessibleObjectKey {
 
   /**
    * Get the number of arguments that the method takes.
-   * 
+   *
    * @return the number of arguments that the method takes.
    */
   public int getNumArgs() {

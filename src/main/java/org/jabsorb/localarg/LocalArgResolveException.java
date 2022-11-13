@@ -36,7 +36,7 @@ public class LocalArgResolveException extends Exception {
 
   /**
    * Creates a new LocalArgResolveException
-   * 
+   *
    * @param msg The message to display
    */
   public LocalArgResolveException(String msg) {

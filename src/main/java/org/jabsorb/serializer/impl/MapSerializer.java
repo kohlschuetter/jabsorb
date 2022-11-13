@@ -41,7 +41,7 @@ import org.json.JSONObject;
 
 /**
  * Serialises Maps
- * 
+ *
  * TODO: if this serialises a superclass does it need to also specify the subclasses?
  */
 public class MapSerializer extends AbstractSerializer {

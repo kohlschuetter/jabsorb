@@ -38,7 +38,7 @@ import java.util.concurrent.Future;
 public interface AsyncResultCallback<S, R, C> {
   /**
    * Method to be called when the asynchronous operation is completed
-   * 
+   *
    * @param source The source of the callback, usually the object that contains the asynchronous
    *          operation
    * @param result The result of the operation
