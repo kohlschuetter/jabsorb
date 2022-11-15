@@ -78,14 +78,32 @@ public abstract class JSONRPCResult {
     return id;
   }
 
-  @Override
-  public String toString() {
-
+  /**
+   * Converts the result to a JSON string, optionally adding a {@code serverURL} parameter,
+   * indicating that the receiving JSON-RPC client should switch over to using that new URL for
+   * subsequent calls.
+   * 
+   * The new serverURL can either be a fully qualified URL or a relative URL, such as
+   * "/json?someArgs=123". In the latter case, the URL is to be updated relative to the current URL.
+   * 
+   * @param newServerURL The new serverURL to be used by the client.
+   * @return a string representation of this JSON object.
+   */
+  public String toJSONString(String newServerURL) {
     try {
-      return createOutput().toString();
+      JSONObject obj = createOutput();
+      if (newServerURL != null) {
+        obj.put("serverURL", newServerURL);
+      }
+      return obj.toString();
     } catch (JSONException e) {
       // this would have been a null pointer exception in the previous json.org library.
       throw (RuntimeException) new RuntimeException(e.getMessage()).initCause(e);
     }
+  }
+
+  @Override
+  public String toString() {
+    return toJSONString(null);
   }
 }
