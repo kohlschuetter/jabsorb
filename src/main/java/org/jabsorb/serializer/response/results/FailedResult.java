@@ -105,6 +105,11 @@ public class FailedResult extends JSONRPCResult {
   private final Object error;
 
   /**
+   * The error message.
+   */
+  private String message;
+
+  /**
    * Creates a new FailedResult.
    *
    * @param errorCode The error code. This should be one of the error codes defined in this class.
@@ -112,8 +117,20 @@ public class FailedResult extends JSONRPCResult {
    * @param error The error that caused the failure.
    */
   public FailedResult(int errorCode, Object id, Object error) {
+    this(errorCode, id, error == null ? null : error.toString(), error);
+  }
+
+  /**
+   * Creates a new FailedResult.
+   *
+   * @param errorCode The error code. This should be one of the error codes defined in this class.
+   * @param id The id of the response.
+   * @param error The error that caused the failure.
+   */
+  public FailedResult(int errorCode, Object id, String message, Object error) {
     super(id);
     this.errorCode = errorCode;
+    this.message = message;
     this.error = error;
   }
 
@@ -122,7 +139,12 @@ public class FailedResult extends JSONRPCResult {
     JSONObject o = super._createOutput();
     JSONObject err = new JSONObject();
     err.put("code", errorCode);
-    err.put("msg", error);
+    err.put("message", message == null ? "" : message);
+    if (error != null) {
+      if (!(error instanceof CharSequence)) {
+        err.put("data", error);
+      }
+    }
     o.put("error", err);
     return o;
   }

@@ -146,8 +146,8 @@ public class Client implements InvocationHandler {
     JSONObject error = (JSONObject) responseMessage.get("error");
     if (error != null) {
       Integer code = error.has("code") ? error.getInt("code") : 0;
-      String trace = error.has("trace") ? error.getString("trace") : null;
-      String msg = error.has("msg") ? error.getString("msg") : null;
+      String trace = error.has("data") ? error.getString("data") : null;
+      String msg = error.has("message") ? error.getString("message") : null;
       throw new ErrorResponse(code, msg, trace);
     }
     throw new ErrorResponse(FailedResult.CODE_ERR_PARSE, "Unknown response:" + responseMessage
