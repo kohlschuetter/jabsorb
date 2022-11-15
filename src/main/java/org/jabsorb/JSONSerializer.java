@@ -358,7 +358,6 @@ public class JSONSerializer implements Serializable {
    *           thrown: This can only happen if there is an internal problem with the code
    */
   public void registerDefaultSerializers() throws Exception {
-
     // the order of registration is important:
     // when trying to marshall java objects into json, first,
     // a direct match (by Class) is looked for in the serializeableMap
@@ -367,19 +366,9 @@ public class JSONSerializer implements Serializable {
     // serializerList)
     // for the first serializer that canSerialize the java class type.
 
-    registerSerializer(new RawJSONArraySerializer());
-    registerSerializer(new RawJSONObjectSerializer());
-    registerSerializer(new BeanSerializer());
-    registerSerializer(new ArraySerializer());
-    registerSerializer(new DictionarySerializer());
-    registerSerializer(new MapSerializer());
-    registerSerializer(new SetSerializer());
-    registerSerializer(new ListSerializer());
-    registerSerializer(new DateSerializer());
-    registerSerializer(new StringSerializer());
-    registerSerializer(new NumberSerializer());
-    registerSerializer(new BooleanSerializer());
-    registerSerializer(new PrimitiveSerializer());
+    for (Serializer s : getDefaultSerializers()) {
+      registerSerializer(s);
+    }
   }
 
   /**
