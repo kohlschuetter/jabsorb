@@ -82,10 +82,10 @@ public abstract class JSONRPCResult {
    * Converts the result to a JSON string, optionally adding a {@code serverURL} parameter,
    * indicating that the receiving JSON-RPC client should switch over to using that new URL for
    * subsequent calls.
-   * 
+   *
    * The new serverURL can either be a fully qualified URL or a relative URL, such as
    * "/json?someArgs=123". In the latter case, the URL is to be updated relative to the current URL.
-   * 
+   *
    * @param newServerURL The new serverURL to be used by the client.
    * @return a string representation of this JSON object.
    */
