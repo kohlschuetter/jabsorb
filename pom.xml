@@ -16,17 +16,14 @@
     <packaging>jar</packaging>
     <name>Jabsorb</name>
     <url>http://jabsorb.org</url>
-
     <parent>
         <groupId>com.kohlschutter</groupId>
         <artifactId>kohlschutter-parent</artifactId>
         <version>1.5.2-SNAPSHOT</version>
         <relativePath>../kohlschutter-parent/pom.xml</relativePath>
     </parent>
-
     <properties>
         <kohlschutter.project.base.directory>${project.basedir}</kohlschutter.project.base.directory>
-
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,7 +43,6 @@
     <scm>
         <url>https://github.com/Servoy/jabsorb</url>
     </scm>
-
     <build>
         <plugins>
             <!-- plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
@@ -134,7 +130,6 @@ org.slf4j</Import-Package>
 				</executions>
 			</plugin>
 			-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -143,7 +138,6 @@ org.slf4j</Import-Package>
                     <skip>true</skip>
                 </configuration>
             </plugin>
-
             <plugin>
                 <!-- invoke with: mvn formatter:format -->
                 <groupId>net.revelc.code.formatter</groupId>
@@ -154,7 +148,6 @@ org.slf4j</Import-Package>
                     </includes>
                 </configuration>
             </plugin>
-
             <plugin>
                 <!-- invoke with: mvn license:format -->
                 <groupId>com.mycila</groupId>
@@ -180,7 +173,6 @@ org.slf4j</Import-Package>
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <!-- Runtime dependencies -->
         <dependency>
@@ -193,7 +185,6 @@ org.slf4j</Import-Package>
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.5.0</version>
         </dependency>
-
         <!-- Optional runtime dependencies -->
         <dependency>
             <!-- Replacement for commons-logging required by httpclient -->
@@ -212,14 +203,7 @@ org.slf4j</Import-Package>
                 </exclusion>
             </exclusions>
         </dependency>
-
         <!-- Test dependencies -->
-        <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty</artifactId>
-            <version>6.1.6</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -227,17 +211,39 @@ org.slf4j</Import-Package>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jsp-2.1</artifactId>
-            <version>6.1.6</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-webapp</artifactId>
+            <version>12.0.0.alpha3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-servlet</artifactId>
+            <version>12.0.0.alpha3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-apache-jsp</artifactId>
+            <version>12.0.0.alpha3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>12.0.0.alpha3</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.kohlschutter</groupId>
             <artifactId>compiler-annotations</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>

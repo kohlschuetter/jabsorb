@@ -40,11 +40,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jabsorb.JSONRPCBridge;
 import org.jabsorb.callback.InvocationCallback;
 import org.json.JSONObject;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Server side unit tests, used by unit.jsp / unit.js.

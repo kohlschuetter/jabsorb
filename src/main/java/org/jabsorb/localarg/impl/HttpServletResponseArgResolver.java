@@ -24,10 +24,10 @@
  */
 package org.jabsorb.localarg.impl;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.jabsorb.localarg.LocalArgResolveException;
 import org.jabsorb.localarg.LocalArgResolver;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A LocalArgResolver implementation that is registered by default on the JSONRPCBridge and will

@@ -25,11 +25,11 @@
 package org.jabsorb.test;
 
 import org.apache.jasper.servlet.JspServlet;
+import org.eclipse.jetty.ee10.servlet.DefaultServlet;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
+import org.eclipse.jetty.server.Server;
 import org.jabsorb.JSONRPCServlet;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.DefaultServlet;
-import org.mortbay.jetty.servlet.ServletHolder;
 
 /**
  * A basic embedded jetty implementation which runs the jabsorb webapp
@@ -79,9 +79,9 @@ public class JabsorbTestServer {
    * Puts the necessary servlets on the server
    */
   private void createBaseContext() {
-    Context context = new Context(this.server, BASE_CONTEXT, Context.SESSIONS);
+    WebAppContext context = new WebAppContext();
     context.setContextPath(BASE_CONTEXT);
-    context.setResourceBase("webapps/jsonrpc/");
+    context.setBaseResourceAsString("webapps/jsonrpc/");
     context.setAttribute("copyWebDir", "true");
     ServletHolder defaultServlet = new ServletHolder(new DefaultServlet());
     context.addServlet(defaultServlet, "/");
