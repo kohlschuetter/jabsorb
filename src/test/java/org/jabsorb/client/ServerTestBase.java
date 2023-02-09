@@ -24,8 +24,6 @@
  */
 package org.jabsorb.client;
 
-import java.util.Collections;
-
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
@@ -38,7 +36,7 @@ import junit.framework.TestCase;
 /**
  * Test case that requires starting the jabsorb server
  */
-public class ServerTestBase extends TestCase {
+public abstract class ServerTestBase extends TestCase {
 
   /**
    * Encapsulate Jetty hosting server initialization so that we could start it only once during the
@@ -61,7 +59,7 @@ public class ServerTestBase extends TestCase {
       jsonRpcServlet.setInitParameter("auto-session-bridge", "0");
       context.addServlet(jsonRpcServlet, "/*");
       context.setServer(server);
-      server.addHandler(context);
+      server.setHandler(context);
       server.start();
     }
   }
