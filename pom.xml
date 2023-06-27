@@ -87,6 +87,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <supportIncrementalBuild>true</supportIncrementalBuild>
                     <instructions>
                         <Bundle-SymbolicName>jabsorb;singleton:=true</Bundle-SymbolicName>
                         <Export-Package>org.json,org.jabsorb.callback,org.jabsorb.localarg.imp
