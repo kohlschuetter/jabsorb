@@ -25,6 +25,9 @@
 package org.jabsorb.serializer.impl;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
@@ -45,15 +48,16 @@ public class NumberSerializer extends AbstractSerializer {
    * Classes that this can serialise.
    */
   private static Class<?>[] _serializableClasses = new Class[] {
-      Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class,
-      BigDecimal.class};
+      Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class, int.class,
+      byte.class, short.class, long.class, float.class, double.class, BigDecimal.class,};
 
   /**
    * Classes that this can serialise to.
    */
   private static Class<?>[] _JSONClasses = new Class[] {
-      Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class,
-      BigDecimal.class, String.class};
+      Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class, int.class,
+      byte.class, short.class, long.class, float.class, double.class, BigDecimal.class,
+      String.class};
 
   @Override
   public Class<?>[] getSerializableClasses() {
@@ -65,6 +69,38 @@ public class NumberSerializer extends AbstractSerializer {
     return _JSONClasses;
   }
 
+  private static final Map<Class<?>, Function<Object, Object>> TO_NUMBER_MAP = new HashMap<>();
+
+  static {
+    registerConverter(Integer.class, int.class, (v) -> v instanceof Number ? ((Number) v).intValue()
+        : Integer.parseInt(v.toString()));
+    registerConverter(Long.class, long.class, (v) -> v instanceof Number ? ((Number) v).longValue()
+        : Integer.parseInt(v.toString()));
+    registerConverter(Short.class, short.class, (v) -> v instanceof Number ? ((Number) v)
+        .shortValue() : Integer.parseInt(v.toString()));
+    registerConverter(Byte.class, byte.class, (v) -> v instanceof Number ? ((Number) v).byteValue()
+        : Integer.parseInt(v.toString()));
+    registerConverter(Float.class, float.class, (v) -> v instanceof Number ? ((Number) v)
+        .floatValue() : Integer.parseInt(v.toString()));
+    registerConverter(Double.class, double.class, (v) -> v instanceof Number ? ((Number) v)
+        .doubleValue() : Integer.parseInt(v.toString()));
+    registerConverter(BigDecimal.class, (v) -> v instanceof BigDecimal ? (BigDecimal) v
+        : v instanceof Number ? new BigDecimal(((Number) v).doubleValue()) : new BigDecimal(v
+            .toString()));
+  }
+
+  private static void registerConverter(Class<?> class1, Function<Object, Object> function) {
+    registerConverter(class1, null, function);
+  }
+
+  private static void registerConverter(Class<?> class1, Class<?> class2,
+      Function<Object, Object> function) {
+    TO_NUMBER_MAP.put(class1, function);
+    if (class2 != null) {
+      TO_NUMBER_MAP.put(class2, function);
+    }
+  }
+
   /**
    * Converts a javascript object to a Java number
    *
@@ -74,46 +110,12 @@ public class NumberSerializer extends AbstractSerializer {
    * @throws NumberFormatException If clazz is numeric and jso does not parse into a number.
    */
   public Object toNumber(Class<?> clazz, Object jso) throws NumberFormatException {
-    // TODO: isn't this largely a dupe of PrimitiveSerialiser.toPrimitive()?
-    // We should probably have just one method that does this, or have one use
-    // the other
-    if (clazz == Integer.class) {
-      if (jso instanceof String) {
-        return Integer.valueOf((String) jso);
-      }
-      return Integer.valueOf(((Number) jso).intValue());
-    } else if (clazz == Long.class) {
-      if (jso instanceof String) {
-        return Long.valueOf((String) jso);
-      }
-      return Long.valueOf(((Number) jso).longValue());
-    } else if (clazz == Short.class) {
-      if (jso instanceof String) {
-        return Short.valueOf((String) jso);
-      }
-      return Short.valueOf(((Number) jso).shortValue());
-    } else if (clazz == Byte.class) {
-      if (jso instanceof String) {
-        return Byte.valueOf((String) jso);
-      }
-      return Byte.valueOf(((Number) jso).byteValue());
-    } else if (clazz == Float.class) {
-      if (jso instanceof String) {
-        return Float.valueOf((String) jso);
-      }
-      return Float.valueOf(((Number) jso).floatValue());
-    } else if (clazz == Double.class) {
-      if (jso instanceof String) {
-        return Double.valueOf((String) jso);
-      }
-      return Double.valueOf(((Number) jso).doubleValue());
-    } else if (clazz == BigDecimal.class) {
-      if (jso instanceof String) {
-        return new BigDecimal((String) jso);
-      }
-      return new BigDecimal(((Number) jso).doubleValue()); // hmmm?
+    Function<Object, Object> function = TO_NUMBER_MAP.get(clazz);
+    if (jso == null || function == null) {
+      return null;
+    } else {
+      return function.apply(jso);
     }
-    return null;
   }
 
   @Override
