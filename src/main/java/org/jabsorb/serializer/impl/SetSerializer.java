@@ -23,6 +23,7 @@
  * limitations under the License.
  */
 package org.jabsorb.serializer.impl;
+//CPD-OFF
 
 import java.util.AbstractSet;
 import java.util.Collection;

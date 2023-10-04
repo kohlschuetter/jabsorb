@@ -29,6 +29,8 @@ import org.jabsorb.serializer.response.FixUp;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Circular references are handled by generating an extra parameter, fixups, which contains an array
@@ -36,6 +38,8 @@ import org.json.JSONObject;
  * duplicates.
  */
 public class FixupsCircularReferenceHandler extends RequestParser {
+  private static final Logger LOG = LoggerFactory.getLogger(FixupsCircularReferenceHandler.class);
+
   @Override
   public JSONArray unmarshallArray(final JSONObject jsonReq, final String key)
       throws JSONException {
@@ -206,7 +210,10 @@ public class FixupsCircularReferenceHandler extends RequestParser {
       }
       return arr;
     } catch (Exception e) {
-      throw new JSONException("unexpected exception");
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Unexpected exception", e);
+      }
+      throw new JSONException("unexpected exception"); // NOPMD
     }
   }
 

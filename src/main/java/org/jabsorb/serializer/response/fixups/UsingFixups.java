@@ -65,7 +65,7 @@ public abstract class UsingFixups extends NoCircRefsOrDupes {
    * @throws JSONException If an exception occurs when the fixups are created.
    */
   public static JSONObject addFixups(JSONObject o, Collection<FixUp> fixUps) throws JSONException {
-    if (fixUps != null && fixUps.size() > 0) {
+    if (fixUps != null && !fixUps.isEmpty()) {
       JSONArray fixups = new JSONArray();
       for (FixUp fixup : fixUps) {
         fixups.put(fixup.toJSONArray());

@@ -25,10 +25,9 @@
 package org.jabsorb.serializer.request.flat;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.jabsorb.serializer.request.RequestParser;
 import org.jabsorb.serializer.response.flat.FlatSerializerState;
@@ -116,8 +115,9 @@ public class FlatRequestParser extends RequestParser {
       JSONObject o = jsonReq.getJSONObject(index);
       this.parsedObjects.put(index, o);
       Map<String, Object> newObjects = new TreeMap<String, Object>();
-      for (Iterator<?> i = o.keys(); i.hasNext();) {
-        String k = (String) i.next();
+
+      for (Object key : o.keySet()) {
+        String k = (String) key;
         Object v = o.get(k);
         if (isObjectIndex(v)) {
           Object ob = getObject((String) v, jsonReq);

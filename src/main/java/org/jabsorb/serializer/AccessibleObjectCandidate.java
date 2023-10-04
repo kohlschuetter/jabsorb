@@ -94,7 +94,7 @@ public class AccessibleObjectCandidate {
    */
   @SuppressWarnings("PMD.MethodReturnsInternalArray")
   Class<?>[] getParameterTypes() {
-    return parameterTypes; 
+    return parameterTypes;
   }
 
   /**

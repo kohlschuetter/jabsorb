@@ -37,7 +37,7 @@ public abstract class JSONRPCResult {
   /**
    * The id of the response.
    */
-  private Object id;
+  private final Object id;
 
   /**
    * Creates a new JSONRPCResult without fixups (for backward compatibility to json-rpc and
@@ -88,18 +88,14 @@ public abstract class JSONRPCResult {
    *
    * @param newServerURL The new serverURL to be used by the client.
    * @return a string representation of this JSON object.
+   * @throws JSONException on error.
    */
-  public String toJSONString(String newServerURL) {
-    try {
-      JSONObject obj = createOutput();
-      if (newServerURL != null) {
-        obj.put("serverURL", newServerURL);
-      }
-      return obj.toString();
-    } catch (JSONException e) {
-      // this would have been a null pointer exception in the previous json.org library.
-      throw (RuntimeException) new RuntimeException(e.getMessage()).initCause(e);
+  public String toJSONString(String newServerURL) throws JSONException {
+    JSONObject obj = createOutput();
+    if (newServerURL != null) {
+      obj.put("serverURL", newServerURL);
     }
+    return obj.toString();
   }
 
   @Override

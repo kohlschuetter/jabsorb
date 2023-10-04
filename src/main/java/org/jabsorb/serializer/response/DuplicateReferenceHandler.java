@@ -43,7 +43,6 @@ public interface DuplicateReferenceHandler {
    * @return The object to put in the place of the duplicate reference in the JSONObject
    * @throws MarshallException Thrown if the given object cannot be marshalled
    */
-  public Object duplicateFound(List<Object> originalLocation, Object ref, Object java)
+  Object duplicateFound(List<Object> originalLocation, Object ref, Object java)
       throws MarshallException;
-
 }

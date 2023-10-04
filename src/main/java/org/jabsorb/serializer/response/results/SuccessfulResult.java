@@ -37,7 +37,7 @@ public class SuccessfulResult extends JSONRPCResult {
   /**
    * The result of the call
    */
-  private Object result;
+  private final Object result;
 
   /**
    * Creates a new SuccessfulResult

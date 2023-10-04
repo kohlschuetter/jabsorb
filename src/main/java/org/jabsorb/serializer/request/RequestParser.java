@@ -59,8 +59,7 @@ public abstract class RequestParser {
    *         on this object!
    * @throws JSONException If an exception occurs parsing jsonReq.
    */
-  public abstract JSONArray unmarshallArray(final JSONObject object, final String key)
-      throws JSONException;
+  public abstract JSONArray unmarshallArray(JSONObject object, String key) throws JSONException;
 
   /**
    * Unmarshalls an inner JSONObject from within another JSONObject
@@ -71,6 +70,5 @@ public abstract class RequestParser {
    *         object!
    * @throws JSONException If an exception occurs parsing object.
    */
-  public abstract JSONObject unmarshallObject(final JSONObject object, final String key)
-      throws JSONException;
+  public abstract JSONObject unmarshallObject(JSONObject object, String key) throws JSONException;
 }

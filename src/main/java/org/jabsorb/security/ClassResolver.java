@@ -56,7 +56,7 @@ public final class ClassResolver {
       throw new IllegalStateException("No instances");
     }
   }
-  
+
   public static ClassResolver withDefaults() {
     return withAllowedClassNames(DEFAULT_ALLOWED_CLASSES);
   }

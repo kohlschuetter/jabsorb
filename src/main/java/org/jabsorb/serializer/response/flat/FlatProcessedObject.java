@@ -32,11 +32,11 @@ import org.json.JSONObject;
  *
  * @author William Becker
  */
-class FlatProcessedObject extends ProcessedObject {
+final class FlatProcessedObject extends ProcessedObject {
   /**
    * The index that will be assigned to this object
    */
-  private Index index;
+  private final Index index;
 
   /**
    * Creates a new FlatProcessedObject

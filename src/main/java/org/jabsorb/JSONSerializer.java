@@ -23,6 +23,7 @@
  * limitations under the License.
  */
 package org.jabsorb;
+//CPD-OFF
 
 import java.util.ArrayList;
 import java.util.Collection;

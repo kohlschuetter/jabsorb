@@ -29,11 +29,11 @@ package org.jabsorb.serializer.response.flat;
  *
  * @author William Becker
  */
-class Index {
+final class Index {
   /**
    * The index of the object
    */
-  private String index;
+  private String index; // NOPMD.AvoidFieldNameMatchingTypeName
 
   /**
    * Creates a new index. The value will be set later.

@@ -1,5 +1,6 @@
 package org.json;
 
+// NOPMD
 /*
 Public Domain.
  */
@@ -61,6 +62,7 @@ import java.util.Map;
  * @author JSON.org
  * @version 2016-08/15
  */
+@SuppressWarnings("PMD")
 public class JSONArray implements Iterable<Object> {
 
     /**

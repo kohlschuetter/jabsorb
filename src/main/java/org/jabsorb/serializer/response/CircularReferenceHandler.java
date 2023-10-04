@@ -43,7 +43,6 @@ public interface CircularReferenceHandler {
    * @return The object to put in the place of the circular reference in the JSONObject
    * @throws MarshallException May be thrown if a circular reference is found and cannot be handled
    */
-  public Object circularReferenceFound(List<Object> originalLocation, Object ref, Object java)
+  Object circularReferenceFound(List<Object> originalLocation, Object ref, Object java)
       throws MarshallException;
-
 }

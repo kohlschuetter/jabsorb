@@ -1,4 +1,5 @@
 package org.json;
+//NOPMD
 
 /*
 Public Domain.
@@ -81,6 +82,7 @@ import java.util.regex.Pattern;
  * @author JSON.org
  * @version 2016-08-15
  */
+@SuppressWarnings("PMD")
 public class JSONObject {
     /**
      * JSONObject.NULL is equivalent to the value that JavaScript calls null,

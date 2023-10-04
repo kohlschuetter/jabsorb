@@ -51,7 +51,7 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
    * layer deeper in processing, the reference is pushed onto the stack And each time we recurse out
    * of that layer, it is popped off the stack.
    */
-  protected final LinkedList<Object> currentLocation;
+  protected final LinkedList<Object> currentLocation; // NOPMD
 
   /**
    * The key is the processed object. The value is a ProcessedObject instance which contains both
@@ -131,7 +131,7 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
 
   @Override
   public void pop() throws MarshallException {
-    if (currentLocation.size() == 0) {
+    if (currentLocation.isEmpty()) {
       // this is a sanity check
       throw new MarshallException("scope error, attempt to pop too much off the scope stack.");
     }
@@ -203,7 +203,7 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
     // or we find null (the end of the chain) which would mean it's a duplicate only.
     FixupProcessedObject ancestor = getProcessedObject(parent);
     while (ancestor != null) {
-      if (dup == ancestor) {
+      if (dup == ancestor) { // NOPMD
         return true;
       }
       ancestor = ancestor.getParent();
