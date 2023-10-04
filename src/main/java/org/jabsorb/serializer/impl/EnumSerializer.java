@@ -42,7 +42,7 @@ public class EnumSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class[0];
+  private static Class<?>[] _serializableClasses = new Class<?>[0];
 
   @Override
   public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
