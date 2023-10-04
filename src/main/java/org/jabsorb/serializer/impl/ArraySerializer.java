@@ -99,62 +99,62 @@ public class ArraySerializer extends AbstractSerializer {
     try {
       // TODO: Is there a nicer way of doing this without all the ifs?
       if (clazz == int[].class) {
-        int arr[] = new int[jso.length()];
+        int[] arr = new int[jso.length()];
         state.setSerialized(o, arr);
         for (; i < jso.length(); i++) {
           arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).intValue();
         }
         return arr;
       } else if (clazz == byte[].class) {
-        byte arr[] = new byte[jso.length()];
+        byte[] arr = new byte[jso.length()];
         state.setSerialized(o, arr);
         for (; i < jso.length(); i++) {
           arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).byteValue();
         }
         return arr;
       } else if (clazz == short[].class) {
-        short arr[] = new short[jso.length()];
+        short[] arr = new short[jso.length()];
         state.setSerialized(o, arr);
         for (; i < jso.length(); i++) {
           arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).shortValue();
         }
         return arr;
       } else if (clazz == long[].class) {
-        long arr[] = new long[jso.length()];
+        long[] arr = new long[jso.length()];
         state.setSerialized(o, arr);
         for (; i < jso.length(); i++) {
           arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).longValue();
         }
         return arr;
       } else if (clazz == float[].class) {
-        float arr[] = new float[jso.length()];
+        float[] arr = new float[jso.length()];
         state.setSerialized(o, arr);
         for (; i < jso.length(); i++) {
           arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).floatValue();
         }
         return arr;
       } else if (clazz == double[].class) {
-        double arr[] = new double[jso.length()];
+        double[] arr = new double[jso.length()];
         state.setSerialized(o, arr);
         for (; i < jso.length(); i++) {
           arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).doubleValue();
         }
         return arr;
       } else if (clazz == char[].class) {
-        char arr[] = new char[jso.length()];
+        char[] arr = new char[jso.length()];
         for (; i < jso.length(); i++) {
           arr[i] = ((String) ser.unmarshall(state, cc, jso.get(i))).charAt(0);
         }
         return arr;
       } else if (clazz == boolean[].class) {
-        boolean arr[] = new boolean[jso.length()];
+        boolean[] arr = new boolean[jso.length()];
         state.setSerialized(o, arr);
         for (; i < jso.length(); i++) {
           arr[i] = ((Boolean) ser.unmarshall(state, cc, jso.get(i))).booleanValue();
         }
         return arr;
       } else {
-        Object arr[] = (Object[]) Array.newInstance(clazz == java.lang.Object.class
+        Object[] arr = (Object[]) Array.newInstance(clazz == java.lang.Object.class
             ? java.lang.Object.class : cc, jso.length());
         state.setSerialized(o, arr);
         for (; i < jso.length(); i++) {
@@ -175,47 +175,47 @@ public class ArraySerializer extends AbstractSerializer {
     try {
       JSONArray arr = new JSONArray();
       if (o instanceof int[]) {
-        int a[] = (int[]) o;
+        int[] a = (int[]) o;
         for (int i = 0; i < a.length; i++) {
           arr.put(a[i]);
         }
       } else if (o instanceof long[]) {
-        long a[] = (long[]) o;
+        long[] a = (long[]) o;
         for (int i = 0; i < a.length; i++) {
           arr.put(a[i]);
         }
       } else if (o instanceof short[]) {
-        short a[] = (short[]) o;
+        short[] a = (short[]) o;
         for (int i = 0; i < a.length; i++) {
           arr.put(a[i]);
         }
       } else if (o instanceof byte[]) {
-        byte a[] = (byte[]) o;
+        byte[] a = (byte[]) o;
         for (int i = 0; i < a.length; i++) {
           arr.put(a[i]);
         }
       } else if (o instanceof float[]) {
-        float a[] = (float[]) o;
+        float[] a = (float[]) o;
         for (int i = 0; i < a.length; i++) {
           arr.put(a[i]);
         }
       } else if (o instanceof double[]) {
-        double a[] = (double[]) o;
+        double[] a = (double[]) o;
         for (int i = 0; i < a.length; i++) {
           arr.put(a[i]);
         }
       } else if (o instanceof char[]) {
-        char a[] = (char[]) o;
+        char[] a = (char[]) o;
         for (int i = 0; i < a.length; i++) {
           arr.put(a[i]);
         }
       } else if (o instanceof boolean[]) {
-        boolean a[] = (boolean[]) o;
+        boolean[] a = (boolean[]) o;
         for (int i = 0; i < a.length; i++) {
           arr.put(a[i]);
         }
       } else if (o instanceof Object[]) {
-        Object a[] = (Object[]) o;
+        Object[] a = (Object[]) o;
         for (int i = 0; i < a.length; i++) {
           Object json = ser.marshall(state, o, a[i], i);
           arr.put(json);

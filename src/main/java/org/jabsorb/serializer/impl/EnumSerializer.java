@@ -70,7 +70,7 @@ public class EnumSerializer extends AbstractSerializer {
   @Override
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object json)
       throws UnmarshallException {
-    final Class<?> classes[] = json.getClass().getClasses();
+    final Class<?>[] classes = json.getClass().getClasses();
     for (int i = 0; i < classes.length; i++) {
       if (classes[i].isEnum()) {
         state.setSerialized(json, ObjectMatch.OKAY);

@@ -47,7 +47,7 @@ public class URLConnectionSession implements Session {
   /**
    * Create a URLConnection transport
    *
-   * @param url
+   * @param url The URL.
    */
   URLConnectionSession(URL url) {
     this.url = url;
@@ -76,16 +76,18 @@ public class URLConnectionSession implements Session {
           StandardCharsets.UTF_8)) {
         while (true) {
           int bytesRead = reader.read(buffer);
-          if (bytesRead < 0)
+          if (bytesRead < 0) {
             break;
+          }
           builder.append(buffer, 0, bytesRead);
         }
       }
       JSONTokener tokener = new JSONTokener(builder.toString());
       Object rawResponseMessage = tokener.nextValue();
       JSONObject responseMessage = (JSONObject) rawResponseMessage;
-      if (responseMessage == null)
+      if (responseMessage == null) {
         throw new ClientError("Invalid response type - " + rawResponseMessage.getClass());
+      }
       return responseMessage;
     } catch (IOException ex) {
       throw new ClientError(ex);

@@ -110,18 +110,18 @@ public class ListSerializer extends AbstractSerializer {
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(java_class.equals("java.util.List") || java_class.equals("java.util.AbstractList")
-        || java_class.equals("java.util.LinkedList") || java_class.equals("java.util.ArrayList")
-        || java_class.equals("java.util.Vector"))) {
+    if (!(javaClass.equals("java.util.List") || javaClass.equals("java.util.AbstractList")
+        || javaClass.equals("java.util.LinkedList") || javaClass.equals("java.util.ArrayList")
+        || javaClass.equals("java.util.Vector"))) {
       throw new UnmarshallException("not a List");
     }
     JSONArray jsonlist;
@@ -152,22 +152,22 @@ public class ListSerializer extends AbstractSerializer {
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
     List<Object> al;
-    if (java_class.equals("java.util.List") || java_class.equals("java.util.AbstractList")
-        || java_class.equals("java.util.ArrayList")) {
+    if (javaClass.equals("java.util.List") || javaClass.equals("java.util.AbstractList")
+        || javaClass.equals("java.util.ArrayList")) {
       al = new ArrayList<Object>();
-    } else if (java_class.equals("java.util.LinkedList")) {
+    } else if (javaClass.equals("java.util.LinkedList")) {
       al = new LinkedList<Object>();
-    } else if (java_class.equals("java.util.Vector")) {
+    } else if (javaClass.equals("java.util.Vector")) {
       al = new Vector<Object>();
     } else {
       throw new UnmarshallException("not a List");

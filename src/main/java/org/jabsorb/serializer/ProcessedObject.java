@@ -36,6 +36,14 @@ public class ProcessedObject {
   private final Object object;
 
   /**
+   * The serialized equivalent of the object. Only used for unmarshalling to recreate circular
+   * reference equivalences in java from fixed up incoming json. TODO: should this just be called
+   * unmarshalled? it's only used in the unmarshall case at this point but it might be useful later
+   * in the marshall case as well...
+   */
+  private Object serialized;
+
+  /**
    * Creates a new ProcessedObject
    *
    * @param object The processed incoming object. When marshalling, this is the java object that is
@@ -45,14 +53,6 @@ public class ProcessedObject {
   public ProcessedObject(Object object) {
     this.object = object;
   }
-
-  /**
-   * The serialized equivalent of the object. Only used for unmarshalling to recreate circular
-   * reference equivalences in java from fixed up incoming json. TODO: should this just be called
-   * unmarshalled? it's only used in the unmarshall case at this point but it might be useful later
-   * in the marshall case as well...
-   */
-  private Object serialized;
 
   /**
    * Set the serialized java Object that this ProcessedObject represents. Only used when

@@ -112,7 +112,7 @@ public class CallbackController {
    * @throws Exception If preInvoke fails
    */
   public void preInvokeCallback(Object context, Object instance, AccessibleObject accessibleObject,
-      Object arguments[]) throws Exception {
+      Object[] arguments) throws Exception {
     synchronized (callbackSet) {
       for (CallbackData cbdata : callbackSet) {
         if (cbdata.understands(context)) {

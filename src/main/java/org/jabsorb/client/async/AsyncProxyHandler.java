@@ -64,16 +64,16 @@ public class AsyncProxyHandler implements InvocationHandler {
   private final AsyncSession session;
   private final JSONSerializer serializer;
 
+  private Future<Object> futureResult;
+
+  private AsyncResultCallback<Object, Object, Method> resultCallback;
+
   public AsyncProxyHandler(final String proxyKey, final AsyncSession session,
       final JSONSerializer serializer) {
     this.proxyKey = proxyKey;
     this.session = session;
     this.serializer = serializer;
   }
-
-  private Future<Object> futureResult;
-
-  private AsyncResultCallback<Object, Object, Method> resultCallback;
 
   @Override
   @SuppressWarnings("unchecked")

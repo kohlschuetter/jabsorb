@@ -141,17 +141,17 @@ public class ReferenceSerializer extends AbstractSerializer {
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
     Object ref = null;
-    String json_type;
-    int object_id;
+    String jsonType;
+    int objectId;
     try {
-      json_type = jso.getString("JSONRPCType");
-      object_id = jso.getInt("objectID");
+      jsonType = jso.getString("JSONRPCType");
+      objectId = jso.getInt("objectID");
     } catch (JSONException e) {
       throw new UnmarshallException(e.getMessage(), e);
     }
-    if (json_type != null) {
-      if ((json_type.equals("Reference")) || (json_type.equals("CallableReference"))) {
-        ref = bridge.getReference(object_id);
+    if (jsonType != null) {
+      if ((jsonType.equals("Reference")) || (jsonType.equals("CallableReference"))) {
+        ref = bridge.getReference(objectId);
       }
     }
     state.setSerialized(o, ref);

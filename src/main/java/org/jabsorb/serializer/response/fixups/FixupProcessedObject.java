@@ -35,6 +35,17 @@ import org.jabsorb.serializer.ProcessedObject;
  */
 public class FixupProcessedObject extends ProcessedObject {
   /**
+   * The parent object of this object. It will be null if this is the root object being processed.
+   */
+  private final FixupProcessedObject parent;
+
+  /**
+   * The "json" reference key such that [the json representation of] parent[ref] = object. this will
+   * either be a String for an object reference or an Integer for an array reference.
+   */
+  private Object ref;
+
+  /**
    * Create a new FixupProcessedObject
    *
    * @param object The processed incoming object. When marshalling, this is the java object that is
@@ -46,17 +57,6 @@ public class FixupProcessedObject extends ProcessedObject {
     super(object);
     this.parent = parent;
   }
-
-  /**
-   * The parent object of this object. It will be null if this is the root object being processed.
-   */
-  private final FixupProcessedObject parent;
-
-  /**
-   * The "json" reference key such that [the json representation of] parent[ref] = object. this will
-   * either be a String for an object reference or an Integer for an array reference.
-   */
-  private Object ref;
 
   /**
    * Get the parent ProcessedObject of this ProcessedObject. It can be null if this is the root of

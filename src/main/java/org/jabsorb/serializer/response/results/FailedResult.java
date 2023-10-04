@@ -34,15 +34,6 @@ import org.json.JSONObject;
  */
 public class FailedResult extends JSONRPCResult {
   /**
-   * Gets the error that caused the failure.
-   *
-   * @return The error object
-   */
-  public Object getError() {
-    return error;
-  }
-
-  /**
    * Denotes that an error occured while parsing the request.
    */
   public static final int CODE_ERR_PARSE = 590;
@@ -134,9 +125,18 @@ public class FailedResult extends JSONRPCResult {
     this.error = error;
   }
 
+  /**
+   * Gets the error that caused the failure.
+   *
+   * @return The error object
+   */
+  public Object getError() {
+    return error;
+  }
+
   @Override
   protected JSONObject createOutput() throws JSONException {
-    JSONObject o = super._createOutput();
+    JSONObject o = super.createOutput0();
     JSONObject err = new JSONObject();
     err.put("code", errorCode);
     err.put("message", message == null ? "" : message);

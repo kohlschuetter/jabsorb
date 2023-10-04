@@ -109,10 +109,10 @@ public class BeanSerializer extends AbstractSerializer {
    * @param clazz The class of the bean to analyse
    * @return A populated BeanData
    * @throws IntrospectionException If a problem occurs during getting the bean info.
-   * @throws IllegalAccessException
-   * @throws NoSuchMethodException
+   * @throws IllegalAccessException on error.
+   * @throws NoSuchMethodException on error.
    */
-  public static BeanData analyzeBean(Class<?> clazz) throws IntrospectionException,
+  private static BeanData analyzeBean(Class<?> clazz) throws IntrospectionException,
       IllegalAccessException, NoSuchMethodException {
     log.info("analyzing " + clazz.getName());
     Lookup lookup = MethodHandles.publicLookup();
@@ -126,7 +126,7 @@ public class BeanSerializer extends AbstractSerializer {
     }
 
     BeanInfo beanInfo = Introspector.getBeanInfo(clazz, Object.class);
-    PropertyDescriptor props[] = beanInfo.getPropertyDescriptors();
+    PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
 
     Map<String, MethodHandle> readableProps = new HashMap<String, MethodHandle>();
     Map<String, MethodHandle> writableProps = new HashMap<String, MethodHandle>();
@@ -139,7 +139,7 @@ public class BeanSerializer extends AbstractSerializer {
       }
       Method writeMethod = props[i].getWriteMethod();
       if (writeMethod != null) {
-        Class<?> param[] = writeMethod.getParameterTypes();
+        Class<?>[] param = writeMethod.getParameterTypes();
         if (param.length != 1) {
           throw new IntrospectionException("bean " + clazz.getName() + " method " + writeMethod
               .getName() + " does not have exactly one arg");
@@ -303,7 +303,9 @@ public class BeanSerializer extends AbstractSerializer {
   @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
-    JSONObject jso = (JSONObject) o;
+    if (!(o instanceof JSONObject)) {
+      throw new UnmarshallException("Not a JSONObject: " + o);
+    }
     BeanData bd;
     try {
       bd = getBeanData(clazz);
@@ -331,6 +333,8 @@ public class BeanSerializer extends AbstractSerializer {
 
     state.setSerialized(o, instance);
     Object fieldVal;
+
+    JSONObject jso = (JSONObject) o;
     for (String field : jso.keySet()) {
       MethodHandle setMethod = bd.writableProps.get(field);
       if (setMethod != null) {

@@ -53,6 +53,10 @@ public final class ClassResolver {
   private final Set<String> allowedClasses;
   private final WeakHashMap<String, Class<?>> cachedDecisions = new WeakHashMap<>();
 
+  private ClassResolver(Set<String> allowedClasses) {
+    this.allowedClasses = allowedClasses;
+  }
+
   public static ClassResolver withDefaults() {
     return withAllowedClassNames(DEFAULT_ALLOWED_CLASSES);
   }
@@ -64,10 +68,6 @@ public final class ClassResolver {
 
   public static ClassResolver withAllowedClassNames(Set<String> allowedClasses) {
     return new ClassResolver(allowedClasses);
-  }
-
-  private ClassResolver(Set<String> allowedClasses) {
-    this.allowedClasses = allowedClasses;
   }
 
   public Class<?> tryResolve(String className) {

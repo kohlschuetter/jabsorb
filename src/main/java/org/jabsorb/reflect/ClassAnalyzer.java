@@ -111,14 +111,12 @@ public class ClassAnalyzer {
         .getConstructors()));
     final List<AccessibleObject> memberMethods = new ArrayList<AccessibleObject>();
     final List<AccessibleObject> staticMethods = new ArrayList<AccessibleObject>();
-    {
-      final Method methods[] = clazz.getMethods();
-      for (int i = 0; i < methods.length; i++) {
-        if (Modifier.isStatic(methods[i].getModifiers())) {
-          staticMethods.add(methods[i]);
-        } else {
-          memberMethods.add(methods[i]);
-        }
+
+    for (Method m : clazz.getMethods()) {
+      if (Modifier.isStatic(m.getModifiers())) {
+        staticMethods.add(m);
+      } else {
+        memberMethods.add(m);
       }
     }
 
@@ -142,8 +140,9 @@ public class ClassAnalyzer {
     final Map<AccessibleObjectKey, Set<AccessibleObject>> map =
         new HashMap<AccessibleObjectKey, Set<AccessibleObject>>();
     for (final AccessibleObject accessibleObject : accessibleObjects) {
-      if (!Modifier.isPublic(((Member) accessibleObject).getModifiers()))
+      if (!Modifier.isPublic(((Member) accessibleObject).getModifiers())) {
         continue;
+      }
 
       final AccessibleObjectKey accessibleObjectKey;
       {
@@ -164,8 +163,9 @@ public class ClassAnalyzer {
           }
           // don't count locally resolved args
           for (int n = 0; n < param.length; n++) {
-            if (LocalArgController.isLocalArg(param[n]))
+            if (LocalArgController.isLocalArg(param[n])) {
               continue;
+            }
             argCount++;
           }
 

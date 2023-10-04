@@ -152,14 +152,6 @@ public class JSONRPCServlet extends HttpServlet {
     this("JSONRPCBridge", defaultBridge);
   }
 
-  private void readObject(java.io.ObjectInputStream in) throws IOException {
-    throw new NotSerializableException(JSONRPCServlet.class.getName());
-  }
-
-  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-    throw new NotSerializableException(JSONRPCServlet.class.getName());
-  }
-
   /**
    * Creates a new JSONRPCServlet
    *
@@ -168,6 +160,14 @@ public class JSONRPCServlet extends HttpServlet {
   public JSONRPCServlet(String bridgeLocation, JSONRPCBridge defaultBridge) {
     this.bridgeLocation = bridgeLocation;
     this.defaultBridge = defaultBridge;
+  }
+
+  private void readObject(java.io.ObjectInputStream in) throws IOException {
+    throw new NotSerializableException(JSONRPCServlet.class.getName());
+  }
+
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    throw new NotSerializableException(JSONRPCServlet.class.getName());
   }
 
   /**
@@ -249,7 +249,7 @@ public class JSONRPCServlet extends HttpServlet {
   @Override
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Use protected method in case someone wants to override it
-    JSONRPCBridge json_bridge = findBridge(request);
+    JSONRPCBridge jsonBrdige = findBridge(request);
 
     // Decode using the charset in the request if it exists otherwise
     // use UTF-8 as this is what all browser implementations use.
@@ -273,7 +273,7 @@ public class JSONRPCServlet extends HttpServlet {
     if (receiveString == null) {
       // Read the request
       CharArrayWriter data = new CharArrayWriter();
-      char buf[] = new char[buf_size];
+      char[] buf = new char[buf_size];
       int ret;
       while ((ret = in.read(buf, 0, buf_size)) != -1) {
         data.write(buf, 0, ret);
@@ -295,17 +295,17 @@ public class JSONRPCServlet extends HttpServlet {
     }
 
     // Process the request
-    JSONObject json_req;
-    JSONRPCResult json_res;
+    JSONObject jsonRequest;
+    JSONRPCResult jsonResult;
     try {
-      json_req = new JSONObject(receiveString);
-      json_res = json_bridge.call(new Object[] {request, response}, json_req);
+      jsonRequest = new JSONObject(receiveString);
+      jsonResult = jsonBrdige.call(new Object[] {request, response}, jsonRequest);
     } catch (JSONException e) {
       log.error("can't parse call" + receiveString, e);
-      json_res = new FailedResult(FailedResult.CODE_ERR_PARSE, null, FailedResult.MSG_ERR_PARSE);
+      jsonResult = new FailedResult(FailedResult.CODE_ERR_PARSE, null, FailedResult.MSG_ERR_PARSE);
     }
 
-    String sendString = json_res.toString();
+    String sendString = jsonResult.toString();
 
     // dump the received string
     if (log.isDebugEnabled()) {
@@ -375,14 +375,14 @@ public class JSONRPCServlet extends HttpServlet {
     // Find the JSONRPCBridge for this session or create one
     // if it doesn't exist
     HttpSession session = request.getSession(false);
-    JSONRPCBridge json_bridge = null;
+    JSONRPCBridge jsonBridge = null;
     if (session != null) {
-      json_bridge = (JSONRPCBridge) session.getAttribute(this.bridgeLocation);
+      jsonBridge = (JSONRPCBridge) session.getAttribute(this.bridgeLocation);
     }
-    if (json_bridge == null) {
-      json_bridge = defaultBridge;
+    if (jsonBridge == null) {
+      jsonBridge = defaultBridge;
     }
-    return json_bridge;
+    return jsonBridge;
   }
 
   /**

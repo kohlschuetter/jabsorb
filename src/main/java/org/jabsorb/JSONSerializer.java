@@ -100,31 +100,6 @@ public class JSONSerializer {
   private final ClassResolver classResolver;
 
   /**
-   * A list of good serializers that are used when no others are given.
-   *
-   * @return A newly created list. This enables multiple bridges to call this method and not have
-   *         the serializers duplicated.
-   */
-  public static final List<Serializer> getDefaultSerializers() {
-    final List<Serializer> defaultSerializers = new ArrayList<Serializer>(13);
-    defaultSerializers.add(new RawJSONArraySerializer());
-    defaultSerializers.add(new RawJSONObjectSerializer());
-    defaultSerializers.add(new BeanSerializer());
-    defaultSerializers.add(new ArraySerializer());
-    defaultSerializers.add(new DictionarySerializer());
-    defaultSerializers.add(new MapSerializer());
-    defaultSerializers.add(new SetSerializer());
-    defaultSerializers.add(new ListSerializer());
-    defaultSerializers.add(new DateSerializer());
-    defaultSerializers.add(new StringSerializer());
-    defaultSerializers.add(new NumberSerializer());
-    defaultSerializers.add(new BooleanSerializer());
-    defaultSerializers.add(new PrimitiveSerializer());
-    defaultSerializers.add(new EnumSerializer());
-    return defaultSerializers;
-  }
-
-  /**
    * Should serializers defined in this object include the fully qualified class name of objects
    * being serialized? This can be helpful when unmarshalling, though if not needed can be left out
    * in favor of increased performance and smaller size of marshalled String.
@@ -144,7 +119,7 @@ public class JSONSerializer {
   /**
    * key: Class, value: Serializer
    */
-  private transient final Map<Class<?>, Serializer> serializableMap;
+  private final Map<Class<?>, Serializer> serializableMap;
 
   /**
    * List for reverse registration order search
@@ -176,6 +151,31 @@ public class JSONSerializer {
     this.serializerStateClass = serializerStateClass;
     this.requestParser = requestParser;
     this.classResolver = resolver;
+  }
+
+  /**
+   * A list of good serializers that are used when no others are given.
+   *
+   * @return A newly created list. This enables multiple bridges to call this method and not have
+   *         the serializers duplicated.
+   */
+  public static final List<Serializer> getDefaultSerializers() {
+    final List<Serializer> defaultSerializers = new ArrayList<Serializer>(13);
+    defaultSerializers.add(new RawJSONArraySerializer());
+    defaultSerializers.add(new RawJSONObjectSerializer());
+    defaultSerializers.add(new BeanSerializer());
+    defaultSerializers.add(new ArraySerializer());
+    defaultSerializers.add(new DictionarySerializer());
+    defaultSerializers.add(new MapSerializer());
+    defaultSerializers.add(new SetSerializer());
+    defaultSerializers.add(new ListSerializer());
+    defaultSerializers.add(new DateSerializer());
+    defaultSerializers.add(new StringSerializer());
+    defaultSerializers.add(new NumberSerializer());
+    defaultSerializers.add(new BooleanSerializer());
+    defaultSerializers.add(new PrimitiveSerializer());
+    defaultSerializers.add(new EnumSerializer());
+    return defaultSerializers;
   }
 
   /**
@@ -379,7 +379,7 @@ public class JSONSerializer {
    *          AbstractSerializer).
    */
   public void registerSerializer(Serializer s) {
-    Class<?> classes[] = s.getSerializableClasses();
+    Class<?>[] classes = s.getSerializableClasses();
     synchronized (serializerSet) {
       if (!serializerSet.contains(s)) {
         if (log.isDebugEnabled()) {
@@ -388,8 +388,8 @@ public class JSONSerializer {
         s.setOwner(this);
         serializerSet.add(s);
         serializerList.add(0, s);
-        for (int j = 0; j < classes.length; j++) {
-          serializableMap.put(classes[j], s);
+        for (Class<?> c : classes) {
+          serializableMap.put(c, s);
         }
       }
     }
@@ -485,16 +485,15 @@ public class JSONSerializer {
    *
    * @param state used by the underlying Serializer objects to hold state while unmarshalling for
    *          detecting circular references and duplicates.
-   * @param clazz optional java class to unmarshall to- if set to null then it will be looked for
-   *          via the javaClass hinting mechanism.
+   * @param javaClass optional java class to unmarshall to- if set to null then it will be looked
+   *          for via the javaClass hinting mechanism.
    * @param json JSONObject or JSONArray or primitive Object wrapper that contains the json to
    *          unmarshall.
    * @return an ObjectMatch indicating the degree to which the object matched the class,
    * @throws UnmarshallException if getClassFromHint() fails
    */
-  public ObjectMatch tryUnmarshall(final SerializerState state, final Class<?> clazz,
+  public ObjectMatch tryUnmarshall(final SerializerState state, Class<?> javaClass,
       final Object json) throws UnmarshallException {
-    Class<?> _clazz = clazz;
     // check for duplicate objects or circular references
     {
       final ProcessedObject p = state.getProcessedObject(json);
@@ -514,34 +513,34 @@ public class JSONSerializer {
      * If we have a JSON object class hint that is a sub class of the signature 'clazz', then
      * override 'clazz' with the hint class.
      */
-    if (_clazz != null && json instanceof JSONObject && ((JSONObject) json).has(
-        JSONSerializer.JAVA_CLASS_FIELD) && _clazz.isAssignableFrom(getClassFromHint(json))) {
-      _clazz = getClassFromHint(json);
+    if (javaClass != null && json instanceof JSONObject && ((JSONObject) json).has(
+        JSONSerializer.JAVA_CLASS_FIELD) && javaClass.isAssignableFrom(getClassFromHint(json))) {
+      javaClass = getClassFromHint(json);
     }
 
-    if (_clazz == null) {
-      _clazz = getClassFromHint(json);
+    if (javaClass == null) {
+      javaClass = getClassFromHint(json);
     }
-    if (_clazz == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no class hint");
     }
     if (json == null || json == JSONObject.NULL) {
-      if (!_clazz.isPrimitive()) {
+      if (!javaClass.isPrimitive()) {
         return ObjectMatch.NULL;
       }
 
       throw new UnmarshallException("can't assign null primitive");
 
     }
-    Serializer s = getSerializer(_clazz, json.getClass());
+    Serializer s = getSerializer(javaClass, json.getClass());
     if (s != null) {
-      return s.tryUnmarshall(state, _clazz, json);
+      return s.tryUnmarshall(state, javaClass, json);
     }
     // As a last resort, we check if the object is in fact an instance of the
     // desired class. This will typically happen when the parameter is of
     // type java.lang.Object and the passed object is a String or an Integer
     // that is passed verbatim by JSON
-    if (_clazz.isInstance(json)) {
+    if (javaClass.isInstance(json)) {
       return ObjectMatch.SIMILAR;
     }
 
@@ -575,16 +574,15 @@ public class JSONSerializer {
    *
    * @param state used by the underlying Serializer objects to hold state while unmarshalling for
    *          detecting circular references and duplicates.
-   * @param clazz optional java class to unmarshall to- if set to null then it will be looked for
-   *          via the javaClass hinting mechanism.
+   * @param javaClass optional java class to unmarshall to- if set to null then it will be looked
+   *          for via the javaClass hinting mechanism.
    * @param json JSONObject or JSONArray or primitive Object wrapper that contains the json to
    *          unmarshall.
    * @return the java object representing the json that was unmarshalled.
    * @throws UnmarshallException if there is a problem unmarshalling json to java.
    */
-  public Object unmarshall(final SerializerState state, final Class<?> clazz, final Object json)
+  public Object unmarshall(final SerializerState state, Class<?> javaClass, final Object json)
       throws UnmarshallException {
-    Class<?> _clazz = clazz;
     // check for duplicate objects or circular references
     {
       final ProcessedObject p = state.getProcessedObject(json);
@@ -601,42 +599,42 @@ public class JSONSerializer {
     }
     // If we have a JSON object class hint that is a sub class of the
     // signature 'clazz', then override 'clazz' with the hint class.
-    if (_clazz != null && json instanceof JSONObject && ((JSONObject) json).has(
-        JSONSerializer.JAVA_CLASS_FIELD) && _clazz.isAssignableFrom(getClassFromHint(json))) {
-      _clazz = getClassFromHint(json);
+    if (javaClass != null && json instanceof JSONObject && ((JSONObject) json).has(
+        JSONSerializer.JAVA_CLASS_FIELD) && javaClass.isAssignableFrom(getClassFromHint(json))) {
+      javaClass = getClassFromHint(json);
     }
 
     // if no clazz type was passed in, look for the javaClass hint
-    if (_clazz == null) {
-      _clazz = getClassFromHint(json);
+    if (javaClass == null) {
+      javaClass = getClassFromHint(json);
     }
 
-    if (_clazz == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no class hint");
     }
     if (json == null || json == JSONObject.NULL) {
-      if (!_clazz.isPrimitive()) {
+      if (!javaClass.isPrimitive()) {
         return null;
       }
 
       throw new UnmarshallException("can't assign null primitive");
     }
     Class<?> jsonClass = json.getClass();
-    Serializer s = getSerializer(_clazz, jsonClass);
+    Serializer s = getSerializer(javaClass, jsonClass);
     if (s != null) {
-      return s.unmarshall(state, _clazz, json);
+      return s.unmarshall(state, javaClass, json);
     }
 
     // As a last resort, we check if the object is in fact an instance of the
     // desired class. This will typically happen when the parameter is of
     // type java.lang.Object and the passed object is a String or an Integer
     // that is passed verbatim by JSON
-    if (_clazz.isInstance(json)) {
+    if (javaClass.isInstance(json)) {
       return json;
     }
 
     throw new UnmarshallException("no serializer found that can unmarshall " + (jsonClass != null
-        ? jsonClass.getName() : "null") + " to " + _clazz.getName());
+        ? jsonClass.getName() : "null") + " to " + javaClass.getName());
   }
 
   /**

@@ -118,18 +118,18 @@ public class MapSerializer extends AbstractSerializer {
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(java_class.equals("java.util.Map") || java_class.equals("java.util.AbstractMap")
-        || java_class.equals("java.util.LinkedHashMap") || java_class.equals("java.util.TreeMap")
-        || java_class.equals("java.util.HashMap"))) {
+    if (!(javaClass.equals("java.util.Map") || javaClass.equals("java.util.AbstractMap")
+        || javaClass.equals("java.util.LinkedHashMap") || javaClass.equals("java.util.TreeMap")
+        || javaClass.equals("java.util.HashMap"))) {
       throw new UnmarshallException("not a Map");
     }
     JSONObject jsonmap;
@@ -162,22 +162,22 @@ public class MapSerializer extends AbstractSerializer {
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
     Map<String, Object> abmap;
-    if (java_class.equals("java.util.Map") || java_class.equals("java.util.AbstractMap")
-        || java_class.equals("java.util.HashMap")) {
+    if (javaClass.equals("java.util.Map") || javaClass.equals("java.util.AbstractMap") || javaClass
+        .equals("java.util.HashMap")) {
       abmap = new HashMap<String, Object>();
-    } else if (java_class.equals("java.util.TreeMap")) {
+    } else if (javaClass.equals("java.util.TreeMap")) {
       abmap = new TreeMap<String, Object>();
-    } else if (java_class.equals("java.util.LinkedHashMap")) {
+    } else if (javaClass.equals("java.util.LinkedHashMap")) {
       abmap = new LinkedHashMap<String, Object>();
     } else {
       throw new UnmarshallException("not a Map");

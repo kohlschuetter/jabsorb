@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.security.ClassResolver;
@@ -46,16 +47,7 @@ public class Client implements InvocationHandler {
   /**
    * Maintain a unique id for each message
    */
-  private int id = 0;
-
-  /**
-   * Gets the id of the next message
-   *
-   * @return The id for the next message.
-   */
-  private synchronized int getId() {
-    return id++;
-  }
+  private final AtomicInteger id = new AtomicInteger(0);
 
   /**
    * Maps proxy keys to proxies
@@ -88,6 +80,15 @@ public class Client implements InvocationHandler {
     } catch (Exception e) {
       throw new ClientError(e);
     }
+  }
+
+  /**
+   * Gets the id of the next message
+   *
+   * @return The id for the next message.
+   */
+  private int getId() {
+    return id.incrementAndGet();
   }
 
   /**
@@ -188,8 +189,10 @@ public class Client implements InvocationHandler {
 
     JSONObject responseMessage = session.sendAndReceive(message);
 
-    if (!responseMessage.has(JSONSerializer.RESULT_FIELD))
+    if (!responseMessage.has(JSONSerializer.RESULT_FIELD)) {
       processException(responseMessage);
+    }
+
     Object rawResult = this.serializer.getRequestParser().unmarshall(responseMessage,
         JSONSerializer.RESULT_FIELD);
     if (returnType.equals(Void.TYPE)) {

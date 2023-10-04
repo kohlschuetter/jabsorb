@@ -43,7 +43,7 @@ import java.util.concurrent.TimeoutException;
  * final SettableFuture<String> future = new SettableFuture<String>();
  *
  * new Thread() {
- * 	&#x40;Override
+ *  &#x40;Override
  * 	public void run() {
  * 		Thread.sleep(3000); // do a computation
  * 		future.set("result");

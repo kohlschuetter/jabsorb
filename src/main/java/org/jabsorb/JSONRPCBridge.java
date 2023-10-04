@@ -206,67 +206,6 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Registers a Class to be removed from the exported method signatures and instead be resolved
-   * locally using context information from the transport.
-   *
-   * @param argClazz The class to be resolved locally
-   * @param argResolver The user defined class that resolves the and returns the method argument
-   *          using transport context information
-   * @param contextInterface The type of transport Context object the callback is interested in eg.
-   *          HttpServletRequest.class for the servlet transport
-   */
-  public static void registerLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
-      LocalArgResolver argResolver) {
-    LocalArgController.registerLocalArgResolver(argClazz, contextInterface, argResolver);
-  }
-
-  /**
-   * Unregisters a LocalArgResolver</b>.
-   *
-   * @param argClazz The previously registered local class
-   * @param argResolver The previously registered LocalArgResolver object
-   * @param contextInterface The previously registered transport Context interface.
-   */
-  public static void unregisterLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
-      LocalArgResolver argResolver) {
-    LocalArgController.unregisterLocalArgResolver(argClazz, contextInterface, argResolver);
-  }
-
-  /**
-   * Create unique method names by appending the given prefix to the keys from the given HashMap and
-   * adding them all to the given HashSet.
-   *
-   * @param m HashSet to add unique methods to.
-   * @param prefix prefix to append to each method name found in the methodMap.
-   * @param methodMap a HashMap containing MethodKey keys specifying methods.
-   */
-  protected static void uniqueMethods(Set<String> m, String prefix,
-      Map<AccessibleObjectKey, Set<AccessibleObject>> methodMap) {
-    for (Map.Entry<AccessibleObjectKey, Set<AccessibleObject>> mentry : methodMap.entrySet()) {
-      AccessibleObjectKey mk = mentry.getKey();
-      m.add(prefix + mk.getMethodName());
-    }
-  }
-
-  /**
-   * Creates and loads a java.util.Properties from a file.
-   *
-   * @param propertiesFilename The name of the file to load the properties from.
-   * @return An initialised properties.
-   */
-  @SuppressFBWarnings("OS_OPEN_STREAM")
-  private static Properties loadProperties(final String propertiesFilename) {
-    final Properties p = new Properties();
-    try {
-      p.load(new BufferedInputStream(new FileInputStream(propertiesFilename)));
-    } catch (IOException e) {
-      // If we have an exception here we don't want to throw it up to the
-      // constructors, so just swallow it.
-    }
-    return p;
-  }
-
-  /**
    * Whether references will be used on the bridge
    */
   protected boolean referencesEnabled;
@@ -372,6 +311,67 @@ public final class JSONRPCBridge {
   }
 
   /**
+   * Registers a Class to be removed from the exported method signatures and instead be resolved
+   * locally using context information from the transport.
+   *
+   * @param argClazz The class to be resolved locally
+   * @param argResolver The user defined class that resolves the and returns the method argument
+   *          using transport context information
+   * @param contextInterface The type of transport Context object the callback is interested in eg.
+   *          HttpServletRequest.class for the servlet transport
+   */
+  public static void registerLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
+      LocalArgResolver argResolver) {
+    LocalArgController.registerLocalArgResolver(argClazz, contextInterface, argResolver);
+  }
+
+  /**
+   * Unregisters a LocalArgResolver</b>.
+   *
+   * @param argClazz The previously registered local class
+   * @param argResolver The previously registered LocalArgResolver object
+   * @param contextInterface The previously registered transport Context interface.
+   */
+  public static void unregisterLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
+      LocalArgResolver argResolver) {
+    LocalArgController.unregisterLocalArgResolver(argClazz, contextInterface, argResolver);
+  }
+
+  /**
+   * Create unique method names by appending the given prefix to the keys from the given HashMap and
+   * adding them all to the given HashSet.
+   *
+   * @param m HashSet to add unique methods to.
+   * @param prefix prefix to append to each method name found in the methodMap.
+   * @param methodMap a HashMap containing MethodKey keys specifying methods.
+   */
+  protected static void uniqueMethods(Set<String> m, String prefix,
+      Map<AccessibleObjectKey, Set<AccessibleObject>> methodMap) {
+    for (Map.Entry<AccessibleObjectKey, Set<AccessibleObject>> mentry : methodMap.entrySet()) {
+      AccessibleObjectKey mk = mentry.getKey();
+      m.add(prefix + mk.getMethodName());
+    }
+  }
+
+  /**
+   * Creates and loads a java.util.Properties from a file.
+   *
+   * @param propertiesFilename The name of the file to load the properties from.
+   * @return An initialised properties.
+   */
+  @SuppressFBWarnings("OS_OPEN_STREAM")
+  private static Properties loadProperties(final String propertiesFilename) {
+    final Properties p = new Properties();
+    try {
+      p.load(new BufferedInputStream(new FileInputStream(propertiesFilename)));
+    } catch (IOException e) {
+      // If we have an exception here we don't want to throw it up to the
+      // constructors, so just swallow it.
+    }
+    return p;
+  }
+
+  /**
    * Adds a reference to the map of known references
    *
    * @param o The object to be added
@@ -390,7 +390,7 @@ public final class JSONRPCBridge {
    * @param jsonReq The JSON-RPC request structured as a JSON object tree.
    * @return a JSONRPCResult object with the result of the invocation or an error.
    */
-  public JSONRPCResult call(Object context[], JSONObject jsonReq) {
+  public JSONRPCResult call(Object[] context, JSONObject jsonReq) {
     // #1: Parse the request
     final String encodedMethod;
     final Object requestId;

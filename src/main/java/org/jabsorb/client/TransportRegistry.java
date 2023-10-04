@@ -32,7 +32,6 @@ import java.util.Map;
  * A registry of transports serving JSON-RPC-Client
  */
 public class TransportRegistry {
-
   /**
    * A factory used to create transport sessions. Register with #registerTransport.
    */
@@ -44,23 +43,6 @@ public class TransportRegistry {
      * @return The new session
      */
     Session newSession(URI uri);
-  }
-
-  /**
-   * Maintains singleton instance of this class
-   */
-  private static TransportRegistry singleton;
-
-  /**
-   * Use this function when there is no IOC container to rely on creating the factory.
-   *
-   * @return singleton instance of the class, created if necessary.
-   */
-  public synchronized static TransportRegistry i() {
-    if (singleton == null) {
-      singleton = new TransportRegistry();
-    }
-    return singleton;
   }
 
   /**
@@ -104,5 +86,4 @@ public class TransportRegistry {
   public void registerTransport(String scheme, SessionFactory factory) {
     registry.put(scheme, factory);
   }
-
 }

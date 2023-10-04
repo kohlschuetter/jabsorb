@@ -75,9 +75,9 @@ public class FlatRequestParser extends RequestParser {
       }
       Object o = jsonReq.get(index);
       if (isObjectIndex(o)) {
-        return _getObject((String) o, jsonReq);
+        return getObject0((String) o, jsonReq);
       }
-      return _getObject(index, jsonReq);
+      return getObject0(index, jsonReq);
     }
 
     /**
@@ -109,7 +109,7 @@ public class FlatRequestParser extends RequestParser {
      * @return The object requested
      * @throws JSONException If the json cannot be read
      */
-    private JSONObject _getObject(String index, JSONObject jsonReq) throws JSONException {
+    private JSONObject getObject0(String index, JSONObject jsonReq) throws JSONException {
       if (this.parsedObjects.containsKey(index)) {
         return this.parsedObjects.get(index);
       }

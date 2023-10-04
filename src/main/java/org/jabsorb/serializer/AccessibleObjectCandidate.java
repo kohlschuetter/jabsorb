@@ -33,17 +33,17 @@ public class AccessibleObjectCandidate {
   /**
    * The method/constructor
    */
-  final private AccessibleObject accessibleObject;
+  private final AccessibleObject accessibleObject;
 
   /**
    * The match data for each parameter of the method.
    */
-  final private ObjectMatch match[];
+  private final ObjectMatch[] match;
 
   /**
    * The parameters of the accessibleObject
    */
-  final private Class<?>[] parameterTypes;
+  private final Class<?>[] parameterTypes;
 
   /**
    * Creatse a new MethodCandidate

@@ -39,12 +39,12 @@ public class FixupsCircularReferenceHandler extends RequestParser {
   @Override
   public JSONArray unmarshallArray(final JSONObject jsonReq, final String key)
       throws JSONException {
-    return (JSONArray) _unmarshall(jsonReq, key);
+    return (JSONArray) unmarshall0(jsonReq, key);
   }
 
   @Override
   public JSONObject unmarshallObject(JSONObject jsonReq, String key) throws JSONException {
-    return (JSONObject) _unmarshall(jsonReq, key);
+    return (JSONObject) unmarshall0(jsonReq, key);
   }
 
   /**
@@ -55,7 +55,7 @@ public class FixupsCircularReferenceHandler extends RequestParser {
    * @return The Object/Array
    * @throws JSONException If the json cannot be read
    */
-  private Object _unmarshall(JSONObject data, String key) throws JSONException {
+  private Object unmarshall0(JSONObject data, String key) throws JSONException {
     // TODO: handle error field here
     final Object arguments = data.get(key);
     final JSONArray fixups = data.optJSONArray(FixUp.FIXUPS_FIELD);

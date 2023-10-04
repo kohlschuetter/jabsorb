@@ -63,7 +63,7 @@ public abstract class JSONRPCResult {
    * @return An object which will be sent to the client.
    * @throws JSONException If a problem occurs creating the object.
    */
-  protected JSONObject _createOutput() throws JSONException {
+  protected JSONObject createOutput0() throws JSONException {
     JSONObject o = new JSONObject();
     o.put(JSONSerializer.ID_FIELD, id);
     return o;

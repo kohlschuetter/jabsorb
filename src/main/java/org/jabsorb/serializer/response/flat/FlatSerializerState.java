@@ -37,7 +37,7 @@ import org.json.JSONObject;
 
 /**
  * Serializes objects into a flat style. This means that all JSONObjects exist at the top level.
- * This prevents duplication and circular references from occuring.
+ * This prevents duplication and circular references from occurring.
  *
  * @author William Becker
  */
@@ -46,6 +46,28 @@ public class FlatSerializerState implements SerializerState {
    * The start indentifier of an index
    */
   public static final String INDEX_PREFIX = "_$Inx$_";
+
+  private int index;
+
+  /**
+   * All values which are known to be marshalled to JSONObjects
+   */
+  private final Map<Integer, FlatProcessedObject> marshalledObjects;
+
+  /**
+   * All values which either aren't to be marshalled to JSONObjects or it is unknown to what they
+   * will be unmarshalled
+   */
+  private final Map<Integer, FlatProcessedObject> nonMarshalledObjects;
+
+  /**
+   * Creates a new FlatSerializerState
+   */
+  public FlatSerializerState() {
+    this.marshalledObjects = new HashMap<Integer, FlatProcessedObject>();
+    this.nonMarshalledObjects = new HashMap<Integer, FlatProcessedObject>();
+    this.index = 1;
+  }
 
   /**
    * Adds the values contained in map, to the object o.
@@ -69,28 +91,6 @@ public class FlatSerializerState implements SerializerState {
   /**
    * The current index value
    */
-  private int index;
-
-  /**
-   * All values which are known to be marshalled to JSONObjects
-   */
-  private final Map<Integer, FlatProcessedObject> marshalledObjects;
-
-  /**
-   * All values which either aren't to be marshalled to JSONObjects or it is unknown to what they
-   * will be unmarshalled
-   */
-  private final Map<Integer, FlatProcessedObject> nonMarshalledObjects;
-
-  /**
-   * Creates a new FlatSerializerState
-   */
-  public FlatSerializerState() {
-    this.marshalledObjects = new HashMap<Integer, FlatProcessedObject>();
-    this.nonMarshalledObjects = new HashMap<Integer, FlatProcessedObject>();
-    this.index = 1;
-  }
-
   @Override
   public Object checkObject(Object parent, Object currentObject, Object ref)
       throws MarshallException {
@@ -148,10 +148,10 @@ public class FlatSerializerState implements SerializerState {
     final FlatProcessedObject po;
     if (obj instanceof JSONObject) {
       JSONObject val = new JSONObject();
-      String _index = nextIndex();
-      po = new FlatProcessedObject(val, _index);
+      String valIndex = nextIndex();
+      po = new FlatProcessedObject(val, valIndex);
 
-      toReturn = _index;
+      toReturn = valIndex;
       if (!this.marshalledObjects.containsKey(identity)) {
         this.marshalledObjects.put(identity, po);
       }

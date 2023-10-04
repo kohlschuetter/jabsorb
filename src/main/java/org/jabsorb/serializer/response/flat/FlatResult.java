@@ -56,7 +56,7 @@ class FlatResult extends SuccessfulResult {
 
   @Override
   public JSONObject createOutput() throws JSONException {
-    JSONObject o = this._createOutput();
+    JSONObject o = this.createOutput0();
     Object result = getResult();
     if (result != null) {
       FlatSerializerState.addValuesToObject(o, result, JSONSerializer.RESULT_FIELD, this.map);

@@ -112,18 +112,18 @@ public class SetSerializer extends AbstractSerializer {
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(java_class.equals("java.util.Set") || java_class.equals("java.util.AbstractSet")
-        || java_class.equals("java.util.LinkedHashSet") || java_class.equals("java.util.TreeSet")
-        || java_class.equals("java.util.HashSet"))) {
+    if (!(javaClass.equals("java.util.Set") || javaClass.equals("java.util.AbstractSet")
+        || javaClass.equals("java.util.LinkedHashSet") || javaClass.equals("java.util.TreeSet")
+        || javaClass.equals("java.util.HashSet"))) {
       throw new UnmarshallException("not a Set");
     }
     JSONObject jsonset;
@@ -159,22 +159,22 @@ public class SetSerializer extends AbstractSerializer {
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
     Set<Object> abset = null;
-    if (java_class.equals("java.util.Set") || java_class.equals("java.util.AbstractSet")
-        || java_class.equals("java.util.HashSet")) {
+    if (javaClass.equals("java.util.Set") || javaClass.equals("java.util.AbstractSet") || javaClass
+        .equals("java.util.HashSet")) {
       abset = new HashSet<Object>();
-    } else if (java_class.equals("java.util.TreeSet")) {
+    } else if (javaClass.equals("java.util.TreeSet")) {
       abset = new TreeSet<Object>();
-    } else if (java_class.equals("java.util.LinkedHashSet")) {
+    } else if (javaClass.equals("java.util.LinkedHashSet")) {
       abset = new LinkedHashSet<Object>();
     } else {
       throw new UnmarshallException("not a Set");

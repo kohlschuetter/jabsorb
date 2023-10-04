@@ -49,9 +49,10 @@ public abstract class AbstractSerializer implements Serializer {
    */
   @Override
   public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
-    boolean canJava = false, canJSON = false;
+    boolean canJava = false;
+    boolean canJSON = false;
 
-    Class<?> serializableClasses[] = getSerializableClasses();
+    Class<?>[] serializableClasses = getSerializableClasses();
     for (int i = 0; i < serializableClasses.length; i++) {
       if (clazz == serializableClasses[i]) {
         canJava = true;
@@ -61,7 +62,7 @@ public abstract class AbstractSerializer implements Serializer {
     if (jsonClazz == null) {
       canJSON = true;
     } else {
-      Class<?> jsonClasses[] = getJSONClasses();
+      Class<?>[] jsonClasses = getJSONClasses();
       for (int i = 0; i < jsonClasses.length; i++) {
         if (jsonClazz == jsonClasses[i]) {
           canJSON = true;

@@ -78,7 +78,7 @@ public class StringSerializer extends AbstractSerializer {
     if (jso.getClass().equals(String.class)) {
       return ObjectMatch.OKAY;
     }
-    Class<?> classes[] = jso.getClass().getClasses();
+    Class<?>[] classes = jso.getClass().getClasses();
     for (int i = 0; i < classes.length; i++) {
       if (classes[i].equals(String.class)) {
         state.setSerialized(jso, ObjectMatch.OKAY);
@@ -107,5 +107,4 @@ public class StringSerializer extends AbstractSerializer {
     state.setSerialized(jso, returnValue);
     return returnValue;
   }
-
 }

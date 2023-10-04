@@ -51,11 +51,17 @@ import org.slf4j.LoggerFactory;
  * To use this transport you need to first register it in the TransportRegistry, for example:
  * <p>
  * <code>
- * 		HTTPSession.register(TransportRegistry.i());
+ * HTTPSession.register(TransportRegistry.i());
  * </code>
  */
 public class HTTPSession implements Session {
   private static final Logger log = LoggerFactory.getLogger(HTTPSession.class);
+
+  /**
+   * As per JSON-RPC Working Draft
+   * http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html#RequestHeaders
+   */
+  static final String JSON_CONTENT_TYPE = "application/json";
 
   protected HttpClient client;
 
@@ -74,12 +80,6 @@ public class HTTPSession implements Session {
     this.state = state;
   }
 
-  /**
-   * As per JSON-RPC Working Draft
-   * http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html#RequestHeaders
-   */
-  static final String JSON_CONTENT_TYPE = "application/json";
-
   @Override
   public JSONObject sendAndReceive(JSONObject message) {
     try {
@@ -94,15 +94,21 @@ public class HTTPSession implements Session {
       postMethod.setRequestEntity(requestEntity);
       // http().getHostConfiguration().setProxy(proxyHost, proxyPort);
       http().executeMethod(null, postMethod, state);
+
       int statusCode = postMethod.getStatusCode();
-      if (statusCode != HttpStatus.SC_OK)
+      if (statusCode != HttpStatus.SC_OK) {
         throw new ClientError("HTTP Status - " + HttpStatus.getStatusText(statusCode) + " ("
             + statusCode + ")");
+      }
+
       JSONTokener tokener = new JSONTokener(postMethod.getResponseBodyAsString());
+
       Object rawResponseMessage = tokener.nextValue();
       JSONObject responseMessage = (JSONObject) rawResponseMessage;
-      if (responseMessage == null)
+      if (responseMessage == null) {
         throw new ClientError("Invalid response type - " + rawResponseMessage.getClass());
+      }
+
       return responseMessage;
     } catch (HttpException e) {
       throw new ClientError(e);

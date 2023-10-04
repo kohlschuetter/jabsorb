@@ -118,7 +118,7 @@ public class LocalArgController {
    * @return the run time instance that is resolved, to be used when calling the method.
    * @throws UnmarshallException if there if a failure during resolution.
    */
-  public static Object resolveLocalArg(Object context[], Class<?> param)
+  public static Object resolveLocalArg(Object[] context, Class<?> param)
       throws UnmarshallException {
     Set<LocalArgResolverData> resolverSet = localArgResolverMap.get(param);
     for (LocalArgResolverData resolverData : resolverSet) {

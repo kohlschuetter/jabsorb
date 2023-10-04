@@ -115,16 +115,16 @@ public class DictionarySerializer extends AbstractSerializer {
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(java_class.equals("java.util.Dictionary") || java_class.equals("java.util.Hashtable"))) {
+    if (!(javaClass.equals("java.util.Dictionary") || javaClass.equals("java.util.Hashtable"))) {
       throw new UnmarshallException("not a Dictionary");
     }
     JSONObject jsonmap;
@@ -159,17 +159,17 @@ public class DictionarySerializer extends AbstractSerializer {
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
     Hashtable<String, Object> ht;
-    if (java_class.equals("java.util.Dictionary") || java_class.equals("java.util.Hashtable")) {
+    if (javaClass.equals("java.util.Dictionary") || javaClass.equals("java.util.Hashtable")) {
       ht = new Hashtable<String, Object>();
     } else {
       throw new UnmarshallException("not a Dictionary");

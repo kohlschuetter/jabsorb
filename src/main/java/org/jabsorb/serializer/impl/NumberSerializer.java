@@ -54,16 +54,6 @@ public class NumberSerializer extends AbstractSerializer {
       byte.class, short.class, long.class, float.class, double.class, BigDecimal.class,
       String.class};
 
-  @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
-  }
-
-  @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
-  }
-
   private static final Map<Class<?>, Function<Object, Object>> TO_NUMBER_MAP = new HashMap<>();
 
   static {
@@ -94,6 +84,16 @@ public class NumberSerializer extends AbstractSerializer {
     if (class2 != null) {
       TO_NUMBER_MAP.put(class2, function);
     }
+  }
+
+  @Override
+  public Class<?>[] getSerializableClasses() {
+    return _serializableClasses;
+  }
+
+  @Override
+  public Class<?>[] getJSONClasses() {
+    return _JSONClasses;
   }
 
   /**

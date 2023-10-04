@@ -61,7 +61,7 @@ public class SuccessfulResult extends JSONRPCResult {
 
   @Override
   public JSONObject createOutput() throws JSONException {
-    JSONObject o = this._createOutput();
+    JSONObject o = this.createOutput0();
     o.put(JSONSerializer.RESULT_FIELD, this.result);
     return o;
   }

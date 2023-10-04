@@ -51,6 +51,12 @@ public abstract class UsingFixups extends NoCircRefsOrDupes {
       Short.class};
 
   /**
+   * A List of FixUp objects that are generated during processing for circular references and/or
+   * duplicate references.
+   */
+  private final Collection<FixUp> fixups = new ArrayList<FixUp>();
+
+  /**
    * Adds fixups to a JSONObject
    *
    * @param o The object to which the fixups are to be added.
@@ -91,12 +97,6 @@ public abstract class UsingFixups extends NoCircRefsOrDupes {
     }
     return false;
   }
-
-  /**
-   * A List of FixUp objects that are generated during processing for circular references and/or
-   * duplicate references.
-   */
-  private final Collection<FixUp> fixups = new ArrayList<FixUp>();
 
   @Override
   public JSONObject createObject(String key, Object json) throws JSONException {

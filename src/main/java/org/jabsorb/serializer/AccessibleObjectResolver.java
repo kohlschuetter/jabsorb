@@ -93,7 +93,7 @@ public class AccessibleObjectResolver {
    * @return The result of the call transformed into json in a JSONRPCResult
    */
   public static JSONRPCResult invokeAccessibleObject(AccessibleObject accessibleObject,
-      Object context[], JSONArray arguments, Object javascriptObject, Object requestId,
+      Object[] context, JSONArray arguments, Object javascriptObject, Object requestId,
       JSONSerializer serializer, CallbackController cbc,
       ExceptionTransformer exceptionTransformer) {
     JSONRPCResult result;
@@ -120,7 +120,7 @@ public class AccessibleObjectResolver {
       }
 
       // Unmarshall arguments
-      final Object javaArgs[] = AccessibleObjectResolver.unmarshallArgs(context, parameterTypes,
+      final Object[] javaArgs = AccessibleObjectResolver.unmarshallArgs(context, parameterTypes,
           arguments, serializer);
 
       // Call pre invoke callbacks
@@ -360,7 +360,8 @@ public class AccessibleObjectResolver {
     final Class<?>[] parameters = methodCandidate.getParameterTypes();
     final Class<?>[] parameters1 = methodCandidate1.getParameterTypes();
 
-    int c = 0, c1 = 0;
+    int c = 0;
+    int c1 = 0;
     for (int i = 0; i < parameters.length; i++) {
       final Class<?> parameterClass = parameters[i];
       final Class<?> parameterClass1 = parameters1[i];
@@ -439,10 +440,11 @@ public class AccessibleObjectResolver {
    * @return the java arguments as unmarshalled from json.
    * @throws UnmarshallException if there is a problem unmarshalling the arguments.
    */
-  private static Object[] unmarshallArgs(Object context[], Class<?>[] param, JSONArray arguments,
+  private static Object[] unmarshallArgs(Object[] context, Class<?>[] param, JSONArray arguments,
       JSONSerializer serializer) throws UnmarshallException {
-    Object javaArgs[] = new Object[param.length];
-    int i = 0, j = 0;
+    Object[] javaArgs = new Object[param.length];
+    int i = 0;
+    int j = 0;
     try {
       for (; i < param.length; i++) {
         if (LocalArgController.isLocalArg(param[i])) {

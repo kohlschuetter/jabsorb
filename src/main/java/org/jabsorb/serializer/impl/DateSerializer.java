@@ -84,17 +84,17 @@ public class DateSerializer extends AbstractSerializer {
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
-    String java_class;
+    String javaClass;
     try {
-      java_class = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
     } catch (JSONException e) {
       throw new UnmarshallException("no type hint", e);
     }
-    if (java_class == null) {
+    if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(java_class.equals("java.util.Date")) && !(java_class.equals("java.sql.Timestamp"))
-        && !(java_class.equals("java.sql.Time")) && !(java_class.equals("java.sql.Date"))) {
+    if (!(javaClass.equals("java.util.Date")) && !(javaClass.equals("java.sql.Timestamp"))
+        && !(javaClass.equals("java.sql.Time")) && !(javaClass.equals("java.sql.Date"))) {
       throw new UnmarshallException("not a Date");
     }
     state.setSerialized(o, ObjectMatch.OKAY);

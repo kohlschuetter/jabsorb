@@ -46,7 +46,7 @@ public interface InvocationCallback extends Serializable {
    * @throws Exception if the invocation doesn't work.
    */
   public void preInvoke(Object context, Object instance, AccessibleObject accessibleObject,
-      Object arguments[]) throws Exception;
+      Object[] arguments) throws Exception;
 
   /**
    * Callback after invocation of an RPC method.
