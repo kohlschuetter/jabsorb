@@ -32,8 +32,6 @@ import java.util.concurrent.Future;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.kohlschutter.dumborb.client.async.AsyncResultCallback;
-import com.kohlschutter.dumborb.client.async.AsyncSession;
 import com.kohlschutter.dumborb.serializer.response.results.SuccessfulResult;
 
 class DummyAsyncSession implements AsyncSession {

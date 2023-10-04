@@ -32,9 +32,6 @@ import org.json.JSONObject;
 
 import com.kohlschutter.dumborb.JSONSerializer;
 import com.kohlschutter.dumborb.client.Session;
-import com.kohlschutter.dumborb.client.async.AsyncResultCallback;
-import com.kohlschutter.dumborb.client.async.AsyncSession;
-import com.kohlschutter.dumborb.client.async.AsyncSessionUtil;
 
 import junit.framework.TestCase;
 
