@@ -97,11 +97,11 @@ import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
  * use them.
  * </p>
  */
-public final class JSONRPCBridge  {
+public final class JSONRPCBridge {
   /**
    * Container for objects of which instances have been made
    */
-  protected static class ObjectInstance  {
+  protected static class ObjectInstance {
     /**
      * The class the object is of
      */
