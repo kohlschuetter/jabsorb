@@ -30,7 +30,7 @@ import java.io.Serializable;
  * @author cytan
  */
 public class BeanB implements Serializable {
-  private final static long serialVersionUID = 2;
+  private static final long serialVersionUID = 2;
 
   private long id;
 

@@ -28,7 +28,7 @@ package org.jabsorb.dict;
  * Simple Java Dict Client (RFC2229)
  */
 public class DictClientException extends Exception {
-  private final static long serialVersionUID = 2;
+  private static final long serialVersionUID = 2;
 
   private DictCommandResult r;
 

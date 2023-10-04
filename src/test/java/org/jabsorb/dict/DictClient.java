@@ -38,9 +38,9 @@ import java.util.List;
  * Simple Java Dict Client (RFC2229)
  */
 public class DictClient implements Serializable {
-  private final static long serialVersionUID = 2;
+  private static final long serialVersionUID = 2;
 
-  private final static boolean debug = false;
+  private static final boolean debug = false;
 
   private static String DEFAULT_HOST = "localhost";
   private static int DEFAULT_PORT = 2628;

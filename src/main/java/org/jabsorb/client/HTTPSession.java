@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * </code>
  */
 public class HTTPSession implements Session {
-  private final static Logger log = LoggerFactory.getLogger(HTTPSession.class);
+  private static final Logger log = LoggerFactory.getLogger(HTTPSession.class);
 
   protected HttpClient client;
 

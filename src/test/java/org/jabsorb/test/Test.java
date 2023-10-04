@@ -51,7 +51,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class Test implements Serializable, ITest {
 
-  private final static long serialVersionUID = 2;
+  private static final long serialVersionUID = 2;
 
   // Void test
 
@@ -491,7 +491,7 @@ public class Test implements Serializable, ITest {
   // Reference Tests
   public static class CallableRefTest implements Serializable, Comparable<Object> {
 
-    private final static long serialVersionUID = 2;
+    private static final long serialVersionUID = 2;
 
     private static Test.RefTest ref = new Test.RefTest("a secret");
 
@@ -515,7 +515,7 @@ public class Test implements Serializable, ITest {
 
   public static class RefTest implements Serializable {
 
-    private final static long serialVersionUID = 2;
+    private static final long serialVersionUID = 2;
 
     private String s;
 
@@ -576,7 +576,7 @@ public class Test implements Serializable, ITest {
 
   public static InvocationCallback cb = new InvocationCallback() {
 
-    private final static long serialVersionUID = 2;
+    private static final long serialVersionUID = 2;
 
     @Override
     public void preInvoke(Object context, Object instance, AccessibleObject m, Object arguments[])

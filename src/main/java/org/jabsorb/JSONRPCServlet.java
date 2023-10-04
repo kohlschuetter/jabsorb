@@ -105,12 +105,12 @@ import jakarta.servlet.http.HttpSession;
  */
 
 public class JSONRPCServlet extends HttpServlet {
-  private final static long serialVersionUID = -1; // not serializable, just to suppress a warning
+  private static final long serialVersionUID = -1; // not serializable, just to suppress a warning
 
   /**
    * The size of the buffer used for reading requests
    */
-  private final static int buf_size = 4096;
+  private static final int buf_size = 4096;
 
   /**
    * The GZIP_THRESHOLD indicates the response size at which the servlet will attempt to gzip the
@@ -136,7 +136,7 @@ public class JSONRPCServlet extends HttpServlet {
   /**
    * The logger for this class
    */
-  private final static Logger log = LoggerFactory.getLogger(JSONRPCServlet.class);
+  private static final Logger log = LoggerFactory.getLogger(JSONRPCServlet.class);
 
   /**
    * The location of the JSONRPCBridge variable in the session

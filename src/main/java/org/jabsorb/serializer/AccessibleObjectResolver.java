@@ -55,7 +55,7 @@ public class AccessibleObjectResolver {
   /**
    * The logger for this class
    */
-  private final static Logger log = LoggerFactory.getLogger(AccessibleObjectResolver.class);
+  private static final Logger log = LoggerFactory.getLogger(AccessibleObjectResolver.class);
 
   /**
    * This is used to order the preference of primitives, as used when overloading a method. Eg, with

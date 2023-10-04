@@ -43,7 +43,7 @@ public class ReferenceSerializer extends AbstractSerializer {
   /**
    * The logger for this class
    */
-  private final static Logger log = LoggerFactory.getLogger(ReferenceSerializer.class);
+  private static final Logger log = LoggerFactory.getLogger(ReferenceSerializer.class);
 
   /**
    * Classes that this can serialise.

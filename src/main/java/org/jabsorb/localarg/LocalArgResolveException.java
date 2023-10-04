@@ -32,7 +32,7 @@ public class LocalArgResolveException extends Exception {
   /**
    * Unique serialisation id.
    */
-  private final static long serialVersionUID = 2;
+  private static final long serialVersionUID = 2;
 
   /**
    * Creates a new LocalArgResolveException

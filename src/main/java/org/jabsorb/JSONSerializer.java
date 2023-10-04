@@ -95,7 +95,7 @@ public class JSONSerializer {
   /**
    * The logger for this class
    */
-  private final static Logger log = LoggerFactory.getLogger(JSONSerializer.class);
+  private static final Logger log = LoggerFactory.getLogger(JSONSerializer.class);
 
   private final ClassResolver classResolver;
 
@@ -105,7 +105,7 @@ public class JSONSerializer {
    * @return A newly created list. This enables multiple bridges to call this method and not have
    *         the serializers duplicated.
    */
-  public final static List<Serializer> getDefaultSerializers() {
+  public static final List<Serializer> getDefaultSerializers() {
     final List<Serializer> defaultSerializers = new ArrayList<Serializer>(13);
     defaultSerializers.add(new RawJSONArraySerializer());
     defaultSerializers.add(new RawJSONObjectSerializer());

@@ -36,7 +36,7 @@ import java.util.Vector;
 public interface ITest {
   public static class Waggle implements Serializable {
 
-    private final static long serialVersionUID = 2;
+    private static final long serialVersionUID = 2;
 
     private int baz;
 
@@ -85,7 +85,7 @@ public interface ITest {
 
   public static class Wiggle implements Serializable {
 
-    private final static long serialVersionUID = 2;
+    private static final long serialVersionUID = 2;
 
     private String foo;
 

@@ -51,14 +51,14 @@ public class ClassAnalyzer {
   /**
    * The logger for this class
    */
-  private final static Logger log = LoggerFactory.getLogger(ClassAnalyzer.class);
+  private static final Logger log = LoggerFactory.getLogger(ClassAnalyzer.class);
 
   /**
    * Classes that have been analysed
    *
    * key: Clazz, val ClassData
    */
-  private final static Map<Class<?>, ClassData> classCache;
+  private static final Map<Class<?>, ClassData> classCache;
 
   static {
     classCache = new HashMap<Class<?>, ClassData>();

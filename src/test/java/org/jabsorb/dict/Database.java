@@ -30,7 +30,7 @@ import java.io.Serializable;
  * Simple Java Dict Client (RFC2229)
  */
 public class Database implements Serializable {
-  private final static long serialVersionUID = 2;
+  private static final long serialVersionUID = 2;
 
   private String database;
 

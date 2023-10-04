@@ -45,38 +45,38 @@ public class FailedResult extends JSONRPCResult {
   /**
    * Denotes that an error occured while parsing the request.
    */
-  public final static int CODE_ERR_PARSE = 590;
+  public static final int CODE_ERR_PARSE = 590;
 
   /**
    * Denotes (when calling a constructor) that no method was found with the given name/arguments.
    */
-  public final static int CODE_ERR_NOCONSTRUCTOR = 594;
+  public static final int CODE_ERR_NOCONSTRUCTOR = 594;
 
   /**
    * Denotes (when using a callable reference) that no method was found with the given name and
    * number of arguments.
    */
-  public final static int CODE_ERR_NOMETHOD = 591;
+  public static final int CODE_ERR_NOMETHOD = 591;
 
   /**
    * Denotes that an error occured while unmarshalling the request.
    */
-  public final static int CODE_ERR_UNMARSHALL = 592;
+  public static final int CODE_ERR_UNMARSHALL = 592;
 
   /**
    * Denotes that an error occured while marshalling the response.
    */
-  public final static int CODE_ERR_MARSHALL = 593;
+  public static final int CODE_ERR_MARSHALL = 593;
 
   /**
    * Denotes that an error occured while applying the fixup data for circular references/duplicates.
    */
-  public final static int CODE_ERR_FIXUP = 594;
+  public static final int CODE_ERR_FIXUP = 594;
 
   /**
    * The error method shown when an error occured while parsing the request.
    */
-  public final static String MSG_ERR_PARSE = "couldn't parse request arguments";
+  public static final String MSG_ERR_PARSE = "couldn't parse request arguments";
 
   /**
    * The error method shown when no constructor was found with the given name.
@@ -86,13 +86,13 @@ public class FailedResult extends JSONRPCResult {
   /**
    * The error method shown when no method was found with the given name and number of arguments.
    */
-  public final static String MSG_ERR_NOMETHOD =
+  public static final String MSG_ERR_NOMETHOD =
       "method with the requested number of arguments not found (session may" + " have timed out)";
 
   /**
    * The error method shown when something in the fixups was amiss.
    */
-  public final static String MSG_ERR_FIXUP = "invalid or unexpected data in fixups";
+  public static final String MSG_ERR_FIXUP = "invalid or unexpected data in fixups";
 
   /**
    * An error code if a problem occured (CODE_SUCCESS otherwise)

@@ -36,7 +36,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 public class Unicode implements Serializable {
-  private final static long serialVersionUID = 2;
+  private static final long serialVersionUID = 2;
 
   static InputStream getResourceStream(String rsrcName) {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -45,7 +45,7 @@ public class Unicode implements Serializable {
 
   public static class UnicodeTest implements Serializable {
 
-    private final static long serialVersionUID = 2;
+    private static final long serialVersionUID = 2;
 
     private String desc;
 
@@ -111,7 +111,7 @@ public class Unicode implements Serializable {
 
   protected static class UnicodeTestStore implements Serializable {
 
-    private final static long serialVersionUID = 2;
+    private static final long serialVersionUID = 2;
 
     private Map<String, UnicodeTest> tests = new HashMap<String, UnicodeTest>();
 

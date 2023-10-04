@@ -37,7 +37,7 @@ public class RemoteException extends FailedResult {
   /**
    * Denotes that an exception was thrown on the server
    */
-  public final static int CODE_REMOTE_EXCEPTION = 490;
+  public static final int CODE_REMOTE_EXCEPTION = 490;
 
   /**
    * Creates a new RemoteException

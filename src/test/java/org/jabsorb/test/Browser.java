@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Browser implements Serializable {
-  private final static long serialVersionUID = 2;
+  private static final long serialVersionUID = 2;
 
   protected static class BrowserStore {
 

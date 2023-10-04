@@ -39,29 +39,29 @@ public class ObjectMatch {
   /**
    * The objects match
    */
-  public final static ObjectMatch OKAY = new ObjectMatch(-3);
+  public static final ObjectMatch OKAY = new ObjectMatch(-3);
 
   /**
    * The objects can be converted into the same types, eg int converts into a string.
    */
-  public final static ObjectMatch SIMILAR = new ObjectMatch(-2);
+  public static final ObjectMatch SIMILAR = new ObjectMatch(-2);
 
   /**
    * The objects can be converted into the same types, but it should be avoided eg any string can
    * converts into a boolean, where "true" is true and anything else is false.
    */
-  public final static ObjectMatch ROUGHLY_SIMILAR = new ObjectMatch(-1);
+  public static final ObjectMatch ROUGHLY_SIMILAR = new ObjectMatch(-1);
 
   /**
    * The object cannot be converted into similar types at all.
    */
-  public final static ObjectMatch NO_MATCH = new ObjectMatch(Integer.MAX_VALUE);
+  public static final ObjectMatch NO_MATCH = new ObjectMatch(Integer.MAX_VALUE);
 
   /**
    * The object was null, and therefore matches any object, (because any object reference could be
    * null)
    */
-  public final static ObjectMatch NULL = new ObjectMatch(0);
+  public static final ObjectMatch NULL = new ObjectMatch(0);
 
   /**
    * The number of mismatched fields that occurred on a tryUnmarshall call. TODO: make this value

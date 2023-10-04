@@ -82,7 +82,7 @@ public class BeanSerializer extends AbstractSerializer {
   /**
    * The logger for this class
    */
-  private final static Logger log = LoggerFactory.getLogger(BeanSerializer.class);
+  private static final Logger log = LoggerFactory.getLogger(BeanSerializer.class);
 
   /**
    * Caches analysed beans

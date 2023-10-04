@@ -48,7 +48,7 @@ public class ClassAnalyzer {
   /**
    * The logger for this class
    */
-  private final static Logger log = LoggerFactory.getLogger(ClassAnalyzer.class);
+  private static final Logger log = LoggerFactory.getLogger(ClassAnalyzer.class);
 
   /**
    * Classes that have been analysed

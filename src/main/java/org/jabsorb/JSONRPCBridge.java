@@ -168,7 +168,7 @@ public final class JSONRPCBridge {
   /**
    * The logger for this class
    */
-  public final static Logger log;
+  public static final Logger log;
 
   /**
    * The prefix for objects, as sent in messages

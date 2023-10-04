@@ -50,7 +50,7 @@ public class LocalArgController {
   /**
    * The logger for this class
    */
-  private final static Logger log = LoggerFactory.getLogger(LocalArgController.class);
+  private static final Logger log = LoggerFactory.getLogger(LocalArgController.class);
 
   /**
    * Key: argClazz (ie Class), Value: HashSet<LocalArgResolverData>

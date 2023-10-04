@@ -39,7 +39,7 @@ public class CallbackController {
   /**
    * The log used for this class.
    */
-  private final static Logger log = LoggerFactory.getLogger(CallbackController.class);
+  private static final Logger log = LoggerFactory.getLogger(CallbackController.class);
 
   /**
    * Holds all callbacks registered with this controller. Type: CallbackData
