@@ -92,7 +92,7 @@ public class AccessibleObjectResolver {
    * @param exceptionTransformer Renders the exception into a suitable text format
    * @return The result of the call transformed into json in a JSONRPCResult
    */
-  @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity"})
+  @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity", "PMD.NcssCount"})
   public static JSONRPCResult invokeAccessibleObject(AccessibleObject accessibleObject,
       Object[] context, JSONArray arguments, Object javascriptObject, Object requestId,
       JSONSerializer serializer, CallbackController cbc,
@@ -136,7 +136,6 @@ public class AccessibleObjectResolver {
       if (isConstructor) {
         returnObj = ((Constructor<?>) accessibleObject).newInstance(javaArgs);
       } else {
-        System.out.println("INVOKE " + accessibleObject + " with " + javaArgs);
         returnObj = ((Method) accessibleObject).invoke(javascriptObject, javaArgs);
       }
       // Call post invoke callbacks
@@ -325,7 +324,7 @@ public class AccessibleObjectResolver {
   }
 
   /**
-   * Creates a signature for an array of arguments
+   * Creates a signature for an array of arguments.
    *
    * @param arguments The argumnts
    * @return A comma seperated string listing the arguments
@@ -360,7 +359,7 @@ public class AccessibleObjectResolver {
   }
 
   /**
-   * Returns the more fit of the two method candidates
+   * Returns the more fit of the two method candidates.
    *
    * @param methodCandidate One of the methodCandidates to compare
    * @param methodCandidate1 The other of the methodCandidates to compare
@@ -401,7 +400,7 @@ public class AccessibleObjectResolver {
   }
 
   /**
-   * Tries to unmarshall the arguments to a method
+   * Tries to unmarshall the arguments to a method.
    *
    * @param accessibleObject The method/constructor to unmarshall the arguments for.
    * @param arguments The arguments to unmarshall

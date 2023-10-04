@@ -24,6 +24,7 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,16 +52,18 @@ public class ArraySerializer extends AbstractSerializer {
   /**
    * The class that this serialises to
    */
-  private static final Class<?>[] JSON_CLASSES = new Class<?>[] {JSONArray.class};
+  private static final Class<?>[] JSON_CLASSES = {JSONArray.class};
+
+  private static final Map<Class<?>, ArrayUnmarshaller<?>> UNMARSHAL_MAP = new HashMap<>();
 
   @Override
   public Class<?>[] getSerializableClasses() {
-    return SERIALIZABLE_CLASSES;
+    return SERIALIZABLE_CLASSES; // NOPMD
   }
 
   @Override
   public Class<?>[] getJSONClasses() {
-    return JSON_CLASSES;
+    return JSON_CLASSES; // NOPMD
   }
 
   @Override
@@ -97,8 +100,6 @@ public class ArraySerializer extends AbstractSerializer {
     T unmarshal(JSONSerializer ser, SerializerState state, Class<?> componentType, JSONArray jso)
         throws UnmarshallException;
   }
-
-  private static final Map<Class<?>, ArrayUnmarshaller<?>> UNMARSHAL_MAP = new HashMap<>();
 
   private static <T> void registerUnmarshaller(Class<T> returnType,
       ArrayUnmarshaller<T> unmarshaller) {
@@ -181,7 +182,7 @@ public class ArraySerializer extends AbstractSerializer {
         });
     registerUnmarshaller( //
         Object[].class, (ser, state, cc, jso) -> {
-          Object[] arr = new Object[jso.length()];
+          Object[] arr = (Object[]) Array.newInstance(cc, jso.length());
           state.setSerialized(jso, arr);
           for (int i = 0; i < arr.length; i++) {
             arr[i] = ser.unmarshall(state, cc, jso.get(i));
@@ -197,9 +198,10 @@ public class ArraySerializer extends AbstractSerializer {
     Class<?> cc = clazz.getComponentType();
     int i = 0;
     try {
-      // TODO: Is there a nicer way of doing this without all the ifs?
-      ArrayUnmarshaller<?> aum = UNMARSHAL_MAP.computeIfAbsent(clazz, (k) -> UNMARSHAL_MAP.get(
-          Object[].class));
+      ArrayUnmarshaller<?> aum = UNMARSHAL_MAP.get(clazz);
+      if (aum == null) {
+        aum = UNMARSHAL_MAP.get(Object[].class);
+      }
       return aum.unmarshal(ser, state, cc, jso);
     } catch (UnmarshallException e) {
       throw new UnmarshallException("element " + i + " " + e.getMessage(), e);
@@ -209,62 +211,87 @@ public class ArraySerializer extends AbstractSerializer {
     }
   }
 
+  private static final Map<Class<?>, ArrayMarshaller<?>> MARSHAL_MAP = new HashMap<>();
+
+  static {
+    registerMarshaller(int[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        arr.put(a[i]);
+      }
+    });
+    registerMarshaller(long[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        arr.put(a[i]);
+      }
+    });
+    registerMarshaller(short[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        arr.put(a[i]);
+      }
+    });
+    registerMarshaller(byte[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        arr.put(a[i]);
+      }
+    });
+    registerMarshaller(float[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        arr.put(a[i]);
+      }
+    });
+    registerMarshaller(double[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        arr.put(a[i]);
+      }
+    });
+    registerMarshaller(char[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        arr.put(a[i]);
+      }
+    });
+    registerMarshaller(boolean[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        arr.put(a[i]);
+      }
+    });
+    registerMarshaller(Object[].class, (ser, state, a, arr) -> {
+      for (int i = 0; i < a.length; i++) {
+        Object json = ser.marshall(state, a, a[i], i);
+        arr.put(json);
+      }
+    });
+  }
+
+  private static <T> void registerMarshaller(Class<T> returnType, ArrayMarshaller<T> marshaller) {
+    MARSHAL_MAP.put(returnType, marshaller);
+  }
+
+  @FunctionalInterface
+  interface ArrayMarshaller<T> {
+    void marshal(JSONSerializer ser, SerializerState state, T source, JSONArray target)
+        throws MarshallException;
+
+    default void marshal(JSONSerializer ser, SerializerState state, Object source,
+        Class<T> sourceType, JSONArray target) throws MarshallException {
+      marshal(ser, state, sourceType.cast(source), target);
+    }
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
   public Object marshall(SerializerState state, Object p, Object o) throws MarshallException {
     try {
       JSONArray arr = new JSONArray();
-      if (o instanceof int[]) {
-        int[] a = (int[]) o;
-        for (int i = 0; i < a.length; i++) {
-          arr.put(a[i]);
-        }
-      } else if (o instanceof long[]) {
-        long[] a = (long[]) o;
-        for (int i = 0; i < a.length; i++) {
-          arr.put(a[i]);
-        }
-      } else if (o instanceof short[]) {
-        short[] a = (short[]) o;
-        for (int i = 0; i < a.length; i++) {
-          arr.put(a[i]);
-        }
-      } else if (o instanceof byte[]) {
-        byte[] a = (byte[]) o;
-        for (int i = 0; i < a.length; i++) {
-          arr.put(a[i]);
-        }
-      } else if (o instanceof float[]) {
-        float[] a = (float[]) o;
-        for (int i = 0; i < a.length; i++) {
-          arr.put(a[i]);
-        }
-      } else if (o instanceof double[]) {
-        double[] a = (double[]) o;
-        for (int i = 0; i < a.length; i++) {
-          arr.put(a[i]);
-        }
-      } else if (o instanceof char[]) {
-        char[] a = (char[]) o;
-        for (int i = 0; i < a.length; i++) {
-          arr.put(a[i]);
-        }
-      } else if (o instanceof boolean[]) {
-        boolean[] a = (boolean[]) o;
-        for (int i = 0; i < a.length; i++) {
-          arr.put(a[i]);
-        }
-      } else if (o instanceof Object[]) {
-        Object[] a = (Object[]) o;
-        for (int i = 0; i < a.length; i++) {
-          Object json = ser.marshall(state, o, a[i], i);
-          arr.put(json);
-        }
+      Class<?> type = o.getClass();
+      ArrayMarshaller<?> marshaller = MARSHAL_MAP.get(type);
+      if (marshaller == null) {
+        type = Object[].class;
+        marshaller = MARSHAL_MAP.get(type);
       }
+      marshaller.marshal(ser, state, o, (Class) type, arr);
       return arr;
-
     } catch (JSONException e) {
       throw new MarshallException(e.getMessage() + " threw json exception", e);
     }
-
   }
 }
