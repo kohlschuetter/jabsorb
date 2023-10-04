@@ -25,8 +25,10 @@
 package org.jabsorb.serializer.impl;
 
 import java.lang.reflect.Array;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
@@ -44,26 +46,28 @@ public class ArraySerializer extends AbstractSerializer {
   /**
    * The classes that this can serialise
    */
-  private static final Class<?>[] SERIALIZABLE_CLASSES = {
-      int[].class, short[].class, long[].class, float[].class, double[].class, boolean[].class,
-      Integer[].class, Short[].class, Long[].class, Float[].class, Double[].class, Boolean[].class,
-      String[].class};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = //
+      Set.of(int[].class, short[].class, long[].class, float[].class, double[].class,
+          boolean[].class, Integer[].class, Short[].class, Long[].class, Float[].class,
+          Double[].class, Boolean[].class, String[].class);
 
   /**
    * The class that this serialises to
    */
-  private static final Class<?>[] JSON_CLASSES = {JSONArray.class};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(JSONArray.class);
+
+  private static final Map<Class<?>, ArrayMarshaller<?>> MARSHAL_MAP = new HashMap<>();
 
   private static final Map<Class<?>, ArrayUnmarshaller<?>> UNMARSHAL_MAP = new HashMap<>();
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return SERIALIZABLE_CLASSES; // NOPMD
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return JSON_CLASSES; // NOPMD
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
@@ -210,8 +214,6 @@ public class ArraySerializer extends AbstractSerializer {
           + " not found in json object", e);
     }
   }
-
-  private static final Map<Class<?>, ArrayMarshaller<?>> MARSHAL_MAP = new HashMap<>();
 
   static {
     registerMarshaller(int[].class, (ser, state, a, arr) -> {

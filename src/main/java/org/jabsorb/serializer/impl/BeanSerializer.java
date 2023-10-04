@@ -34,9 +34,12 @@ import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
@@ -49,9 +52,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Serialises java beans that are known to have readable and writable properties
+ * Serializes java beans that are known to have readable and writable properties
  */
 public class BeanSerializer extends AbstractSerializer {
+
+  /**
+   * The logger for this class
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(BeanSerializer.class);
+
+  private static final String DECLARING_CLASS = "declaringClass";
+
+  /**
+   * Caches analyzed beans
+   */
+  private static final Map<Class<?>, BeanData> BEAN_CACHE = new WeakHashMap<Class<?>, BeanData>();
+
+  /**
+   * Classes that this can serialize.
+   */
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of();
+
+  /**
+   * Classes that this can serialize to.
+   */
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of();
+
   /**
    * Stores the readable and writable properties for the Bean.
    */
@@ -80,30 +106,6 @@ public class BeanSerializer extends AbstractSerializer {
   }
 
   /**
-   * The logger for this class
-   */
-  private static final Logger log = LoggerFactory.getLogger(BeanSerializer.class);
-
-  /**
-   * Caches analysed beans
-   */
-  private static Map<Class<?>, BeanData> beanCache = new HashMap<Class<?>, BeanData>();
-
-  /**
-   * Classes that this can serialise.
-   *
-   * TODO: Yay for bloat!
-   */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {};
-
-  /**
-   * Classes that this can serialise to.
-   *
-   * TODO: Yay for bloat!
-   */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {};
-
-  /**
    * Analyses a bean, returning a BeanData with the data extracted from it.
    *
    * @param clazz The class of the bean to analyse
@@ -114,7 +116,9 @@ public class BeanSerializer extends AbstractSerializer {
    */
   private static BeanData analyzeBean(Class<?> clazz) throws IntrospectionException,
       IllegalAccessException, NoSuchMethodException {
-    log.info("analyzing " + clazz.getName());
+    if (LOG.isInfoEnabled()) {
+      LOG.info("analyzing " + clazz.getName());
+    }
     Lookup lookup = MethodHandles.publicLookup();
 
     Constructor<?> constructor;
@@ -126,18 +130,17 @@ public class BeanSerializer extends AbstractSerializer {
     }
 
     BeanInfo beanInfo = Introspector.getBeanInfo(clazz, Object.class);
-    PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
 
     Map<String, MethodHandle> readableProps = new HashMap<String, MethodHandle>();
     Map<String, MethodHandle> writableProps = new HashMap<String, MethodHandle>();
 
-    for (int i = 0; i < props.length; i++) {
+    for (PropertyDescriptor prop : beanInfo.getPropertyDescriptors()) {
       // This is declared by enums and shouldn't be shown.
-      if (props[i].getName().equals("declaringClass")) {
+      if (DECLARING_CLASS.equals(prop.getName())) {
         // FIXME generalize, and check that this is an enum class
         continue;
       }
-      Method writeMethod = props[i].getWriteMethod();
+      Method writeMethod = prop.getWriteMethod();
       if (writeMethod != null) {
         Class<?>[] param = writeMethod.getParameterTypes();
         if (param.length != 1) {
@@ -146,12 +149,12 @@ public class BeanSerializer extends AbstractSerializer {
         }
 
         MethodHandle mh = lookup.unreflect(writeMethod);
-        writableProps.put(props[i].getName(), mh);
+        writableProps.put(prop.getName(), mh);
       }
 
-      Method readMethod = props[i].getReadMethod();
+      Method readMethod = prop.getReadMethod();
       if (readMethod != null) {
-        readableProps.put(props[i].getName(), lookup.unreflect(readMethod));
+        readableProps.put(prop.getName(), lookup.unreflect(readMethod));
       }
     }
     return new BeanData(constructor, readableProps, writableProps);
@@ -166,15 +169,15 @@ public class BeanSerializer extends AbstractSerializer {
    */
   public static BeanData getBeanData(Class<?> clazz) throws IntrospectionException {
     BeanData bd;
-    synchronized (beanCache) {
-      bd = beanCache.get(clazz);
+    synchronized (BEAN_CACHE) {
+      bd = BEAN_CACHE.get(clazz);
       if (bd == null) {
         try {
           bd = analyzeBean(clazz);
         } catch (IllegalAccessException | NoSuchMethodException e) {
           throw (IntrospectionException) new IntrospectionException(e.toString()).initCause(e);
         }
-        beanCache.put(clazz, bd);
+        BEAN_CACHE.put(clazz, bd);
       }
     }
     return bd;
@@ -187,13 +190,13 @@ public class BeanSerializer extends AbstractSerializer {
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
@@ -211,28 +214,24 @@ public class BeanSerializer extends AbstractSerializer {
     for (Map.Entry<String, MethodHandle> ent : bd.readableProps.entrySet()) {
       String prop = ent.getKey();
       MethodHandle getMethod = ent.getValue();
-      if (log.isDebugEnabled()) {
-        log.debug("invoking getter " + prop + " " + getMethod + "()");
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("invoking getter " + prop + " " + getMethod + "()");
       }
       try {
         result = getMethod.invoke(o);
-      } catch (Throwable e) {
-        if (e instanceof InvocationTargetException) {
-          e = ((InvocationTargetException) e).getTargetException();
+      } catch (Throwable e) { // NOPMD.AvoidCatchingThrowable
+        if (e instanceof InvocationTargetException) { // NOPMD.AvoidInstanceofChecksInCatchClause
+          e = ((InvocationTargetException) e).getTargetException(); // NOPMD.AvoidReassigningCatchVariables
         }
         throw new MarshallException("bean " + o.getClass().getName() + " can't invoke getter:"
             + prop + " " + getMethod + ": " + e.getMessage(), e);
       }
       try {
         if (result != null || ser.isMarshallNullAttributes()) {
-          try {
-            Object json = ser.marshall(state, o, result, prop);
-            val.put(prop, json);
-          } catch (JSONException e) {
-            throw new MarshallException("JSONException: " + e.getMessage(), e);
-          }
+          Object json = ser.marshall(state, o, result, prop);
+          val.put(prop, json);
         }
-      } catch (MarshallException e) {
+      } catch (JSONException e) {
         throw new MarshallException("bean " + o.getClass().getName() + " " + e.getMessage(), e);
       }
     }
@@ -241,6 +240,7 @@ public class BeanSerializer extends AbstractSerializer {
   }
 
   @Override
+  @SuppressWarnings("PMD.CognitiveComplexity")
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -283,9 +283,7 @@ public class BeanSerializer extends AbstractSerializer {
               m = m.max(tmp);
             }
           }
-        } catch (UnmarshallException e) {
-          throw new UnmarshallException("bean " + clazz.getName() + " " + e.getMessage(), e);
-        } catch (JSONException e) {
+        } catch (JSONException | UnmarshallException e) {
           throw new UnmarshallException("bean " + clazz.getName() + " " + e.getMessage(), e);
         }
       } else {
@@ -301,6 +299,7 @@ public class BeanSerializer extends AbstractSerializer {
   }
 
   @Override
+  @SuppressWarnings("PMD.CognitiveComplexity")
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     if (!(o instanceof JSONObject)) {
@@ -312,8 +311,8 @@ public class BeanSerializer extends AbstractSerializer {
     } catch (IntrospectionException e) {
       throw new UnmarshallException(clazz.getName() + " is not a bean", e);
     }
-    if (log.isDebugEnabled()) {
-      log.debug("instantiating " + clazz.getName());
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("instantiating " + clazz.getName());
     }
 
     Object instance;
@@ -340,21 +339,18 @@ public class BeanSerializer extends AbstractSerializer {
       if (setMethod != null) {
         try {
           fieldVal = ser.unmarshall(state, setMethod.type().parameterType(1), jso.get(field));
-        } catch (UnmarshallException e) {
-          throw new UnmarshallException("could not unmarshall field \"" + field + "\" of bean "
-              + clazz.getName(), e);
-        } catch (JSONException e) {
+        } catch (JSONException | UnmarshallException e) {
           throw new UnmarshallException("could not unmarshall field \"" + field + "\" of bean "
               + clazz.getName(), e);
         }
-        if (log.isDebugEnabled()) {
-          log.debug("invoking setter " + field + " " + setMethod + "(" + fieldVal + ")");
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("invoking setter " + field + " " + setMethod + "(" + fieldVal + ")");
         }
         try {
           setMethod.invoke(instance, fieldVal);
-        } catch (Throwable e) {
-          if (e instanceof InvocationTargetException) {
-            e = ((InvocationTargetException) e).getTargetException();
+        } catch (Throwable e) { // NOPMD
+          if (e instanceof InvocationTargetException) { // NOPMD
+            e = ((InvocationTargetException) e).getTargetException(); // NOPMD
           }
           throw new UnmarshallException("bean " + clazz.getName() + "can't invoke setter " + field
               + " " + setMethod + ": " + e.getMessage(), e);

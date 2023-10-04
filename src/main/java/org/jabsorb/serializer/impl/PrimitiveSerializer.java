@@ -24,6 +24,12 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
 import org.jabsorb.serializer.ObjectMatch;
@@ -37,23 +43,106 @@ public class PrimitiveSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {
-      int.class, byte.class, short.class, long.class, float.class, double.class};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(int.class, byte.class,
+      short.class, long.class, float.class, double.class);
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {
-      Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class, String.class};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(Integer.class, Byte.class,
+      Short.class, Long.class, Float.class, Double.class, String.class);
 
-  @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  private static final Map<Class<?>, Function<Object, Object>> PRIMITIVE_MAP = new HashMap<>();
+  static {
+    registerPrimitiveMapper(int.class, (jso) -> {
+      if (jso instanceof String) {
+        return Integer.parseInt((String) jso);
+      }
+      // Handle it if it is out of the range of the number
+      Number n = (Number) jso;
+      if (n.longValue() != n.intValue()) {
+        throw new NumberFormatException("number is too large for an int");
+      }
+      if (n.floatValue() != n.intValue()) {
+        throw new NumberFormatException("number is not an integer");
+      }
+      return n.intValue();
+    });
+
+    registerPrimitiveMapper(long.class, (jso) -> {
+      if (jso instanceof String) {
+        return Long.parseLong((String) jso);
+      }
+      Number n = (Number) jso;
+      if (n.floatValue() != n.longValue()) {
+        throw new NumberFormatException("number is not an integer");
+      }
+      return n.longValue();
+    });
+
+    registerPrimitiveMapper(short.class, (jso) -> {
+      if (jso instanceof String) {
+        return Short.parseShort((String) jso);
+      }
+      // Handle it if it is out of the range of the number
+      Number n = (Number) jso;
+      if (n.longValue() != n.shortValue()) {
+        throw new NumberFormatException("number is too large for an short");
+      }
+      if (n.floatValue() != n.shortValue()) {
+        throw new NumberFormatException("number is not an integer");
+      }
+      return n.shortValue();
+    });
+
+    registerPrimitiveMapper(byte.class, (jso) -> {
+      if (jso instanceof String) {
+        return Byte.parseByte((String) jso);
+      }
+      // Handle it if it is out of the range of the number
+      Number n = (Number) jso;
+      if (n.longValue() != n.byteValue()) {
+        // TODO: is appropriate to throw?
+        throw new NumberFormatException("number is too large for an short");
+      }
+      if (n.floatValue() != n.byteValue()) {
+        throw new NumberFormatException("number is not an integer");
+      }
+      return n.byteValue();
+    });
+
+    registerPrimitiveMapper(float.class, (jso) -> {
+      if (jso instanceof String) {
+        return Float.parseFloat((String) jso);
+      }
+      Number n = (Number) jso;
+      if ((n.floatValue() > Float.MAX_VALUE) || (n.floatValue() < -Float.MAX_VALUE)) {
+        throw new NumberFormatException("number is too large for a float");
+      }
+      return ((Number) jso).floatValue();
+    });
+
+    registerPrimitiveMapper(double.class, (jso) -> {
+      if (jso instanceof String) {
+        return Double.parseDouble((String) jso);
+      }
+      return ((Number) jso).doubleValue();
+    });
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
+  }
+
+  @Override
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
+  }
+
+  private static void registerPrimitiveMapper(Class<?> primitiveClass,
+      Function<Object, Object> mapper) {
+    PRIMITIVE_MAP.put(primitiveClass, mapper);
   }
 
   /**
@@ -66,74 +155,12 @@ public class PrimitiveSerializer extends AbstractSerializer {
    */
   public Object toPrimitive(Class<?> clazz, Object jso) throws NumberFormatException {
     // TODO: is there a better way of doing this instead of all the if elses?
-    if (int.class.equals(clazz)) {
-      // TODO: Should something be done about these early returns?
-      if (jso instanceof String) {
-        return Integer.valueOf((String) jso);
-      }
-      // Handle it if it is out of the range of the number
-      Number n = (Number) jso;
-      if (n.longValue() != n.intValue()) {
-        throw new NumberFormatException("number is too large for an int");
-      }
-      if (n.floatValue() != n.intValue()) {
-        throw new NumberFormatException("number is not an integer");
-      }
-      return Integer.valueOf(n.intValue());
-    } else if (long.class.equals(clazz)) {
-      if (jso instanceof String) {
-        return Long.valueOf((String) jso);
-      }
-      Number n = (Number) jso;
-      if (n.floatValue() != n.longValue()) {
-        throw new NumberFormatException("number is not an integer");
-      }
-      return Long.valueOf(n.longValue());
-    } else if (short.class.equals(clazz)) {
-      if (jso instanceof String) {
-        return Short.valueOf((String) jso);
-      }
-      // Handle it if it is out of the range of the number
-      Number n = (Number) jso;
-      if (n.longValue() != n.shortValue()) {
-        // TODO: is appropriate to throw?
-        throw new NumberFormatException("number is too large for an short");
-      }
-      if (n.floatValue() != n.shortValue()) {
-        throw new NumberFormatException("number is not an integer");
-      }
-      return Short.valueOf(n.shortValue());
-    } else if (byte.class.equals(clazz)) {
-      if (jso instanceof String) {
-        return Byte.valueOf((String) jso);
-      }
-      // Handle it if it is out of the range of the number
-      Number n = (Number) jso;
-      if (n.longValue() != n.byteValue()) {
-        // TODO: is appropriate to throw?
-        throw new NumberFormatException("number is too large for an short");
-      }
-      if (n.floatValue() != n.byteValue()) {
-        throw new NumberFormatException("number is not an integer");
-      }
-      return Byte.valueOf(n.byteValue());
-    } else if (float.class.equals(clazz)) {
-      if (jso instanceof String) {
-        return Float.valueOf((String) jso);
-      }
-      Number n = (Number) jso;
-      if ((n.floatValue() > Float.MAX_VALUE) || (n.floatValue() < -Float.MAX_VALUE)) {
-        throw new NumberFormatException("number is too large for a float");
-      }
-      return Float.valueOf(((Number) jso).floatValue());
-    } else if (double.class.equals(clazz)) {
-      if (jso instanceof String) {
-        return Double.valueOf((String) jso);
-      }
-      return Double.valueOf(((Number) jso).doubleValue());
-    }
 
-    return null;
+    Function<Object, Object> mapper = PRIMITIVE_MAP.get(clazz);
+    if (mapper == null) {
+      throw new NumberFormatException("No primitive mapper for " + clazz);
+    }
+    return mapper.apply(jso);
   }
 
   @Override

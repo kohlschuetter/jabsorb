@@ -24,6 +24,9 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
 import org.jabsorb.serializer.ObjectMatch;
@@ -37,12 +40,12 @@ public class EnumSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {String.class};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(String.class);
 
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class<?>[0];
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of();
 
   @Override
   public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
@@ -50,13 +53,13 @@ public class EnumSerializer extends AbstractSerializer {
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
@@ -71,8 +74,8 @@ public class EnumSerializer extends AbstractSerializer {
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object json)
       throws UnmarshallException {
     final Class<?>[] classes = json.getClass().getClasses();
-    for (int i = 0; i < classes.length; i++) {
-      if (classes[i].isEnum()) {
+    for (Class<?> c : classes) {
+      if (c.isEnum()) {
         state.setSerialized(json, ObjectMatch.OKAY);
         return ObjectMatch.OKAY;
       }

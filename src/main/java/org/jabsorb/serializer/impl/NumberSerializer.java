@@ -25,8 +25,10 @@
 package org.jabsorb.serializer.impl;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.jabsorb.serializer.AbstractSerializer;
@@ -42,17 +44,16 @@ public class NumberSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {
-      Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class, int.class,
-      byte.class, short.class, long.class, float.class, double.class, BigDecimal.class,};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(Integer.class, Byte.class,
+      Short.class, Long.class, Float.class, Double.class, int.class, byte.class, short.class,
+      long.class, float.class, double.class, BigDecimal.class);
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {
-      Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class, int.class,
-      byte.class, short.class, long.class, float.class, double.class, BigDecimal.class,
-      String.class};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(Integer.class, Byte.class,
+      Short.class, Long.class, Float.class, Double.class, int.class, byte.class, short.class,
+      long.class, float.class, double.class, BigDecimal.class, String.class);
 
   private static final Map<Class<?>, Function<Object, Object>> TO_NUMBER_MAP = new HashMap<>();
 
@@ -69,9 +70,10 @@ public class NumberSerializer extends AbstractSerializer {
         .floatValue() : Integer.parseInt(v.toString()));
     registerConverter(Double.class, double.class, (v) -> v instanceof Number ? ((Number) v)
         .doubleValue() : Integer.parseInt(v.toString()));
+
     registerConverter(BigDecimal.class, (v) -> v instanceof BigDecimal ? (BigDecimal) v
-        : v instanceof Number ? new BigDecimal(((Number) v).doubleValue()) : new BigDecimal(v
-            .toString()));
+        : v instanceof Number ? new BigDecimal(((Number) v).doubleValue()) // NOPMD
+            : new BigDecimal(v.toString()));
   }
 
   private static void registerConverter(Class<?> class1, Function<Object, Object> function) {
@@ -87,13 +89,13 @@ public class NumberSerializer extends AbstractSerializer {
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   /**

@@ -25,6 +25,8 @@
 package org.jabsorb.serializer.impl;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Set;
 
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
@@ -39,22 +41,22 @@ public class StringSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {
-      String.class, char.class, Character.class, byte[].class, char[].class};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(String.class, char.class,
+      Character.class, byte[].class, char[].class);
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {String.class, Integer.class};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(String.class, Integer.class);
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
@@ -79,8 +81,8 @@ public class StringSerializer extends AbstractSerializer {
       return ObjectMatch.OKAY;
     }
     Class<?>[] classes = jso.getClass().getClasses();
-    for (int i = 0; i < classes.length; i++) {
-      if (classes[i].equals(String.class)) {
+    for (Class<?> cl : classes) {
+      if (String.class.equals(cl)) {
         state.setSerialized(jso, ObjectMatch.OKAY);
         return ObjectMatch.OKAY;
       }

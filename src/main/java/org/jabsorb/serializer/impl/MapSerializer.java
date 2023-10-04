@@ -24,11 +24,17 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
@@ -40,21 +46,42 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Serialises Maps
+ * Serializes Maps
  *
- * TODO: if this serialises a superclass does it need to also specify the subclasses?
+ * TODO: if this serializes a superclass does it need to also specify the subclasses?
  */
 public class MapSerializer extends AbstractSerializer {
-  /**
-   * Classes that this can serialise.
-   */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {
-      Map.class, HashMap.class, TreeMap.class, LinkedHashMap.class};
+  private static final Map<Class<?>, Supplier<Map<String, Object>>> CLASS_TO_CONSTRUCTOR =
+      new HashMap<>();
+  private static final Map<String, Supplier<Map<String, Object>>> CLASSNAME_TO_CONSTRUCTOR =
+      new HashMap<>();
+  static {
+    registerClass(Map.class, HashMap::new);
+    registerClass(AbstractMap.class, HashMap::new);
+    registerClass(HashMap.class, HashMap::new); // NOPMD
+    registerClass(LinkedHashMap.class, LinkedHashMap::new); // NOPMD
+    registerClass(TreeMap.class, TreeMap::new); // NOPMD
+  }
 
   /**
-   * Classes that this can serialise to.
+   * Classes that this can serialize.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {JSONObject.class};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Collections.unmodifiableSet(
+      CLASS_TO_CONSTRUCTOR.keySet());
+
+  /**
+   * Classes that this can serialize to.
+   */
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(JSONObject.class);
+
+  private static final Set<String> SUPPORTED_JAVA_CLASSES = SERIALIZABLE_CLASSES.stream().map((
+      c) -> c.getName()).collect(Collectors.toSet());
+
+  private static <T extends Map<?, ?>> void registerClass(Class<T> klazz,
+      Supplier<Map<String, Object>> constructor) {
+    CLASS_TO_CONSTRUCTOR.put(klazz, constructor);
+    CLASSNAME_TO_CONSTRUCTOR.put(klazz.getName(), constructor);
+  }
 
   @Override
   public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
@@ -63,13 +90,13 @@ public class MapSerializer extends AbstractSerializer {
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
@@ -104,9 +131,7 @@ public class MapSerializer extends AbstractSerializer {
 
         mapdata.put(keyString, json);
       }
-    } catch (MarshallException e) {
-      throw new MarshallException("map key " + key + " " + e.getMessage(), e);
-    } catch (JSONException e) {
+    } catch (JSONException | MarshallException e) {
       throw new MarshallException("map key " + key + " " + e.getMessage(), e);
     } finally {
       state.pop();
@@ -115,6 +140,7 @@ public class MapSerializer extends AbstractSerializer {
   }
 
   @Override
+  @SuppressWarnings("PMD.CyclomaticComplexity")
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -127,9 +153,7 @@ public class MapSerializer extends AbstractSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(javaClass.equals("java.util.Map") || javaClass.equals("java.util.AbstractMap")
-        || javaClass.equals("java.util.LinkedHashMap") || javaClass.equals("java.util.TreeMap")
-        || javaClass.equals("java.util.HashMap"))) {
+    if (!SUPPORTED_JAVA_CLASSES.contains(javaClass)) {
       throw new UnmarshallException("not a Map");
     }
     JSONObject jsonmap;
@@ -150,9 +174,7 @@ public class MapSerializer extends AbstractSerializer {
         key = i.next();
         m.setMismatch(ser.tryUnmarshall(state, null, jsonmap.get(key)).max(m).getMismatch());
       }
-    } catch (UnmarshallException e) {
-      throw new UnmarshallException("key " + key + " " + e.getMessage(), e);
-    } catch (JSONException e) {
+    } catch (JSONException | UnmarshallException e) {
       throw new UnmarshallException("key " + key + " " + e.getMessage(), e);
     }
     return m;
@@ -171,17 +193,14 @@ public class MapSerializer extends AbstractSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    Map<String, Object> abmap;
-    if (javaClass.equals("java.util.Map") || javaClass.equals("java.util.AbstractMap") || javaClass
-        .equals("java.util.HashMap")) {
-      abmap = new HashMap<String, Object>();
-    } else if (javaClass.equals("java.util.TreeMap")) {
-      abmap = new TreeMap<String, Object>();
-    } else if (javaClass.equals("java.util.LinkedHashMap")) {
-      abmap = new LinkedHashMap<String, Object>();
-    } else {
+
+    Supplier<Map<String, Object>> supp = CLASSNAME_TO_CONSTRUCTOR.get(javaClass);
+    if (supp == null) {
       throw new UnmarshallException("not a Map");
     }
+
+    Map<String, Object> abmap = supp.get();
+
     JSONObject jsonmap;
     try {
       jsonmap = jso.getJSONObject("map");
@@ -199,9 +218,7 @@ public class MapSerializer extends AbstractSerializer {
         key = i.next();
         abmap.put(key, ser.unmarshall(state, null, jsonmap.get(key)));
       }
-    } catch (UnmarshallException e) {
-      throw new UnmarshallException("key " + key + " " + e.getMessage(), e);
-    } catch (JSONException e) {
+    } catch (JSONException | UnmarshallException e) {
       throw new UnmarshallException("key " + key + " " + e.getMessage(), e);
     }
 

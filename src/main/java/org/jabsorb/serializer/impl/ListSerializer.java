@@ -24,11 +24,19 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
@@ -41,21 +49,42 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Serialises lists
+ * Serializes lists.
  *
- * TODO: if this serialises a superclass does it need to also specify the subclasses?
+ * TODO: if this serializes a superclass does it need to also specify the subclasses?
  */
 public class ListSerializer extends AbstractSerializer {
-  /**
-   * Classes that this can serialise.
-   */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {
-      List.class, ArrayList.class, LinkedList.class, Vector.class};
+  private static final Map<Class<?>, Supplier<List<Object>>> CLASS_TO_CONSTRUCTOR = new HashMap<>();
+  private static final Map<String, Supplier<List<Object>>> CLASSNAME_TO_CONSTRUCTOR =
+      new HashMap<>();
+  static {
+    registerClass(List.class, ArrayList::new);
+    registerClass(AbstractList.class, ArrayList::new);
+    registerClass(ArrayList.class, ArrayList::new); // NOPMD
+
+    registerClass(LinkedList.class, LinkedList::new); // NOPMD
+    registerClass(Vector.class, Vector::new); // NOPMD
+  }
 
   /**
-   * Classes that this can serialise to.
+   * Classes that this can serialize.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {JSONObject.class};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Collections.unmodifiableSet(
+      CLASS_TO_CONSTRUCTOR.keySet());
+
+  /**
+   * Classes that this can serialize to.
+   */
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(JSONObject.class);
+
+  private static final Set<String> SUPPORTED_JAVA_CLASSES = SERIALIZABLE_CLASSES.stream().map((
+      c) -> c.getName()).collect(Collectors.toSet());
+
+  private static <T extends List<?>> void registerClass(Class<T> klazz,
+      Supplier<List<Object>> constructor) {
+    CLASS_TO_CONSTRUCTOR.put(klazz, constructor);
+    CLASSNAME_TO_CONSTRUCTOR.put(klazz.getName(), constructor);
+  }
 
   @Override
   public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
@@ -64,13 +93,13 @@ public class ListSerializer extends AbstractSerializer {
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
@@ -107,6 +136,7 @@ public class ListSerializer extends AbstractSerializer {
   // TODO: Also cache the result somehow so that an unmarshall
   // following a tryUnmarshall doesn't do the same work twice!
   @Override
+  @SuppressWarnings("PMD.CyclomaticComplexity")
   public ObjectMatch tryUnmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
     JSONObject jso = (JSONObject) o;
@@ -119,9 +149,7 @@ public class ListSerializer extends AbstractSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(javaClass.equals("java.util.List") || javaClass.equals("java.util.AbstractList")
-        || javaClass.equals("java.util.LinkedList") || javaClass.equals("java.util.ArrayList")
-        || javaClass.equals("java.util.Vector"))) {
+    if (!SUPPORTED_JAVA_CLASSES.contains(javaClass)) {
       throw new UnmarshallException("not a List");
     }
     JSONArray jsonlist;
@@ -140,9 +168,7 @@ public class ListSerializer extends AbstractSerializer {
       for (; i < jsonlist.length(); i++) {
         m.setMismatch(ser.tryUnmarshall(state, null, jsonlist.get(i)).max(m).getMismatch());
       }
-    } catch (UnmarshallException e) {
-      throw new UnmarshallException("element " + i + " " + e.getMessage(), e);
-    } catch (JSONException e) {
+    } catch (JSONException | UnmarshallException e) {
       throw new UnmarshallException("element " + i + " " + e.getMessage(), e);
     }
     return m;
@@ -161,17 +187,12 @@ public class ListSerializer extends AbstractSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    List<Object> al;
-    if (javaClass.equals("java.util.List") || javaClass.equals("java.util.AbstractList")
-        || javaClass.equals("java.util.ArrayList")) {
-      al = new ArrayList<Object>();
-    } else if (javaClass.equals("java.util.LinkedList")) {
-      al = new LinkedList<Object>();
-    } else if (javaClass.equals("java.util.Vector")) {
-      al = new Vector<Object>();
-    } else {
+
+    Supplier<List<Object>> supp = CLASSNAME_TO_CONSTRUCTOR.get(javaClass);
+    if (supp == null) {
       throw new UnmarshallException("not a List");
     }
+    List<Object> al = supp.get();
 
     JSONArray jsonlist;
     try {
@@ -188,12 +209,9 @@ public class ListSerializer extends AbstractSerializer {
       for (; i < jsonlist.length(); i++) {
         al.add(ser.unmarshall(state, null, jsonlist.get(i)));
       }
-    } catch (UnmarshallException e) {
-      throw new UnmarshallException("element " + i + " " + e.getMessage(), e);
-    } catch (JSONException e) {
+    } catch (JSONException | UnmarshallException e) {
       throw new UnmarshallException("element " + i + " " + e.getMessage(), e);
     }
     return al;
   }
-
 }

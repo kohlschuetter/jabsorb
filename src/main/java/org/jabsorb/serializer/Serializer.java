@@ -24,6 +24,8 @@
  */
 package org.jabsorb.serializer;
 
+import java.util.Collection;
+
 import org.jabsorb.JSONSerializer;
 
 /**
@@ -50,7 +52,7 @@ public interface Serializer {
    *
    * @return json side java classes that can be serialized/deserialized by this serializer.
    */
-  Class<?>[] getJSONClasses();
+  Collection<Class<?>> getJSONClasses();
 
   /**
    * Get the java classes that this Serializer is able to serialize from java into json and
@@ -58,7 +60,7 @@ public interface Serializer {
    *
    * @return java side classes that can be serialized/deserialized by this serializer.
    */
-  Class<?>[] getSerializableClasses();
+  Collection<Class<?>> getSerializableClasses();
 
   /**
    * Marshall a java object into an equivalent json object.

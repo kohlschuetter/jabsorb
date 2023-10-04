@@ -26,7 +26,10 @@ package org.jabsorb.serializer.impl;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
@@ -44,22 +47,25 @@ public class DateSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {
-      Date.class, Timestamp.class, java.sql.Date.class, Time.class};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(Date.class,
+      Timestamp.class, java.sql.Date.class, Time.class);
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {JSONObject.class};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(JSONObject.class);
+
+  private static final Set<String> SUPPORTED_JAVA_CLASSES = SERIALIZABLE_CLASSES.stream().map((
+      c) -> c.getName()).collect(Collectors.toSet());
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
@@ -93,8 +99,7 @@ public class DateSerializer extends AbstractSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(javaClass.equals("java.util.Date")) && !(javaClass.equals("java.sql.Timestamp"))
-        && !(javaClass.equals("java.sql.Time")) && !(javaClass.equals("java.sql.Date"))) {
+    if (!SUPPORTED_JAVA_CLASSES.contains(javaClass)) {
       throw new UnmarshallException("not a Date");
     }
     state.setSerialized(o, ObjectMatch.OKAY);

@@ -24,7 +24,9 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
@@ -41,21 +43,21 @@ public class RawJSONObjectSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {JSONObject.class};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(JSONObject.class);
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {JSONObject.class};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(JSONObject.class);
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
@@ -72,9 +74,7 @@ public class RawJSONObjectSerializer extends AbstractSerializer {
         Object j = ser.marshall(state, o, jsonIn.opt(key), key);
         jsonOut.put(key, j);
       }
-    } catch (MarshallException e) {
-      throw new MarshallException("JSONObject key " + key + " " + e.getMessage(), e);
-    } catch (JSONException e) {
+    } catch (JSONException | MarshallException e) {
       throw new MarshallException("JSONObject key " + key + " " + e.getMessage(), e);
     }
     return jsonOut;

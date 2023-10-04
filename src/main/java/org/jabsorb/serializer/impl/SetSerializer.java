@@ -24,11 +24,18 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
@@ -40,21 +47,40 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Serialises Sets
+ * Serializes Sets
  *
- * TODO: if this serialises a superclass does it need to also specify the subclasses?
+ * TODO: if this serializes a superclass does it need to also specify the subclasses?
  */
 public class SetSerializer extends AbstractSerializer {
+  private static final Map<Class<?>, Supplier<Set<Object>>> CLASS_TO_CONSTRUCTOR = new HashMap<>();
+  private static final Map<String, Supplier<Set<Object>>> CLASSNAME_TO_CONSTRUCTOR =
+      new HashMap<>();
+  static {
+    registerClass(Set.class, HashSet::new);
+    registerClass(AbstractSet.class, HashSet::new);
+    registerClass(HashSet.class, HashSet::new); // NOPMD
+    registerClass(LinkedHashSet.class, LinkedHashSet::new); // NOPMD
+    registerClass(TreeSet.class, TreeSet::new); // NOPMD
+  }
   /**
-   * Classes that this can serialise.
+   * Classes that this can serialize.
    */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {
-      Set.class, HashSet.class, TreeSet.class, LinkedHashSet.class};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Collections.unmodifiableSet(
+      CLASS_TO_CONSTRUCTOR.keySet());
 
   /**
-   * Classes that this can serialise to.
+   * Classes that this can serialize to.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {JSONObject.class};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of(JSONObject.class);
+
+  private static final Set<String> SUPPORTED_JAVA_CLASSES = SERIALIZABLE_CLASSES.stream().map((
+      c) -> c.getName()).collect(Collectors.toSet());
+
+  private static <T extends Set<?>> void registerClass(Class<T> klazz,
+      Supplier<Set<Object>> constructor) {
+    CLASS_TO_CONSTRUCTOR.put(klazz, constructor);
+    CLASSNAME_TO_CONSTRUCTOR.put(klazz.getName(), constructor);
+  }
 
   @Override
   public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
@@ -63,13 +89,13 @@ public class SetSerializer extends AbstractSerializer {
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
@@ -98,9 +124,7 @@ public class SetSerializer extends AbstractSerializer {
         Object json = ser.marshall(state, setdata, key, keyString);
         setdata.put(keyString, json);
       }
-    } catch (MarshallException e) {
-      throw new MarshallException("set key " + key + e.getMessage(), e);
-    } catch (JSONException e) {
+    } catch (JSONException | MarshallException e) {
       throw new MarshallException("set key " + key + e.getMessage(), e);
     } finally {
       state.pop();
@@ -121,9 +145,7 @@ public class SetSerializer extends AbstractSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    if (!(javaClass.equals("java.util.Set") || javaClass.equals("java.util.AbstractSet")
-        || javaClass.equals("java.util.LinkedHashSet") || javaClass.equals("java.util.TreeSet")
-        || javaClass.equals("java.util.HashSet"))) {
+    if (!SUPPORTED_JAVA_CLASSES.contains(javaClass)) {
       throw new UnmarshallException("not a Set");
     }
     JSONObject jsonset;
@@ -147,9 +169,7 @@ public class SetSerializer extends AbstractSerializer {
         key = (String) i.next();
         m.setMismatch(ser.tryUnmarshall(state, null, jsonset.get(key)).max(m).getMismatch());
       }
-    } catch (UnmarshallException e) {
-      throw new UnmarshallException("key " + key + " " + e.getMessage(), e);
-    } catch (JSONException e) {
+    } catch (JSONException | UnmarshallException e) {
       throw new UnmarshallException("key " + key + " " + e.getMessage(), e);
     }
     return m;
@@ -168,17 +188,14 @@ public class SetSerializer extends AbstractSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no type hint");
     }
-    Set<Object> abset = null;
-    if (javaClass.equals("java.util.Set") || javaClass.equals("java.util.AbstractSet") || javaClass
-        .equals("java.util.HashSet")) {
-      abset = new HashSet<Object>();
-    } else if (javaClass.equals("java.util.TreeSet")) {
-      abset = new TreeSet<Object>();
-    } else if (javaClass.equals("java.util.LinkedHashSet")) {
-      abset = new LinkedHashSet<Object>();
-    } else {
+
+    Supplier<Set<Object>> supp = CLASSNAME_TO_CONSTRUCTOR.get(javaClass);
+    if (supp == null) {
       throw new UnmarshallException("not a Set");
     }
+
+    Set<Object> abset = supp.get();
+
     JSONObject jsonset;
     try {
       jsonset = jso.getJSONObject("set");

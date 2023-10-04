@@ -24,6 +24,9 @@
  */
 package org.jabsorb.serializer.impl;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.jabsorb.JSONRPCBridge;
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
@@ -43,22 +46,22 @@ public class ReferenceSerializer extends AbstractSerializer {
   /**
    * The logger for this class
    */
-  private static final Logger log = LoggerFactory.getLogger(ReferenceSerializer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ReferenceSerializer.class);
 
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class<?>[] {};
+  private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of();
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class<?>[] {};
+  private static final Collection<Class<?>> JSON_CLASSES = Set.of();
 
   /**
    * A reference to the bridge
    */
-  private JSONRPCBridge bridge;
+  private final JSONRPCBridge bridge;
 
   /**
    * Creates a new ReferenceSerializer
@@ -68,6 +71,7 @@ public class ReferenceSerializer extends AbstractSerializer {
    *          TODO: Should reference detection be abstracted out into another class?
    */
   public ReferenceSerializer(JSONRPCBridge bridge) {
+    super();
     this.bridge = bridge;
   }
 
@@ -79,13 +83,13 @@ public class ReferenceSerializer extends AbstractSerializer {
   }
 
   @Override
-  public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+  public Collection<Class<?>> getSerializableClasses() {
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
-  public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+  public Collection<Class<?>> getJSONClasses() {
+    return JSON_CLASSES;
   }
 
   @Override
@@ -93,8 +97,8 @@ public class ReferenceSerializer extends AbstractSerializer {
     Class<?> clazz = o.getClass();
     Integer identity = System.identityHashCode(o);
     if (bridge.isReference(clazz)) {
-      if (log.isDebugEnabled()) {
-        log.debug("marshalling reference to object " + identity + " of class " + clazz.getName());
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("marshalling reference to object " + identity + " of class " + clazz.getName());
       }
       bridge.addReference(o);
       JSONObject jso = new JSONObject();
@@ -107,8 +111,8 @@ public class ReferenceSerializer extends AbstractSerializer {
       }
       return jso;
     } else if (bridge.isCallableReference(clazz)) {
-      if (log.isDebugEnabled()) {
-        log.debug("marshalling callable reference to object " + identity + " of class " + clazz
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("marshalling callable reference to object " + identity + " of class " + clazz
             .getName());
       }
       bridge.registerObject(identity, o);
@@ -150,8 +154,13 @@ public class ReferenceSerializer extends AbstractSerializer {
       throw new UnmarshallException(e.getMessage(), e);
     }
     if (jsonType != null) {
-      if ((jsonType.equals("Reference")) || (jsonType.equals("CallableReference"))) {
-        ref = bridge.getReference(objectId);
+      switch (jsonType) {
+        case "Reference":
+        case "CallableReference":
+          ref = bridge.getReference(objectId);
+          break;
+        default:
+          break;
       }
     }
     state.setSerialized(o, ref);

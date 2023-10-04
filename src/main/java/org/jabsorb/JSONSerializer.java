@@ -25,6 +25,7 @@
 package org.jabsorb;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -380,7 +381,7 @@ public class JSONSerializer {
    *          AbstractSerializer).
    */
   public void registerSerializer(Serializer s) {
-    Class<?>[] classes = s.getSerializableClasses();
+    Collection<Class<?>> classes = s.getSerializableClasses();
     synchronized (serializerSet) {
       if (!serializerSet.contains(s)) {
         if (LOG.isDebugEnabled()) {
