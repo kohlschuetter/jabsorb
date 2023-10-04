@@ -40,11 +40,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 /**
- * Responsible for serialising Java arrays
+ * Responsible for serializing Java arrays.
  */
 public class ArraySerializer extends AbstractSerializer {
   /**
-   * The classes that this can serialise
+   * The classes that this can serialize.
    */
   private static final Collection<Class<?>> SERIALIZABLE_CLASSES = //
       Set.of(int[].class, short[].class, long[].class, float[].class, double[].class,
@@ -52,7 +52,7 @@ public class ArraySerializer extends AbstractSerializer {
           Double[].class, Boolean[].class, String[].class);
 
   /**
-   * The class that this serialises to
+   * The class that this serializes to.
    */
   private static final Collection<Class<?>> JSON_CLASSES = Set.of(JSONArray.class);
 

@@ -35,12 +35,12 @@ import org.json.JSONObject;
  */
 public class RemoteFailedResult extends FailedResult {
   /**
-   * Denotes that an exception was thrown on the server
+   * Denotes that an exception was thrown on the server.
    */
   public static final int CODE_REMOTE_EXCEPTION = 490;
 
   /**
-   * Creates a new RemoteException
+   * Creates a new {@link RemoteFailedResult}.
    *
    * @param id The id of the response
    * @param error The Exception which was thrown.

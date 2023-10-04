@@ -35,7 +35,7 @@ public class ClientError extends RuntimeException {
   private static final long serialVersionUID = 1L;
 
   /**
-   * Creates a new ClientError
+   * Creates a new ClientError.
    *
    * @param message the detail message.
    */
@@ -44,7 +44,7 @@ public class ClientError extends RuntimeException {
   }
 
   /**
-   * Creates a new ClientError
+   * Creates a new ClientError.
    *
    * @param ex the underlying cause of the exception
    */

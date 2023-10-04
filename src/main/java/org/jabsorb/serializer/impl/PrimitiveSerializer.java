@@ -37,22 +37,23 @@ import org.jabsorb.serializer.SerializerState;
 import org.jabsorb.serializer.UnmarshallException;
 
 /**
- * Serializes primitive Java values
+ * Serializes primitive Java values.
  */
 public class PrimitiveSerializer extends AbstractSerializer {
   /**
-   * Classes that this can serialise.
+   * Classes that this can serialize.
    */
   private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(int.class, byte.class,
       short.class, long.class, float.class, double.class);
 
   /**
-   * Classes that this can serialise to.
+   * Classes that this can serialize to.
    */
   private static final Collection<Class<?>> JSON_CLASSES = Set.of(Integer.class, Byte.class,
       Short.class, Long.class, Float.class, Double.class, String.class);
 
   private static final Map<Class<?>, Function<Object, Object>> PRIMITIVE_MAP = new HashMap<>();
+
   static {
     registerPrimitiveMapper(int.class, (jso) -> {
       if (jso instanceof String) {
@@ -146,7 +147,7 @@ public class PrimitiveSerializer extends AbstractSerializer {
   }
 
   /**
-   * Converts a javascript object to a Java object
+   * Converts a javascript object to a Java object.
    *
    * @param clazz The class of the Java object that it should be converted to
    * @param jso The javascript object

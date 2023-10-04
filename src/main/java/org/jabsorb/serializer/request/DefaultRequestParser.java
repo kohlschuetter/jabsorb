@@ -29,7 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * A simple request parser that just returns the argument array without doing anything
+ * A simple request parser that just returns the argument array without doing anything.
  */
 public class DefaultRequestParser extends RequestParser {
   @Override

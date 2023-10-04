@@ -30,12 +30,12 @@ package org.jabsorb.localarg;
 class LocalArgResolverData {
   /**
    * The user defined class that resolves the and returns the method argument using transport
-   * context information
+   * context information.
    */
   private final LocalArgResolver argResolver;
 
   /**
-   * The class to be resolved locally
+   * The class to be resolved locally.
    */
   private final Class<?> argClazz;
 
@@ -46,7 +46,7 @@ class LocalArgResolverData {
   private final Class<?> contextInterface;
 
   /**
-   * Create a new data holder
+   * Create a new data holder.
    *
    * @param argResolver The user defined class that resolves the and returns the method argument
    *          using transport context information
@@ -77,7 +77,7 @@ class LocalArgResolverData {
   }
 
   /**
-   * Whether this object's context can understand the given object
+   * Whether this object's context can understand the given object.
    *
    * @param context The object to test
    * @return Whether the contextInterface isAssignableFrom the given object
@@ -87,7 +87,7 @@ class LocalArgResolverData {
   }
 
   /**
-   * Gets the argResolver
+   * Gets the argResolver.
    *
    * @return LocalArgResolver
    */

@@ -30,12 +30,9 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Exception created from the JSON-RPC error response
+ * Exception created from the JSON-RPC error response.
  */
 public class ErrorResponse extends ClientError {
-  /**
-   * Generated id
-   */
   private static final long serialVersionUID = 1L;
   private final String message;
   private final String trace;
@@ -52,7 +49,7 @@ public class ErrorResponse extends ClientError {
     return result;
   }
 
-  /** Borrowed from org.apache.commons.lang.exception.NestableDelegate */
+  // Borrowed from org.apache.commons.lang.exception.NestableDelegate.
   @Override
   public void printStackTrace(PrintStream out) {
     synchronized (out) {

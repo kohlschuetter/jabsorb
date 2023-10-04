@@ -60,7 +60,7 @@ public class ClassData {
   private final Map<AccessibleObjectKey, Set<AccessibleObject>> constructorMap;
 
   /**
-   * Creates a new ClassData
+   * Creates a new ClassData.
    *
    * @param clazz The class that this ClassData maps.
    * @param methodMap Map of public instance methods. Static methods do not go here. Key is a

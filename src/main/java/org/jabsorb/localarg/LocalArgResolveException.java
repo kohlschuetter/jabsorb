@@ -35,7 +35,7 @@ public class LocalArgResolveException extends Exception {
   private static final long serialVersionUID = 2;
 
   /**
-   * Creates a new LocalArgResolveException
+   * Creates a new LocalArgResolveException.
    *
    * @param msg The message to display
    */

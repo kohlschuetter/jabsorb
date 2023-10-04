@@ -31,7 +31,7 @@ import org.json.JSONObject;
  */
 public interface Session {
   /**
-   * Synchronously send JSON message and receive the result
+   * Synchronously send JSON message and receive the result.
    *
    * @param message A JSON message to send
    * @return the JSON result message
@@ -39,7 +39,7 @@ public interface Session {
   JSONObject sendAndReceive(JSONObject message);
 
   /**
-   * Close the session and release the resources if necessary
+   * Close the session and release the resources if necessary.
    */
   void close();
 }

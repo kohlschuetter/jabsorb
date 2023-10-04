@@ -27,9 +27,9 @@ package org.jabsorb.callback;
 /**
  * Container class for information about callbacks and the transport they are associated with.
  */
-public class CallbackData {
+final class CallbackData {
   /**
-   * The object implementing the InvocationCallback Interface
+   * The object implementing the InvocationCallback Interface.
    */
   private final InvocationCallback cb;
 
@@ -40,13 +40,13 @@ public class CallbackData {
   private final Class<?> contextInterface;
 
   /**
-   * Creates a new Callback data holder
+   * Creates a new Callback data holder.
    *
    * @param cb The object implementing the InvocationCallback Interface
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
    */
-  public CallbackData(InvocationCallback cb, Class<?> contextInterface) {
+  CallbackData(InvocationCallback cb, Class<?> contextInterface) {
     this.cb = cb;
     this.contextInterface = contextInterface;
   }
@@ -67,7 +67,7 @@ public class CallbackData {
   }
 
   /**
-   * Gets the callback
+   * Gets the callback.
    *
    * @return InvocationCallback
    */
@@ -86,7 +86,7 @@ public class CallbackData {
   }
 
   /**
-   * Whether the context for this object can be used with the given object
+   * Whether the context for this object can be used with the given object.
    *
    * @param context The object to test
    * @return Whether the context for this object is assignable from the given object.

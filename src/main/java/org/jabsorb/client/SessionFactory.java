@@ -31,7 +31,7 @@ import java.net.URI;
  */
 public interface SessionFactory {
   /**
-   * Creates the new session
+   * Creates the new session.
    *
    * @param uri URI used to open this session
    * @return The new session

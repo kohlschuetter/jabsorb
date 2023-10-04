@@ -34,7 +34,7 @@ import org.jabsorb.serializer.SerializerState;
 import org.jabsorb.serializer.UnmarshallException;
 
 /**
- * Serialiess Boolean values
+ * Serializes Boolean values.
  */
 public class BooleanSerializer extends AbstractSerializer {
   private static final String FALSE = "false";
@@ -42,13 +42,13 @@ public class BooleanSerializer extends AbstractSerializer {
   private static final String TRUE = "true";
 
   /**
-   * Classes that this can serialise.
+   * Classes that this can serialize.
    */
   private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(boolean.class,
       Boolean.class);
 
   /**
-   * Classes that this can serialise to.
+   * Classes that this can serialize to.
    */
   private static final Collection<Class<?>> JSON_CLASSES = Set.of(Boolean.class, String.class);
 

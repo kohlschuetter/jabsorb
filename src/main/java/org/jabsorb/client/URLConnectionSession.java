@@ -38,14 +38,13 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * Transport based on URLConnection
- *
+ * Transport based on {@link URLConnection}.
  */
 public class URLConnectionSession implements Session {
   URL url;
 
   /**
-   * Create a URLConnection transport
+   * Create a URLConnection transport.
    *
    * @param url The URL.
    */
@@ -93,5 +92,4 @@ public class URLConnectionSession implements Session {
       throw new ClientError(e);
     }
   }
-
 }

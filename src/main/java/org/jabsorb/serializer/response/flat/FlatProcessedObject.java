@@ -28,18 +28,18 @@ import org.jabsorb.serializer.ProcessedObject;
 import org.json.JSONObject;
 
 /**
- * Contains data for each flatten object
+ * Contains data for each flatten object.
  *
  * @author William Becker
  */
 final class FlatProcessedObject extends ProcessedObject {
   /**
-   * The index that will be assigned to this object
+   * The index that will be assigned to this object.
    */
   private final Index index;
 
   /**
-   * Creates a new FlatProcessedObject
+   * Creates a new FlatProcessedObject.
    *
    * @param object The object that is being processed
    * @param index The unique identifier for the object
@@ -50,7 +50,7 @@ final class FlatProcessedObject extends ProcessedObject {
   }
 
   /**
-   * Creates a new FlatProcessedObject. The index must be set later.
+   * Creates a new FlatProcessedObject; the index must be set later.
    *
    * @param object The object that is being processed
    */
@@ -60,7 +60,7 @@ final class FlatProcessedObject extends ProcessedObject {
   }
 
   /**
-   * Sets the index
+   * Sets the index.
    *
    * @param index The value the index should take
    */

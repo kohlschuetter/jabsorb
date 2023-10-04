@@ -47,9 +47,6 @@ import jakarta.servlet.http.HttpSession;
  * Controls registration and lookup of LocalArgResolver classes.
  */
 public class LocalArgController {
-  /**
-   * The logger for this class
-   */
   private static final Logger LOG = LoggerFactory.getLogger(LocalArgController.class);
 
   private static final Map<Class<?>, Set<LocalArgResolverData>> RESOLVER_MAP =
@@ -136,7 +133,7 @@ public class LocalArgController {
   }
 
   /**
-   * Unregisters a LocalArgResolver</b>.
+   * Unregisters a {@link LocalArgResolver}.
    *
    * @param argClazz The previously registered local class
    * @param argResolver The previously registered LocalArgResolver object

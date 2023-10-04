@@ -105,17 +105,16 @@ import jakarta.servlet.http.HttpSession;
  * }<br />
  * </code>
  */
-
 public class JSONRPCServlet extends HttpServlet {
   private static final long serialVersionUID = -1; // not serializable, just to suppress a warning
 
   /**
-   * The logger for this class
+   * The logger for this class.
    */
   private static final Logger LOG = LoggerFactory.getLogger(JSONRPCServlet.class);
 
   /**
-   * The size of the buffer used for reading requests
+   * The size of the buffer used for reading requests.
    */
   private static final int BUF_SIZE = 4096;
 
@@ -141,21 +140,21 @@ public class JSONRPCServlet extends HttpServlet {
   private int gzipThreshold = 200;
 
   /**
-   * The location of the JSONRPCBridge variable in the session
+   * The location of the JSONRPCBridge variable in the session.
    */
   private final String bridgeLocation;
 
   private final transient JSONRPCBridge defaultBridge;
 
   /**
-   * Creates a new JSONRPCServlet with the bridge in the "JSONRPCBridge" variable
+   * Creates a new JSONRPCServlet with the bridge in the "JSONRPCBridge" variable.
    */
   public JSONRPCServlet(JSONRPCBridge defaultBridge) {
     this("JSONRPCBridge", defaultBridge);
   }
 
   /**
-   * Creates a new JSONRPCServlet
+   * Creates a new JSONRPCServlet.
    *
    * @param bridgeLocation The location of the JSONRPCBridge variable in the session
    */
@@ -402,7 +401,7 @@ public class JSONRPCServlet extends HttpServlet {
   }
 
   /**
-   * Can browser accept gzip encoding?
+   * Checks if browser can accept gzip encoding.
    *
    * @param request browser request object.
    * @return true if gzip encoding accepted.

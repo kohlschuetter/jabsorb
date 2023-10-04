@@ -25,7 +25,7 @@
 package org.jabsorb;
 
 /**
- * Used to transform the exception to some object in JSONRPCResults
+ * Used to transform the exception to some object in JSONRPCResults.
  */
 public interface ExceptionTransformer {
   /**

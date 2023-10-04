@@ -32,18 +32,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Puts all the objects and indexes into a results
+ * Puts all the objects and indexes into a results.
  *
  * @author William Becker
  */
 class FlatResult extends SuccessfulResult {
   /**
-   * Maps the hash codes of objects to results
+   * Maps the hash codes of objects to results.
    */
   private final Map<Integer, FlatProcessedObject> map;
 
   /**
-   * Creates a new FlatResult
+   * Creates a new {@link FlatResult}.
    *
    * @param id The id of the message
    * @param jsonResult The main message to send

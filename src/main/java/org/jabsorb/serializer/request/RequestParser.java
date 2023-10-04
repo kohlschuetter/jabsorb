@@ -51,7 +51,7 @@ public abstract class RequestParser {
   }
 
   /**
-   * Unmarshalls an array from a JSONObject
+   * Unmarshalls an array from a JSONObject.
    *
    * @param object The object to unmarshall
    * @param key The key in which the array exists within the JSONObject
@@ -62,7 +62,7 @@ public abstract class RequestParser {
   public abstract JSONArray unmarshallArray(JSONObject object, String key) throws JSONException;
 
   /**
-   * Unmarshalls an inner JSONObject from within another JSONObject
+   * Unmarshalls an inner JSONObject from within another JSONObject.
    *
    * @param object The request from the client may contain circular references
    * @param key The key in which the object exists within the JSONObject

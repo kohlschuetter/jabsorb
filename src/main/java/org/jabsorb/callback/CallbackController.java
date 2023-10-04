@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Class that is instantiated per bridge to maintain the list of callbacks and provides an interface
  * to invoke them.
  */
-public class CallbackController {
+public final class CallbackController {
   /**
    * The log used for this class.
    */
@@ -123,14 +123,13 @@ public class CallbackController {
   }
 
   /**
-   * Registers a callback to be called before and after method invocation
+   * Registers a callback to be called before and after method invocation.
    *
    * @param callback The object implementing the InvocationCallback Interface
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
    */
   public void registerCallback(InvocationCallback callback, Class<?> contextInterface) {
-
     synchronized (callbackSet) {
       callbackSet.add(new CallbackData(callback, contextInterface));
     }
@@ -141,13 +140,12 @@ public class CallbackController {
   }
 
   /**
-   * Unregisters a callback
+   * Unregisters a callback.
    *
    * @param callback The previously registered InvocationCallback object
    * @param contextInterface The previously registered transport Context interface.
    */
   public void unregisterCallback(InvocationCallback callback, Class<?> contextInterface) {
-
     synchronized (callbackSet) {
       callbackSet.remove(new CallbackData(callback, contextInterface));
     }

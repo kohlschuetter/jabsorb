@@ -37,7 +37,7 @@ import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 public abstract class AbstractSerializer implements Serializer {
 
   /**
-   * Main serialiser
+   * Main serialiser.
    */
   protected JSONSerializer ser;
 

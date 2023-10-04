@@ -35,17 +35,17 @@ import org.jabsorb.serializer.SerializerState;
 import org.jabsorb.serializer.UnmarshallException;
 
 /**
- * Serialises String values
+ * Serializes String values.
  */
 public class StringSerializer extends AbstractSerializer {
   /**
-   * Classes that this can serialise.
+   * Classes that this can serialize.
    */
   private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(String.class, char.class,
       Character.class, byte[].class, char[].class);
 
   /**
-   * Classes that this can serialise to.
+   * Classes that this can serialize to.
    */
   private static final Collection<Class<?>> JSON_CLASSES = Set.of(String.class, Integer.class);
 

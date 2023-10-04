@@ -48,7 +48,7 @@ public interface SerializerState {
   Object checkObject(Object parent, Object currentObject, Object ref) throws MarshallException;
 
   /**
-   * Creates a json object with the data in <code>json</code> stored at <code>key</code>
+   * Creates a json object with the data in <code>json</code> stored at <code>key</code>.
    *
    * @param key The key in which the data should be stored
    * @param json The data to store
@@ -100,7 +100,7 @@ public interface SerializerState {
   Object push(Object parent, Object obj, Object ref);
 
   /**
-   * Tells the serializer state that marshalling for the given object has been completed
+   * Tells the serializer state that marshalling for the given object has been completed.
    *
    * @param marshalledObject What the object was marshalled into
    * @param java The object that was marshalled

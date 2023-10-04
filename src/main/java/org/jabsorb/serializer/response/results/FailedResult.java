@@ -86,7 +86,7 @@ public class FailedResult extends JSONRPCResult {
   public static final String MSG_ERR_FIXUP = "invalid or unexpected data in fixups";
 
   /**
-   * An error code if a problem occured (CODE_SUCCESS otherwise)
+   * An error code if a problem occured (CODE_SUCCESS otherwise).
    */
   private final int errorCode;
 

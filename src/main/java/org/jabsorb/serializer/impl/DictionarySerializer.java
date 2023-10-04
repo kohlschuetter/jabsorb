@@ -43,19 +43,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Serialises Hashtables
- *
- * TODO: why not use a map serialiser?
+ * Serializes Hashtables.
  */
+// TODO: why not use a map serialiser?
 public class DictionarySerializer extends AbstractSerializer {
   /**
-   * Classes that this can serialise.
+   * Classes that this can serialize.
    */
   private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of(//
       Hashtable.class, Dictionary.class); // NOPMD
 
   /**
-   * Classes that this can serialise to.
+   * Classes that this can serialize to.
    */
   private static final Collection<Class<?>> JSON_CLASSES = Set.of(JSONObject.class);
 

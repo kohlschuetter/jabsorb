@@ -69,9 +69,8 @@ import org.slf4j.LoggerFactory;
  * marshalling Java objects into JSON objects and unmarshalling JSON objects into Java objects.
  */
 public class JSONSerializer {
-
   /**
-   * The logger for this class
+   * The logger for this class.
    */
   private static final Logger LOG = LoggerFactory.getLogger(JSONSerializer.class);
 
@@ -81,7 +80,7 @@ public class JSONSerializer {
   public static final String ID_FIELD = "id";
 
   /**
-   * The key in which json objects should keep their java class
+   * The key in which json objects should keep their java class.
    */
   public static final String JAVA_CLASS_FIELD = "javaClass";
 
@@ -115,22 +114,22 @@ public class JSONSerializer {
   private boolean marshallNullAttributes = true;
 
   /**
-   * The request parser to use
+   * The request parser to use.
    */
   private RequestParser requestParser;
 
   /**
-   * key: Class, value: Serializer
+   * key: Class, value: Serializer.
    */
   private final Map<Class<?>, Serializer> serializableMap;
 
   /**
-   * List for reverse registration order search
+   * List for reverse registration order search.
    */
   private final List<Serializer> serializerList;
 
   /**
-   * Key: Serializer
+   * Key: Serializer.
    */
   private final Set<Serializer> serializerSet;
 
@@ -140,7 +139,7 @@ public class JSONSerializer {
   private Class<? extends SerializerState> serializerStateClass;
 
   /**
-   * Creates a new JSONSerializer
+   * Creates a new JSONSerializer.
    *
    * @param serializerStateClass The serializer state's class which will be created by
    *          createSerializerState().
@@ -237,7 +236,7 @@ public class JSONSerializer {
   }
 
   /**
-   * Gets the request parser
+   * Gets the request parser.
    *
    * @return The request parser
    */
@@ -246,7 +245,7 @@ public class JSONSerializer {
   }
 
   /**
-   * Sets the request parser
+   * Sets the request parser.
    *
    * @param requestParser The new request parser
    */
@@ -333,7 +332,7 @@ public class JSONSerializer {
   }
 
   /**
-   * Ensures the reference serializer is registered for the given class
+   * Ensures the reference serializer is registered for the given class.
    *
    * @param clazz The java class that should be serialized with the reference serializer
    */

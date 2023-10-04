@@ -57,7 +57,7 @@ public abstract class UsingFixups extends NoCircRefsOrDupes {
   private final Collection<FixUp> fixups = new ArrayList<FixUp>();
 
   /**
-   * Adds fixups to a JSONObject
+   * Adds fixups to a JSONObject.
    *
    * @param o The object to which the fixups are to be added.
    * @param fixUps The fixups to add.

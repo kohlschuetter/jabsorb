@@ -22,9 +22,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
 package org.jabsorb.client.async;
 
 import java.lang.reflect.InvocationHandler;
@@ -45,7 +42,7 @@ import org.json.JSONObject;
 
 import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 
-public class AsyncProxyHandler implements InvocationHandler {
+final class AsyncProxyHandler implements InvocationHandler {
   private static final String TO_STRING = "toString";
   private static final String EQUALS = "equals";
   private static final String HASH_CODE = "hashCode";
@@ -109,7 +106,7 @@ public class AsyncProxyHandler implements InvocationHandler {
   }
 
   /**
-   * Invokes a method for the asynchronous client and returns null immediately
+   * Invokes a method for the asynchronous client and returns null immediately.
    *
    * @param objectTag (optional) the name of the object to invoke the method on. May be null.
    * @param method The method to call.
@@ -170,22 +167,22 @@ public class AsyncProxyHandler implements InvocationHandler {
   }
 
   /**
-   * Gets the id of the next message
+   * Gets the id of the next message.
    *
    * @return The id for the next message.
    */
-  protected String getId() {
+  private String nextId() {
     return UUID.randomUUID().toString();
   }
 
   /**
-   * Generate and throw exception based on the data in the 'responseMessage'
+   * Generate and throw exception based on the data in the 'responseMessage'.
    *
    * @param responseMessage The error message
    * @throws JSONException Rethrows the exception in the repsonse.
    */
   @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
-  protected void processException(final JSONObject responseMessage) throws JSONException {
+  private void processException(final JSONObject responseMessage) throws JSONException {
     final JSONObject error = (JSONObject) responseMessage.get("error");
     if (error != null) {
       final Integer code = error.has("code") ? error.getInt("code") : 0;
@@ -197,7 +194,7 @@ public class AsyncProxyHandler implements InvocationHandler {
         .toString(2), null);
   }
 
-  protected JSONObject createInvokeMessage(final String objectTag, final String methodName,
+  private JSONObject createInvokeMessage(final String objectTag, final String methodName,
       final Object[] args) throws MarshallException, JSONException {
     JSONObject message;
     String methodTag = objectTag == null ? "" : objectTag + ".";
@@ -215,13 +212,13 @@ public class AsyncProxyHandler implements InvocationHandler {
     }
 
     message.put(JSONSerializer.METHOD_FIELD, methodTag);
-    message.put(JSONSerializer.ID_FIELD, getId());
+    message.put(JSONSerializer.ID_FIELD, nextId());
 
     return message;
   }
 
-  protected Object convertResponseMessage(final JSONObject responseMessage,
-      final Class<?> returnType) throws Exception {
+  private Object convertResponseMessage(final JSONObject responseMessage, final Class<?> returnType)
+      throws Exception {
     if (!responseMessage.has(JSONSerializer.RESULT_FIELD)) {
       processException(responseMessage);
     }
@@ -241,9 +238,6 @@ public class AsyncProxyHandler implements InvocationHandler {
     return toReturn;
   }
 
-  /**
-   * @param futureResult the futureResult to set
-   */
   private synchronized void setFutureResult(final Future<Object> futureResult) {
     // Synchronize setting the futureResult so that calling a method and
     // getting the futureResult in one synchronized block returns the
@@ -252,9 +246,6 @@ public class AsyncProxyHandler implements InvocationHandler {
     this.futureResult = futureResult;
   }
 
-  /**
-   * @param resultCallback the resultCallback to set
-   */
   private synchronized void setResultCallback(
       final AsyncResultCallback<Object, Object, Method> resultCallback) {
     // Synchronize setting the resultCallback so that calling a method and

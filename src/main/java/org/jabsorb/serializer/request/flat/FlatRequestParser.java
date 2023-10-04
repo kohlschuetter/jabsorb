@@ -43,25 +43,25 @@ import org.json.JSONObject;
  */
 public class FlatRequestParser extends RequestParser {
   /**
-   * Parses an array
+   * Parses an array.
    *
    * @author William Becker
    */
   private static final class FlatParser {
     /**
-     * The indexes of objects that have been read already mapped to the objects
+     * The indexes of objects that have been read already mapped to the objects.
      */
     private final Map<String, JSONObject> parsedObjects;
 
     /**
-     * Creates a new ArrayParser
+     * Creates a new ArrayParser.
      */
     public FlatParser() {
       parsedObjects = new HashMap<String, JSONObject>();
     }
 
     /**
-     * Gets an object by its index
+     * Gets an object by its index.
      *
      * @param index The index of the object
      * @param jsonReq The object which maps indexes to objects
@@ -81,7 +81,7 @@ public class FlatRequestParser extends RequestParser {
 
     /**
      * Reads an array with (potentially) indexes which point to objects and returns a properly
-     * constructed array;
+     * constructed array.
      *
      * @param array The array to parse
      * @param jsonReq The main object that contains indexes mapped to objects
@@ -101,7 +101,7 @@ public class FlatRequestParser extends RequestParser {
     }
 
     /**
-     * Gets an object by its index
+     * Gets an object by its index.
      *
      * @param index The index of the object
      * @param jsonReq The object which maps indexes to objects
@@ -135,7 +135,7 @@ public class FlatRequestParser extends RequestParser {
   }
 
   /**
-   * Is the given object an index which is mapped to an object?
+   * Checks if the given object is an index which is mapped to an object.
    *
    * @param o The object to test
    * @return Whether the object is an index

@@ -83,7 +83,7 @@ public interface Serializer {
   void setOwner(JSONSerializer ser);
 
   /**
-   * Attempts to unmarshal a javascript object
+   * Attempts to unmarshal a javascript object.
    *
    * @param state The state of the serialiser
    * @param clazz The class to unmarhall to

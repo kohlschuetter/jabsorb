@@ -42,31 +42,28 @@ import org.slf4j.LoggerFactory;
 import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 
 /**
- * Serialises classes that have been registered on the bridge as references or callable references.
+ * Serializes classes that have been registered on the bridge as references or callable references.
  */
 public class ReferenceSerializer extends AbstractSerializer {
-  /**
-   * The logger for this class
-   */
   private static final Logger LOG = LoggerFactory.getLogger(ReferenceSerializer.class);
 
   /**
-   * Classes that this can serialise.
+   * Classes that this can serialize.
    */
   private static final Collection<Class<?>> SERIALIZABLE_CLASSES = Set.of();
 
   /**
-   * Classes that this can serialise to.
+   * Classes that this can serialize to.
    */
   private static final Collection<Class<?>> JSON_CLASSES = Set.of();
 
   /**
-   * A reference to the bridge
+   * A reference to the bridge.
    */
   private final JSONRPCBridge bridge;
 
   /**
-   * Creates a new ReferenceSerializer
+   * Creates a new ReferenceSerializer.
    *
    * @param bridge The bridge to determine if a class is a reference.
    *

@@ -57,6 +57,7 @@ public class ListSerializer extends AbstractSerializer {
   private static final Map<Class<?>, Supplier<List<Object>>> CLASS_TO_CONSTRUCTOR = new HashMap<>();
   private static final Map<String, Supplier<List<Object>>> CLASSNAME_TO_CONSTRUCTOR =
       new HashMap<>();
+
   static {
     registerClass(List.class, ArrayList::new);
     registerClass(AbstractList.class, ArrayList::new);

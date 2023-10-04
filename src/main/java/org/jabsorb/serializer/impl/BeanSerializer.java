@@ -54,19 +54,19 @@ import org.slf4j.LoggerFactory;
 import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 
 /**
- * Serializes java beans that are known to have readable and writable properties
+ * Serializes java beans that are known to have readable and writable properties.
  */
 public class BeanSerializer extends AbstractSerializer {
 
   /**
-   * The logger for this class
+   * The logger for this class.
    */
   private static final Logger LOG = LoggerFactory.getLogger(BeanSerializer.class);
 
   private static final String DECLARING_CLASS = "declaringClass";
 
   /**
-   * Caches analyzed beans
+   * Caches analyzed beans.
    */
   private static final Map<Class<?>, BeanData> BEAN_CACHE = new WeakHashMap<Class<?>, BeanData>();
 

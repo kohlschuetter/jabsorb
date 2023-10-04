@@ -37,7 +37,7 @@ package org.jabsorb.serializer;
  */
 public class ObjectMatch {
   /**
-   * The objects match
+   * The objects match.
    */
   public static final ObjectMatch OKAY = new ObjectMatch(-3);
 
@@ -59,13 +59,12 @@ public class ObjectMatch {
 
   /**
    * The object was null, and therefore matches any object, (because any object reference could be
-   * null)
+   * null).
    */
   public static final ObjectMatch NULL = new ObjectMatch(0);
 
   /**
-   * The number of mismatched fields that occurred on a tryUnmarshall call. TODO: make this value
-   * final, so it can't be changed!
+   * The number of mismatched fields that occurred on a tryUnmarshall call.
    */
   private int mismatch;
 

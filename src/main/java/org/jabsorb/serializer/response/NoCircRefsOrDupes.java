@@ -61,7 +61,7 @@ public class NoCircRefsOrDupes implements SerializerState, CircularReferenceHand
   private final Map<Object, FixupProcessedObject> processedObjects;
 
   /**
-   * Creates a new NoCircRefsOrDupes
+   * Creates a new {@link NoCircRefsOrDupes} instance.
    */
   public NoCircRefsOrDupes() {
     processedObjects = new IdentityHashMap<Object, FixupProcessedObject>();

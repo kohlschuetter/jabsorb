@@ -96,29 +96,29 @@ import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public final class JSONRPCBridge {
   /**
-   * The logger for this class
+   * The logger for this class.
    */
   private static final Logger LOG = LoggerFactory.getLogger(JSONRPCBridge.class);
 
   private static final String SYSTEM_LIST_METHODS = "system.listMethods";
 
   /**
-   * The prefix for callable references, as sent in messages
+   * The prefix for callable references, as sent in messages.
    */
   private static final String CALLABLE_REFERENCE_METHOD_PREFIX = ".ref";
 
   /**
-   * The string identifying constuctor calls
+   * The string identifying constuctor calls.
    */
   public static final String CONSTRUCTOR_FLAG = "$constructor";
 
   /**
-   * The prefix for objects, as sent in messages
+   * The prefix for objects, as sent in messages.
    */
   private static final String OBJECT_METHOD_PREFIX = ".obj";
 
   /**
-   * A simple transformer that makes no change
+   * A simple transformer that makes no change.
    */
   private static final ExceptionTransformer IDENTITY_EXCEPTION_TRANSFORMER =
       new ExceptionTransformer() {
@@ -129,52 +129,52 @@ public final class JSONRPCBridge {
       };
 
   /**
-   * Whether references will be used on the bridge
+   * Whether references will be used on the bridge.
    */
   private boolean referencesEnabled;
 
   /**
-   * key clazz, classes that should be returned as CallableReferences
+   * Key clazz, classes that should be returned as CallableReferences.
    */
   private final Set<Class<?>> callableReferenceSet;
 
   /**
-   * The callback controller
+   * The callback controller.
    */
   private CallbackController cbc = null;
 
   /**
-   * key "exported class name", val Class
+   * Key "exported class name", val Class.
    */
   private final Map<String, Class<?>> classMap;
 
   /**
-   * The functor used to convert exceptions
+   * The functor used to convert exceptions.
    */
   private ExceptionTransformer exceptionTransformer = IDENTITY_EXCEPTION_TRANSFORMER;
 
   /**
-   * key "exported instance name", val ObjectInstance
+   * Key "exported instance name", val ObjectInstance.
    */
   private final Map<Object, ObjectInstance> objectMap;
 
   /**
-   * key Integer hashcode, object held as reference
+   * key Integer hashcode, object held as reference.
    */
   private final Map<Integer, Object> referenceMap;
 
   /**
-   * ReferenceSerializer if enabled
+   * ReferenceSerializer if enabled.
    */
   private final Serializer referenceSerializer;
 
   /**
-   * key clazz, classes that should be returned as References
+   * key clazz, classes that should be returned as References.
    */
   private final Set<Class<?>> referenceSet;
 
   /**
-   * Local JSONSerializer instance
+   * Local JSONSerializer instance.
    */
   private final JSONSerializer ser;
 
@@ -244,7 +244,7 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Unregisters a LocalArgResolver</b>.
+   * Unregisters a {@link LocalArgResolver}.
    *
    * @param argClazz The previously registered local class
    * @param argResolver The previously registered LocalArgResolver object
@@ -272,7 +272,7 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Adds a reference to the map of known references
+   * Adds a reference to the map of known references.
    *
    * @param o The object to be added
    */
@@ -371,9 +371,9 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Allows references to be used on the bridge
+   * Allows references to be used on the bridge.
    *
-   * @throws Exception If a serialiser has already been registered for CallableReferences
+   * @throws Exception If a serializer has already been registered for CallableReferences.
    */
   public synchronized void enableReferences() throws Exception {
     if (!referencesEnabled) {
@@ -393,10 +393,10 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Gets a known reference
+   * Gets a known reference.
    *
-   * @param objectId The id of the object to get
-   * @return The requested reference
+   * @param objectId The id of the object to get.
+   * @return The requested reference.
    */
   public Object getReference(int objectId) {
     synchronized (referenceMap) {
@@ -535,7 +535,7 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Registers a callback to be called before and after method invocation
+   * Registers a callback to be called before and after method invocation.
    *
    * @param callback The object implementing the InvocationCallback Interface
    * @param contextInterface The type of transport Context interface the callback is interested in
@@ -550,12 +550,12 @@ public final class JSONRPCBridge {
 
   /**
    * Registers a class to export static methods.
-   * <p/>
+   * <p>
    * The JSONBridge will export all static methods of the class. This is useful for exporting
    * factory classes that may then return CallableReferences to the JSON-RPC client.
-   * <p/>
+   * <p>
    * Calling registerClass for a clazz again under the same name will have no effect.
-   * <p/>
+   * <p>
    * To export instance methods you need to use registerObject.
    *
    * @param name The name to register the class with.
@@ -579,13 +579,13 @@ public final class JSONRPCBridge {
 
   /**
    * Registers an object to export all instance methods and static methods.
-   * <p/>
+   * <p>
    * The JSONBridge will export all instance methods and static methods of the particular object
    * under the name passed in as a key.
-   * <p/>
+   * <p>
    * This will make available all methods of the object as
    * <code>&lt;key&gt;.&lt;methodnames&gt;</code> to JSON-RPC clients.
-   * <p/>
+   * <p>
    * Calling registerObject for a name that already exists will replace the existing entry.
    *
    * @param key The named prefix to export the object as
@@ -604,17 +604,17 @@ public final class JSONRPCBridge {
 
   /**
    * Registers an object to export all instance methods defined by interfaceClass.
-   * <p/>
+   * <p>
    * The JSONBridge will export all instance methods defined by interfaceClass of the particular
    * object under the name passed in as a key.
-   * <p/>
+   * <p>
    * This will make available these methods of the object as
    * <code>&lt;key&gt;.&lt;methodnames&gt;</code> to JSON-RPC clients.
    *
    * @param key The named prefix to export the object as
    * @param o The object instance to be called upon
    * @param interfaceClass The type that this object should be registered as.
-   *          <p/>
+   *          <p>
    *          This can be used to restrict the exported methods to the methods defined in a specific
    *          superclass or interface.
    */
@@ -631,15 +631,15 @@ public final class JSONRPCBridge {
 
   /**
    * Registers a class to be returned by reference and not by value as is done by default.
-   * <p/>
+   * <p>
    * The JSONBridge will take a references to these objects and return an opaque object to the
    * JSON-RPC client. When the opaque object is passed back through the bridge in subsequent calls,
    * the original object is substitued in calls to Java methods. This should be used for any objects
    * that contain security information or complex types that are not required in the Javascript
    * client but need to be passed as a reference in methods of exported objects.
-   * <p/>
+   * <p>
    * A Reference in JSON format looks like this:
-   * <p/>
+   * <p>
    * <code>{ "javaClass":"org.jabsorb.test.Foo",<br />
    * "objectID":5535614,<br /> "JSONRPCType":"Reference" }</code>
    * <p>
@@ -703,7 +703,7 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Unregisters a callback
+   * Unregisters a callback.
    *
    * @param callback The previously registered InvocationCallback object
    * @param contextInterface The previously registered transport Context interface.
@@ -717,7 +717,7 @@ public final class JSONRPCBridge {
 
   /**
    * Unregisters a class exported with registerClass.
-   * <p/>
+   * <p>
    * The JSONBridge will unexport all static methods of the class.
    *
    * @param name The registered name of the class to unexport static methods from.
@@ -736,7 +736,7 @@ public final class JSONRPCBridge {
 
   /**
    * Unregisters an object exported with registerObject.
-   * <p/>
+   * <p>
    * The JSONBridge will unexport all instance methods and static methods of the particular object
    * under the name passed in as a key.
    *
@@ -831,7 +831,7 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Gets the methods that can be called on the given object
+   * Gets the methods that can be called on the given object.
    *
    * @param objectID The id of the object or 0 if it is a class
    * @param className The name of the class of the object - only required if objectID==0
@@ -883,7 +883,7 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Resolves an objectId to an actual object
+   * Resolves an objectId to an actual object.
    *
    * @param objectID The id of the object to resolve
    * @param className The name of the class of the object
@@ -910,7 +910,7 @@ public final class JSONRPCBridge {
   }
 
   /**
-   * Resolves a string to a class
+   * Resolves a string to a class.
    *
    * @param className The name of the class to resolve
    * @return The data associated with the className
@@ -940,7 +940,7 @@ public final class JSONRPCBridge {
   /**
    * Resolve the key to a specified instance object. If an instance object of the requested key is
    * not found, and this is not the global bridge, then look in the global bridge too.
-   * <p/>
+   * <p>
    * If the key is not found in this bridge or the global bridge, the requested key may be a class
    * method (static method) or may not exist (not registered under the requested key.)
    *

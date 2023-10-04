@@ -25,13 +25,13 @@
 package org.jabsorb.serializer.response.flat;
 
 /**
- * Allows for late allocation of an object's index
+ * Allows for late allocation of an object's index.
  *
  * @author William Becker
  */
 final class Index {
   /**
-   * The index of the object
+   * The index of the object.
    */
   private String index; // NOPMD.AvoidFieldNameMatchingTypeName
 
@@ -43,7 +43,7 @@ final class Index {
   }
 
   /**
-   * Creates a new index
+   * Creates a new index.
    *
    * @param index The index of the object
    */
@@ -52,7 +52,7 @@ final class Index {
   }
 
   /**
-   * Gets the index
+   * Gets the index.
    *
    * @return The index
    */
@@ -61,7 +61,7 @@ final class Index {
   }
 
   /**
-   * Sets the index
+   * Sets the index.
    *
    * @param index The value to set
    */

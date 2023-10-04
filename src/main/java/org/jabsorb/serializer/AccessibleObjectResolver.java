@@ -54,9 +54,6 @@ import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
  * Attempts to resolve a set of arguments to the best possible method/constructor.
  */
 public class AccessibleObjectResolver {
-  /**
-   * The logger for this class
-   */
   private static final Logger LOG = LoggerFactory.getLogger(AccessibleObjectResolver.class);
 
   /**
@@ -79,7 +76,7 @@ public class AccessibleObjectResolver {
   }
 
   /**
-   * Calls a method/constructor
+   * Calls a method/constructor.
    *
    * @param accessibleObject = The method/constructor to invoke
    * @param context The context of the caller. This will be the servlet request and response objects

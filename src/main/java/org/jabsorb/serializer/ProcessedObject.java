@@ -44,7 +44,7 @@ public class ProcessedObject {
   private Object serialized;
 
   /**
-   * Creates a new ProcessedObject
+   * Creates a new ProcessedObject.
    *
    * @param object The processed incoming object. When marshalling, this is the java object that is
    *          being marshalled to json, when unmarshalling, this is the json object being marshalled

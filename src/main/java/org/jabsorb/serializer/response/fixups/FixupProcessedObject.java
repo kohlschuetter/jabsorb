@@ -48,7 +48,7 @@ public class FixupProcessedObject extends ProcessedObject {
   private Object ref;
 
   /**
-   * Create a new FixupProcessedObject
+   * Create a new FixupProcessedObject.
    *
    * @param object The processed incoming object. When marshalling, this is the java object that is
    *          being marshalled to json, when unmarshalling, this is the json object being marshalled

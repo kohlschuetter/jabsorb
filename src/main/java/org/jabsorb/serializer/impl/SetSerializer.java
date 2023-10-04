@@ -48,14 +48,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Serializes Sets
- *
- * TODO: if this serializes a superclass does it need to also specify the subclasses?
+ * Serializes Sets.
  */
+// TODO: if this serializes a superclass does it need to also specify the subclasses?
 public class SetSerializer extends AbstractSerializer {
   private static final Map<Class<?>, Supplier<Set<Object>>> CLASS_TO_CONSTRUCTOR = new HashMap<>();
   private static final Map<String, Supplier<Set<Object>>> CLASSNAME_TO_CONSTRUCTOR =
       new HashMap<>();
+
   static {
     registerClass(Set.class, HashSet::new);
     registerClass(AbstractSet.class, HashSet::new);
@@ -63,6 +63,7 @@ public class SetSerializer extends AbstractSerializer {
     registerClass(LinkedHashSet.class, LinkedHashSet::new); // NOPMD
     registerClass(TreeSet.class, TreeSet::new); // NOPMD
   }
+
   /**
    * Classes that this can serialize.
    */

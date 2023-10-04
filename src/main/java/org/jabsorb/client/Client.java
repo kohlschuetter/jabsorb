@@ -52,12 +52,12 @@ public class Client {
   private static final String HASH_CODE = "hashCode";
 
   /**
-   * Maintain a unique id for each message
+   * Maintain a unique id for each message.
    */
   private final AtomicInteger id = new AtomicInteger(0);
 
   /**
-   * Maps proxy keys to proxies
+   * Maps proxy keys to proxies.
    */
   private final Map<Object, String> proxyMap;
 
@@ -67,12 +67,12 @@ public class Client {
   private final JSONSerializer serializer;
 
   /**
-   * The transport session to use for this connection
+   * The transport session to use for this connection.
    */
   private final Session session;
 
   /**
-   * Create a client given a session
+   * Create a client given a session.
    *
    * @param session transport session to use for this connection
    */
@@ -90,7 +90,7 @@ public class Client {
   }
 
   /**
-   * Gets the id of the next message
+   * Gets the id of the next message.
    *
    * @return The id for the next message.
    */
@@ -99,7 +99,7 @@ public class Client {
   }
 
   /**
-   * Dispose of the proxy that is no longer needed
+   * Dispose of the proxy that is no longer needed.
    *
    * @param proxy The proxy to close
    */
@@ -108,7 +108,7 @@ public class Client {
   }
 
   /**
-   * Allow access to the serializer
+   * Allow access to the serializer.
    *
    * @return The serializer for this class
    */
@@ -146,7 +146,7 @@ public class Client {
   }
 
   /**
-   * Generate and throw exception based on the data in the 'responseMessage'
+   * Generate and throw exception based on the data in the 'responseMessage'.
    *
    * @param responseMessage The error message
    * @throws JSONException Rethrows the exception in the repsonse.

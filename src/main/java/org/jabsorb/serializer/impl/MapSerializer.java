@@ -47,15 +47,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Serializes Maps
- *
- * TODO: if this serializes a superclass does it need to also specify the subclasses?
+ * Serializes Maps.
  */
+// TODO: if this serializes a superclass does it need to also specify the subclasses?
 public class MapSerializer extends AbstractSerializer {
   private static final Map<Class<?>, Supplier<Map<String, Object>>> CLASS_TO_CONSTRUCTOR =
       new HashMap<>();
   private static final Map<String, Supplier<Map<String, Object>>> CLASSNAME_TO_CONSTRUCTOR =
       new HashMap<>();
+
   static {
     registerClass(Map.class, HashMap::new);
     registerClass(AbstractMap.class, HashMap::new);

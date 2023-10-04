@@ -43,25 +43,25 @@ import org.json.JSONObject;
  */
 public class FlatSerializerState implements SerializerState {
   /**
-   * The start indentifier of an index
+   * The start indentifier of an index.
    */
   public static final String INDEX_PREFIX = "_$Inx$_";
 
   private int index;
 
   /**
-   * All values which are known to be marshalled to JSONObjects
+   * All values which are known to be marshalled to JSONObjects.
    */
   private final Map<Integer, FlatProcessedObject> marshalledObjects;
 
   /**
    * All values which either aren't to be marshalled to JSONObjects or it is unknown to what they
-   * will be unmarshalled
+   * will be unmarshalled.
    */
   private final Map<Integer, FlatProcessedObject> nonMarshalledObjects;
 
   /**
-   * Creates a new FlatSerializerState
+   * Creates a new FlatSerializerState.
    */
   public FlatSerializerState() {
     this.marshalledObjects = new HashMap<Integer, FlatProcessedObject>();
@@ -89,7 +89,7 @@ public class FlatSerializerState implements SerializerState {
   }
 
   /**
-   * The current index value
+   * The current index value.
    */
   @Override
   public Object checkObject(Object parent, Object currentObject, Object ref)
@@ -117,7 +117,7 @@ public class FlatSerializerState implements SerializerState {
   }
 
   /**
-   * Get the JSONObject for the given marshalled object
+   * Get the JSONObject for the given marshalled object.
    *
    * @param o The java object
    * @return A JSON object for the java object.
@@ -198,7 +198,7 @@ public class FlatSerializerState implements SerializerState {
   }
 
   /**
-   * Creates the next index value
+   * Creates the next index value.
    *
    * @return The next index value
    */

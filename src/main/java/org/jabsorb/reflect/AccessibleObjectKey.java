@@ -29,12 +29,12 @@ package org.jabsorb.reflect;
  */
 public final class AccessibleObjectKey {
   /**
-   * The name of the method
+   * The name of the method.
    */
   private final String methodName;
 
   /**
-   * The number of arguments passed to the method
+   * The number of arguments passed to the method.
    */
   private final int numArgs;
 

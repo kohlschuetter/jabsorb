@@ -22,9 +22,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
 package org.jabsorb.client.async;
 
 import java.util.concurrent.CompletableFuture;
@@ -37,13 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author matthijs
+ * Some Async-related helper methods.
  *
+ * @author matthijs
  */
-public class AsyncSessionUtil {
+final class AsyncSessionUtil {
   private static final Logger LOG = LoggerFactory.getLogger(AsyncSessionUtil.class);
 
-  public static Session toSyncSession(final AsyncSession asyncSession) {
+  static Session toSyncSession(final AsyncSession asyncSession) {
     // unwrap if possible
     if (asyncSession instanceof AsyncedSyncSession) {
       return ((AsyncedSyncSession) asyncSession).getSession();
@@ -52,7 +50,7 @@ public class AsyncSessionUtil {
     return new SyncedAsyncSession(asyncSession);
   }
 
-  public static AsyncSession toAsyncSession(final Session session) {
+  static AsyncSession toAsyncSession(final Session session) {
     // unwrap if possible
     if (session instanceof SyncedAsyncSession) {
       return ((SyncedAsyncSession) session).getAsyncSession();
@@ -68,9 +66,6 @@ public class AsyncSessionUtil {
       this.asyncSession = asyncSession;
     }
 
-    /**
-     * @return the asyncSession
-     */
     public AsyncSession getAsyncSession() {
       return asyncSession;
     }
@@ -104,9 +99,6 @@ public class AsyncSessionUtil {
       this.session = session;
     }
 
-    /**
-     * @return the session
-     */
     public Session getSession() {
       return session;
     }

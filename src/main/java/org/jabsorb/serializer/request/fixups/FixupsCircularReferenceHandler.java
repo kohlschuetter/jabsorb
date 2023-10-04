@@ -52,7 +52,7 @@ public class FixupsCircularReferenceHandler extends RequestParser {
   }
 
   /**
-   * Applies fixups to an JSONObject or JSONArray
+   * Applies fixups to an JSONObject or JSONArray.
    *
    * @param data The object which holds the Object/array and the fixup info
    * @param key The Key in data for the object/array

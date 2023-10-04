@@ -48,13 +48,10 @@ import org.slf4j.LoggerFactory;
  * ClassData information via reflection and internally caches it.
  */
 public final class ClassAnalyzer {
-  /**
-   * The logger for this class
-   */
   private static final Logger LOG = LoggerFactory.getLogger(ClassAnalyzer.class);
 
   /**
-   * Classes that have been analysed
+   * Classes that have been analysed.
    *
    * key: Clazz, val ClassData
    */

@@ -29,16 +29,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A registry of transports serving JSON-RPC-Client
+ * A registry of transports serving JSON-RPC-Client.
  */
 public class TransportRegistry {
   /**
-   * Maps schemes (eg "http") to session factories
+   * Maps schemes (eg "http") to session factories.
    */
   private final Map<String, SessionFactory> registry;
 
   /**
-   * Creates a new TransportRegistry
+   * Creates a new TransportRegistry.
    */
   public TransportRegistry() {
     this.registry = new HashMap<String, SessionFactory>();
@@ -65,7 +65,7 @@ public class TransportRegistry {
   }
 
   /**
-   * Register a factory for a transport type
+   * Register a factory for a transport type.
    *
    * @param scheme The transport type
    * @param factory The session factory for the scheme

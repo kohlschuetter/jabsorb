@@ -147,7 +147,7 @@ public class HTTPSession implements Session {
   }
 
   /**
-   * Register this transport in 'registry'
+   * Register this transport in 'registry'.
    */
   public static void register(TransportRegistry registry) {
     registry.registerTransport("http", new Factory());

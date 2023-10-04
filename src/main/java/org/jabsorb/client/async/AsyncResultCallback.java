@@ -22,9 +22,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
 package org.jabsorb.client.async;
 
 import java.util.concurrent.Future;
@@ -33,11 +30,10 @@ import java.util.concurrent.Future;
  * This interface specifies a method that is called when the asynchronous operation is completed.
  *
  * @author matthijs
- *
  */
 public interface AsyncResultCallback<S, R, C> {
   /**
-   * Method to be called when the asynchronous operation is completed
+   * Method to be called when the asynchronous operation is completed.
    *
    * @param source The source of the callback, usually the object that contains the asynchronous
    *          operation

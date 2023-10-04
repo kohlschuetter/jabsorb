@@ -39,7 +39,7 @@ import org.jabsorb.serializer.response.fixups.FixupCircRefAndNonPrimitiveDupes;
 public class AsyncClient {
 
   /**
-   * Maps proxy keys to proxies
+   * Maps proxy keys to proxies.
    */
   private final Map<Object, String> proxyMap;
 
@@ -49,12 +49,12 @@ public class AsyncClient {
   private final JSONSerializer serializer;
 
   /**
-   * The transport session to use for this connection
+   * The transport session to use for this connection.
    */
   private final AsyncSession session;
 
   /**
-   * Create a client given a session
+   * Create a client given a session.
    *
    * @param session transport session to use for this connection
    */
@@ -88,7 +88,7 @@ public class AsyncClient {
   }
 
   /**
-   * Dispose of the proxy that is no longer needed
+   * Dispose of the proxy that is no longer needed.
    *
    * @param proxy The proxy to close
    */
@@ -96,12 +96,12 @@ public class AsyncClient {
     proxyMap.remove(proxy);
   }
 
-//  /**
-//   * Allow access to the serializer
-//   *
-//   * @return The serializer for this class
-//   */
-//  public JSONSerializer getSerializer() {
-//    return serializer;
-//  }
+  // /**
+  // * Allow access to the serializer.
+  // *
+  // * @return The serializer for this class
+  // */
+  // public JSONSerializer getSerializer() {
+  // return serializer;
+  // }
 }

@@ -29,11 +29,11 @@ import java.lang.reflect.AccessibleObject;
 import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 
 /**
- * Used to determine whether two methods match
+ * Used to determine whether two methods match.
  */
 public class AccessibleObjectCandidate {
   /**
-   * The method/constructor
+   * The method/constructor.
    */
   private final AccessibleObject accessibleObject;
 
@@ -43,12 +43,12 @@ public class AccessibleObjectCandidate {
   private final ObjectMatch[] match;
 
   /**
-   * The parameters of the accessibleObject
+   * The parameters of the accessibleObject.
    */
   private final Class<?>[] parameterTypes;
 
   /**
-   * Creatse a new MethodCandidate
+   * Creates a new MethodCandidate.
    *
    * @param accessibleObject The method/constructor for this candidate
    * @param parameterTypes The parameters of the accessibleObject
@@ -91,7 +91,7 @@ public class AccessibleObjectCandidate {
   }
 
   /**
-   * Gets the parameter types for the method/constructor
+   * Gets the parameter types for the method/constructor.
    *
    * @return The parameter types
    */
@@ -101,7 +101,7 @@ public class AccessibleObjectCandidate {
   }
 
   /**
-   * Gets the method/constructor
+   * Gets the method/constructor.
    *
    * @return Method or Constructor
    */

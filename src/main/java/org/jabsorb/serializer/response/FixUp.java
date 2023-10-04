@@ -35,7 +35,7 @@ import org.json.JSONArray;
  */
 public class FixUp {
   /**
-   * The field in which fixups are held in json messages
+   * The field in which fixups are held in json messages.
    */
   public static final String FIXUPS_FIELD = "fixups";
 

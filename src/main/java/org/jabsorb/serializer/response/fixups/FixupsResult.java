@@ -48,7 +48,7 @@ public class FixupsResult extends SuccessfulResult {
   private final Collection<FixUp> fixUps;
 
   /**
-   * Creates a new FixupsResult
+   * Creates a new FixupsResult.
    *
    * @param id The id of the response.
    * @param o The main data to return.

@@ -35,12 +35,12 @@ import org.json.JSONObject;
  */
 public class SuccessfulResult extends JSONRPCResult {
   /**
-   * The result of the call
+   * The result of the call.
    */
   private final Object result;
 
   /**
-   * Creates a new SuccessfulResult
+   * Creates a new SuccessfulResult.
    *
    * @param id The id of the response
    * @param result The result of the call
