@@ -24,12 +24,16 @@
  */
 package org.jabsorb.client;
 
+import java.util.Set;
+
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.jabsorb.JSONRPCBridge;
 import org.jabsorb.JSONRPCServlet;
+import org.jabsorb.security.ClassResolver;
+import org.jabsorb.test.ITest;
 
 import junit.framework.TestCase;
 
@@ -37,6 +41,8 @@ import junit.framework.TestCase;
  * Test case that requires starting the jabsorb server
  */
 public abstract class ServerTestBase extends TestCase {
+  private static final JSONRPCBridge BRIDGE = new JSONRPCBridge(ClassResolver.withAllowedClasses(Set
+      .of(ITest.Wiggle.class, ITest.Waggle.class)));
 
   /**
    * Encapsulate Jetty hosting server initialization so that we could start it only once during the
@@ -49,11 +55,11 @@ public abstract class ServerTestBase extends TestCase {
 
     public ServerContext() throws Exception {
       port = 8083;
-      JSONRPCBridge.getGlobalBridge().registerObject("test", new org.jabsorb.test.Test());
+      BRIDGE.registerObject("test", new org.jabsorb.test.Test());
       server = new Server(port);
       context = new WebAppContext(ResourceFactory.root().newResource(ServerContext.class
           .getResource("")), JABSORB_CONTEXT);
-      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet());
+      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet(BRIDGE));
       // Based on the patch by http://code.google.com/u/cameron.taggart/
       // located at http://code.google.com/p/json-rpc-client/issues/detail?id=1
       jsonRpcServlet.setInitParameter("auto-session-bridge", "0");

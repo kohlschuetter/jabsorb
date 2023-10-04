@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jabsorb.JSONSerializer;
+import org.jabsorb.security.ClassResolver;
 import org.jabsorb.serializer.SerializerState;
 import org.jabsorb.serializer.request.fixups.FixupsCircularReferenceHandler;
 import org.jabsorb.serializer.response.fixups.FixupCircRefAndNonPrimitiveDupes;
@@ -76,13 +77,13 @@ public class Client implements InvocationHandler {
    *
    * @param session transport session to use for this connection
    */
-  public Client(Session session) {
+  public Client(Session session, ClassResolver resolver) {
     try {
       this.session = session;
       this.proxyMap = new HashMap<Object, String>();
       // TODO: this might need a better way of initialising it
       this.serializer = new JSONSerializer(FixupCircRefAndNonPrimitiveDupes.class,
-          new FixupsCircularReferenceHandler());
+          new FixupsCircularReferenceHandler(), resolver);
       this.serializer.registerDefaultSerializers();
     } catch (Exception e) {
       throw new ClientError(e);

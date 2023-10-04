@@ -27,18 +27,22 @@ package org.jabsorb.client;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Arrays;
+import java.util.Set;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.jabsorb.security.ClassResolver;
 import org.jabsorb.test.ITest;
 
 /**
  * This test implements some of Jabsorb tests.
  */
 public class ClientTestCase extends ServerTestBase {
+  final ClassResolver classResolver = ClassResolver.withAllowedClasses(Set.of(ITest.Wiggle.class,
+      ITest.Waggle.class));
 
   HttpState state;
 
@@ -80,7 +84,8 @@ public class ClientTestCase extends ServerTestBase {
    * Test for invalid URL
    */
   public void testBadClient() {
-    Client badClient = new Client(registry.createSession("http://non-existing-server:99"));
+    Client badClient = new Client(registry.createSession("http://non-existing-server:99"),
+        classResolver);
     try {
       ITest badTest = (ITest) badClient.openProxy("test", ITest.class);
       badTest.voidFunction();
@@ -91,7 +96,8 @@ public class ClientTestCase extends ServerTestBase {
   }
 
   public void testStandardSession() {
-    Client client = new Client(getRegistry().createSession(getServiceRootURL() + "/JSON-RPC"));
+    Client client = new Client(getRegistry().createSession(getServiceRootURL() + "/JSON-RPC"),
+        classResolver);
     ITest test = (ITest) client.openProxy("test", ITest.class);
     basicClientTest(test);
   }
@@ -113,7 +119,7 @@ public class ClientTestCase extends ServerTestBase {
   }
 
   public void testHTTPSession() {
-    Client client = new Client(newHTTPSession(getServiceURL()));
+    Client client = new Client(newHTTPSession(getServiceURL()), classResolver);
     ITest test = (ITest) client.openProxy("test", ITest.class);
     basicClientTest(test);
   }
@@ -148,7 +154,7 @@ public class ClientTestCase extends ServerTestBase {
     HTTPSession proxiedSession = newHTTPSession(getServiceURL());
     int proxyPort = 40888; // hopefully, the port is unused
     proxiedSession.getHostConfiguration().setProxy("localhost", proxyPort);
-    Client client = new Client(proxiedSession);
+    Client client = new Client(proxiedSession, classResolver);
     ITest proxyObject = (ITest) client.openProxy("test", ITest.class);
     try {
       proxyObject.voidFunction();

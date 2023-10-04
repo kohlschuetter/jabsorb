@@ -454,6 +454,7 @@ public class AccessibleObjectResolver {
     } catch (JSONException e) {
       throw (NoSuchElementException) new NoSuchElementException(e.getMessage()).initCause(e);
     } catch (UnmarshallException e) {
+      e.printStackTrace();
       throw new UnmarshallException("arg " + (i + 1) + " could not unmarshall", e);
     }
 

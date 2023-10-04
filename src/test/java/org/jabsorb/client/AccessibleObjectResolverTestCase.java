@@ -30,16 +30,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.reflect.AccessibleObjectKey;
 import org.jabsorb.reflect.ClassAnalyzer;
+import org.jabsorb.security.ClassResolver;
 import org.jabsorb.serializer.AccessibleObjectResolver;
 import org.jabsorb.serializer.request.fixups.FixupsCircularReferenceHandler;
 import org.jabsorb.serializer.response.fixups.FixupCircRefAndNonPrimitiveDupes;
 import org.jabsorb.test.ConstructorTest;
 import org.json.JSONArray;
+
+import junit.framework.TestCase;
 
 public class AccessibleObjectResolverTestCase extends TestCase {
   AccessibleObjectResolver resolver;
@@ -53,7 +54,7 @@ public class AccessibleObjectResolverTestCase extends TestCase {
     methodMap.putAll(ClassAnalyzer.getClassData(ConstructorTest.class).getMethodMap());
     methodMap.putAll(ClassAnalyzer.getClassData(ConstructorTest.class).getConstructorMap());
     serializer = new JSONSerializer(FixupCircRefAndNonPrimitiveDupes.class,
-        new FixupsCircularReferenceHandler());
+        new FixupsCircularReferenceHandler(), ClassResolver.withDefaults());
     serializer.registerDefaultSerializers();
   }
 

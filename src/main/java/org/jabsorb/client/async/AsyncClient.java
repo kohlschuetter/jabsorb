@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.client.ClientError;
+import org.jabsorb.security.ClassResolver;
 import org.jabsorb.serializer.request.fixups.FixupsCircularReferenceHandler;
 import org.jabsorb.serializer.response.fixups.FixupCircRefAndNonPrimitiveDupes;
 
@@ -57,13 +58,13 @@ public class AsyncClient {
    *
    * @param session transport session to use for this connection
    */
-  public AsyncClient(final AsyncSession session) {
+  public AsyncClient(final AsyncSession session, ClassResolver resolver) {
     try {
       this.session = session;
       this.proxyMap = new HashMap<Object, String>();
       // TODO: this might need a better way of initialising it
       this.serializer = new JSONSerializer(FixupCircRefAndNonPrimitiveDupes.class,
-          new FixupsCircularReferenceHandler());
+          new FixupsCircularReferenceHandler(), resolver);
       this.serializer.registerDefaultSerializers();
     } catch (final Exception e) {
       throw new ClientError(e);

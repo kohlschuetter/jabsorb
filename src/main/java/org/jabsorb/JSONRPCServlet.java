@@ -76,7 +76,7 @@ import jakarta.servlet.http.HttpSession;
  * The JSONRPCServlet looks for a session specific bridge object under the attribute
  * <code>"JSONRPCBridge"</code> in the HttpSession associated with the request (without creating a
  * session if one does not already exist). If it can't find a session specific bridge instance, it
- * will default to invoking against the global bridge.
+ * will default to invoking against the default bridge.
  * </p>
  * <p>
  * Using a session specific bridge allows you to export certain object instances or classes only to
@@ -145,11 +145,13 @@ public class JSONRPCServlet extends HttpServlet {
    */
   private final String bridgeLocation;
 
+  private final JSONRPCBridge defaultBridge;
+
   /**
    * Creates a new JSONRPCServlet with the bridge in the "JSONRPCBridge" variable
    */
-  public JSONRPCServlet() {
-    this("JSONRPCBridge");
+  public JSONRPCServlet(JSONRPCBridge defaultBridge) {
+    this("JSONRPCBridge", defaultBridge);
   }
 
   /**
@@ -157,8 +159,9 @@ public class JSONRPCServlet extends HttpServlet {
    *
    * @param bridgeLocation The location of the JSONRPCBridge variable in the session
    */
-  public JSONRPCServlet(String bridgeLocation) {
+  public JSONRPCServlet(String bridgeLocation, JSONRPCBridge defaultBridge) {
     this.bridgeLocation = bridgeLocation;
+    this.defaultBridge = defaultBridge;
   }
 
   /**
@@ -230,7 +233,7 @@ public class JSONRPCServlet extends HttpServlet {
 
   /**
    * Called when a JSON-RPC requests comes in. Looks in the session for a JSONRPCBridge and if not
-   * found there, uses the global bridge; then passes off the JSON-PRC call to be handled by the
+   * found there, uses the default bridge; then passes off the JSON-PRC call to be handled by the
    * JSONRPCBridge found.
    *
    * @param request servlet request from browser.
@@ -357,7 +360,7 @@ public class JSONRPCServlet extends HttpServlet {
 
   /**
    * Find the JSONRPCBridge from the current session. If it can't be found in the session, or there
-   * is no session, then return the global bridge.
+   * is no session, then return the default bridge.
    *
    * @param request The message received
    * @return the JSONRPCBridge to use for this request
@@ -371,11 +374,7 @@ public class JSONRPCServlet extends HttpServlet {
       json_bridge = (JSONRPCBridge) session.getAttribute(this.bridgeLocation);
     }
     if (json_bridge == null) {
-      // Use the global bridge if we can't find a bridge in the session.
-      json_bridge = JSONRPCBridge.getGlobalBridge();
-      if (log.isDebugEnabled()) {
-        log.debug("Using global bridge.");
-      }
+      json_bridge = defaultBridge;
     }
     return json_bridge;
   }

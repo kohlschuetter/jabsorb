@@ -24,17 +24,24 @@
  */
 package org.jabsorb.test;
 
+import java.util.Set;
+
 import org.apache.jasper.servlet.JspServlet;
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
+import org.jabsorb.JSONRPCBridge;
 import org.jabsorb.JSONRPCServlet;
+import org.jabsorb.security.ClassResolver;
 
 /**
  * A basic embedded jetty implementation which runs the jabsorb webapp
  */
 public class JabsorbTestServer {
+  private static final JSONRPCBridge BRIDGE = new JSONRPCBridge(ClassResolver.withAllowedClasses(Set
+      .of(ITest.Wiggle.class, ITest.Waggle.class)));
+
   /**
    * The directory on which the webapp is found
    */
@@ -93,19 +100,21 @@ public class JabsorbTestServer {
 
     // do static content
     {
-      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet("JSONRPCBridge_Default"));
+      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet("JSONRPCBridge_Default",
+          BRIDGE));
       jsonRpcServlet.setInitParameter("auto-session-bridge", "0");
       context.addServlet(jsonRpcServlet, "/JSON-RPC-Default/*");
 
     }
     {
-      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet(
-          "JSONRPCBridge_CircRefs"));
+      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet("JSONRPCBridge_CircRefs",
+          BRIDGE));
       jsonRpcServlet.setInitParameter("auto-session-bridge", "0");
       context.addServlet(jsonRpcServlet, "/JSON-RPC/*");
     }
     {
-      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet("JSONRPCBridge_Flat"));
+      ServletHolder jsonRpcServlet = new ServletHolder(new JSONRPCServlet("JSONRPCBridge_Flat",
+          BRIDGE));
       jsonRpcServlet.setInitParameter("auto-session-bridge", "0");
       context.addServlet(jsonRpcServlet, "/JSON-RPC-Flat/*");
     }

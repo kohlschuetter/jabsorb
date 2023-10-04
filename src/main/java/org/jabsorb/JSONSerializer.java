@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.jabsorb.security.ClassResolver;
 import org.jabsorb.serializer.MarshallException;
 import org.jabsorb.serializer.ObjectMatch;
 import org.jabsorb.serializer.ProcessedObject;
@@ -101,6 +102,8 @@ public class JSONSerializer implements Serializable {
    * Unique serialisation id.
    */
   private final static long serialVersionUID = 2;
+
+  private final ClassResolver classResolver;
 
   /**
    * A list of good serializers that are used when no others are given.
@@ -172,12 +175,13 @@ public class JSONSerializer implements Serializable {
    * @param requestParser The request parser to use
    */
   public JSONSerializer(Class<? extends SerializerState> serializerStateClass,
-      final RequestParser requestParser) {
+      final RequestParser requestParser, ClassResolver resolver) {
     this.serializerSet = new HashSet<Serializer>();
     this.serializerList = new ArrayList<Serializer>();
     this.serializableMap = new HashMap<Class<?>, Serializer>();
     this.serializerStateClass = serializerStateClass;
     this.requestParser = requestParser;
+    this.classResolver = resolver;
   }
 
   /**
@@ -670,13 +674,8 @@ public class JSONSerializer implements Serializable {
     }
     if (o instanceof JSONObject) {
       String className = "(unknown)";
-      try {
-        className = ((JSONObject) o).getString(JSONSerializer.JAVA_CLASS_FIELD);
-        return Class.forName(className);
-      } catch (Exception e) {
-        throw new UnmarshallException("Class specified in javaClass hint not found: " + className,
-            e);
-      }
+      className = ((JSONObject) o).optString(JSONSerializer.JAVA_CLASS_FIELD, null);
+      return classResolver.resolveOrThrow(className);
     }
     if (o instanceof JSONArray) {
       JSONArray arr = (JSONArray) o;
@@ -691,13 +690,10 @@ public class JSONSerializer implements Serializable {
       } catch (JSONException e) {
         throw (NoSuchElementException) new NoSuchElementException(e.getMessage()).initCause(e);
       }
-      try {
-        if (compClazz.isArray()) {
-          return Class.forName("[" + compClazz.getName());
-        }
-        return Class.forName("[L" + compClazz.getName() + ";");
-      } catch (ClassNotFoundException e) {
-        throw new UnmarshallException("problem getting array type", e);
+      if (compClazz.isArray()) {
+        return classResolver.resolveOrThrow("[" + compClazz.getName());
+      } else {
+        return classResolver.resolveOrThrow("[L" + compClazz.getName() + ";");
       }
     }
     return o.getClass();

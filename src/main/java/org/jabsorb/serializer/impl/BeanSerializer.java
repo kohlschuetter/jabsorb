@@ -56,11 +56,6 @@ public class BeanSerializer extends AbstractSerializer {
     // in absence of getters and setters, these fields are
     // public to allow subclasses to access.
     /**
-     * The bean info for a certain bean
-     */
-    public BeanInfo beanInfo;
-
-    /**
      * The readable properties of the bean.
      */
     public Map<String, Method> readableProps;
@@ -110,10 +105,13 @@ public class BeanSerializer extends AbstractSerializer {
   public static BeanData analyzeBean(Class<?> clazz) throws IntrospectionException {
     log.info("analyzing " + clazz.getName());
     BeanData bd = new BeanData();
-    bd.beanInfo = Introspector.getBeanInfo(clazz, Object.class);
-    PropertyDescriptor props[] = bd.beanInfo.getPropertyDescriptors();
     bd.readableProps = new HashMap<String, Method>();
     bd.writableProps = new HashMap<String, Method>();
+    if (clazz == Object.class) {
+      return bd;
+    }
+    BeanInfo beanInfo = Introspector.getBeanInfo(clazz, Object.class);
+    PropertyDescriptor props[] = beanInfo.getPropertyDescriptors();
     for (int i = 0; i < props.length; i++) {
       // This is declared by enums and shouldn't be shown.
       if (props[i].getName().equals("declaringClass")) {
