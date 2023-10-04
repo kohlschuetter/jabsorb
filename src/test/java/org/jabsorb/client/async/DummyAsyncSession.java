@@ -27,6 +27,7 @@
  */
 package org.jabsorb.client.async;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import org.jabsorb.serializer.response.results.SuccessfulResult;
@@ -50,7 +51,7 @@ class DummyAsyncSession implements AsyncSession {
   @Override
   public Future<JSONObject> send(final JSONObject request,
       final AsyncResultCallback<AsyncSession, JSONObject, JSONObject> callback) {
-    final SettableFuture<JSONObject> future = new SettableFuture<JSONObject>();
+    final CompletableFuture<JSONObject> future = new CompletableFuture<JSONObject>();
 
     new Thread() {
       @Override
@@ -65,7 +66,7 @@ class DummyAsyncSession implements AsyncSession {
           final JSONObject resp = new SuccessfulResult("1", DummyAsyncSession.this.response)
               .createOutput();
 
-          future.set(resp);
+          future.complete(resp);
           if (callback != null) {
             callback.onAsyncResult(DummyAsyncSession.this, future, request);
           }

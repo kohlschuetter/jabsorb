@@ -30,10 +30,9 @@ package org.jabsorb.client.async;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.jabsorb.JSONSerializer;
 import org.jabsorb.client.ErrorResponse;
@@ -118,7 +117,7 @@ public class AsyncProxyHandler implements InvocationHandler {
     // the same.
     final AsyncResultCallback<Object, Object, Method> currentCallback = resultCallback;
 
-    final ExceptionSettableFuture<Object> future = new ExceptionSettableFuture<Object>();
+    final CompletableFuture<Object> future = new CompletableFuture<Object>();
     setFutureResult(future);
 
     final JSONObject message = createInvokeMessage(proxyKey, method.getName(), args);
@@ -137,13 +136,13 @@ public class AsyncProxyHandler implements InvocationHandler {
                   .getReturnType());
 
               // set the result onto the future that is used
-              future.set(resultObject);
-            } catch (final ExecutionException e) {
+              future.complete(resultObject);
+            } catch (ExecutionException e) {
               // deal with exceptions in the future
-              future.setException(e);
-            } catch (final Exception e) {
+              future.completeExceptionally(e);
+            } catch (Exception e) {
               // deal with exceptions in the future
-              future.setException(new ExecutionException(e));
+              future.completeExceptionally(new ExecutionException(e));
             }
 
             // call the callback that was set when invoke was called
@@ -250,36 +249,5 @@ public class AsyncProxyHandler implements InvocationHandler {
     // resultCallback for that call. Other calling threads not holding the
     // monitor will have to wait
     this.resultCallback = resultCallback;
-  }
-
-  private static class ExceptionSettableFuture<T> extends SettableFuture<T> {
-    private ExecutionException exception;
-
-    @Override
-    public synchronized T get() throws InterruptedException, ExecutionException {
-      if (exception != null) {
-        throw exception;
-      }
-
-      return super.get();
-    }
-
-    @Override
-    public T get(final long timeout, final TimeUnit unit) throws InterruptedException,
-        ExecutionException, TimeoutException {
-      if (exception != null) {
-        throw exception;
-      }
-
-      return super.get(timeout, unit);
-    }
-
-    /**
-     * @param exception the exception to set
-     */
-    public void setException(final ExecutionException exception) {
-      this.exception = exception;
-    }
-
   }
 }

@@ -27,6 +27,7 @@
  */
 package org.jabsorb.client.async;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -118,14 +119,14 @@ public class AsyncSessionUtil {
     @Override
     public Future<JSONObject> send(final JSONObject request,
         final AsyncResultCallback<AsyncSession, JSONObject, JSONObject> callback) {
-      final SettableFuture<JSONObject> result = new SettableFuture<JSONObject>();
+      final CompletableFuture<JSONObject> result = new CompletableFuture<JSONObject>();
 
       new Thread() {
         @Override
         public void run() {
           final JSONObject response = session.sendAndReceive(request);
 
-          result.set(response);
+          result.complete(response);
 
           if (callback != null) {
             try {
