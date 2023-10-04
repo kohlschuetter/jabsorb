@@ -51,6 +51,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * Serializes java beans that are known to have readable and writable properties
  */
@@ -189,11 +191,13 @@ public class BeanSerializer extends AbstractSerializer {
         || jsonClazz == JSONObject.class));
   }
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   @Override
   public Collection<Class<?>> getJSONClasses() {
     return JSON_CLASSES;
   }
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   @Override
   public Collection<Class<?>> getSerializableClasses() {
     return SERIALIZABLE_CLASSES;

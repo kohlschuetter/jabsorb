@@ -86,7 +86,7 @@ public class URLConnectionSession implements Session {
       Object rawResponseMessage = tokener.nextValue();
       JSONObject responseMessage = (JSONObject) rawResponseMessage;
       if (responseMessage == null) {
-        throw new ClientError("Invalid response type - " + rawResponseMessage.getClass());
+        throw new ClientError("Invalid response type - null");
       }
       return responseMessage;
     } catch (JSONException | IOException e) {

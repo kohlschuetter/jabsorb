@@ -39,6 +39,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * Serialises classes that have been registered on the bridge as references or callable references.
  */
@@ -70,6 +72,7 @@ public class ReferenceSerializer extends AbstractSerializer {
    *
    *          TODO: Should reference detection be abstracted out into another class?
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public ReferenceSerializer(JSONRPCBridge bridge) {
     super();
     this.bridge = bridge;
@@ -82,11 +85,13 @@ public class ReferenceSerializer extends AbstractSerializer {
             || jsonClazz == JSONObject.class));
   }
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   @Override
   public Collection<Class<?>> getSerializableClasses() {
     return SERIALIZABLE_CLASSES;
   }
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   @Override
   public Collection<Class<?>> getJSONClasses() {
     return JSON_CLASSES;

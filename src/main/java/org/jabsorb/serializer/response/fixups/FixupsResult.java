@@ -31,6 +31,8 @@ import org.jabsorb.serializer.response.results.SuccessfulResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * A successful result that contains fixups.
  *
@@ -52,6 +54,7 @@ public class FixupsResult extends SuccessfulResult {
    * @param o The main data to return.
    * @param fixups The fixups to return.
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public FixupsResult(Object id, Object o, Collection<FixUp> fixups) {
     super(id, o);
     this.fixUps = fixups;

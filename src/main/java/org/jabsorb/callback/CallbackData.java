@@ -59,7 +59,7 @@ public class CallbackData {
    */
   @Override
   public boolean equals(Object o) {
-    if (o == null) {
+    if (!(o instanceof CallbackData)) {
       return false;
     }
     CallbackData cmp = (CallbackData) o;

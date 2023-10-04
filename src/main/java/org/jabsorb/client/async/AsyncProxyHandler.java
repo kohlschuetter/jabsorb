@@ -43,6 +43,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 public class AsyncProxyHandler implements InvocationHandler {
   private static final String TO_STRING = "toString";
   private static final String EQUALS = "equals";
@@ -70,6 +72,7 @@ public class AsyncProxyHandler implements InvocationHandler {
 
   private AsyncResultCallback<Object, Object, Method> resultCallback;
 
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public AsyncProxyHandler(final String proxyKey, final AsyncSession session,
       final JSONSerializer serializer) {
     this.proxyKey = proxyKey;
@@ -93,7 +96,9 @@ public class AsyncProxyHandler implements InvocationHandler {
         return proxyObj.getClass().getName() + '@' + Integer.toHexString(proxyObj.hashCode());
       default:
         if (METHOD_GET_FUTURE_RESULT.equals(method)) {
-          return futureResult;
+          synchronized (this) {
+            return futureResult;
+          }
         } else if (METHOD_SET_RESULT_CALLBACK.equals(method)) {
           setResultCallback((AsyncResultCallback<Object, Object, Method>) args[0]);
           return null;
@@ -119,7 +124,10 @@ public class AsyncProxyHandler implements InvocationHandler {
     // Create a final reference that can be used when this method
     // returns. We don't know if the original callback will still be
     // the same.
-    final AsyncResultCallback<Object, Object, Method> currentCallback = resultCallback;
+    final AsyncResultCallback<Object, Object, Method> currentCallback;
+    synchronized (this) {
+      currentCallback = resultCallback;
+    }
 
     final CompletableFuture<Object> future = new CompletableFuture<Object>();
     setFutureResult(future);
@@ -176,6 +184,7 @@ public class AsyncProxyHandler implements InvocationHandler {
    * @param responseMessage The error message
    * @throws JSONException Rethrows the exception in the repsonse.
    */
+  @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   protected void processException(final JSONObject responseMessage) throws JSONException {
     final JSONObject error = (JSONObject) responseMessage.get("error");
     if (error != null) {

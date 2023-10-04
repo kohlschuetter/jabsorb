@@ -42,11 +42,13 @@ import org.jabsorb.localarg.LocalArgController;
 import org.jabsorb.reflect.AccessibleObjectKey;
 import org.jabsorb.serializer.response.results.FailedResult;
 import org.jabsorb.serializer.response.results.JSONRPCResult;
-import org.jabsorb.serializer.response.results.RemoteException;
+import org.jabsorb.serializer.response.results.RemoteFailedResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 
 /**
  * Attempts to resolve a set of arguments to the best possible method/constructor.
@@ -103,12 +105,14 @@ public class AccessibleObjectResolver {
       final boolean isConstructor = accessibleObject instanceof Constructor;
 
       if (LOG.isDebugEnabled()) {
-        if (!isConstructor) {
+        if (isConstructor) {
+          LOG.debug("invoking " + ((Constructor<?>) accessibleObject).getName() + " " + "(" // NOPMD.GuardLogStatement
+              + argSignature(accessibleObject) + ")");
+        } else if (accessibleObject instanceof Method) {
           LOG.debug("invoking " + ((Method) accessibleObject).getReturnType().getName() + " " // NOPMD.GuardLogStatement
               + ((Method) accessibleObject).getName() + "(" + argSignature(accessibleObject) + ")");
         } else {
-          LOG.debug("invoking " + ((Constructor<?>) accessibleObject).getName() + " " + "(" // NOPMD.GuardLogStatement
-              + argSignature(accessibleObject) + ")");
+          throw new UnmarshallException("Unexpected accessibleObject type");
         }
       }
 
@@ -135,8 +139,10 @@ public class AccessibleObjectResolver {
       final Object returnObj;
       if (isConstructor) {
         returnObj = ((Constructor<?>) accessibleObject).newInstance(javaArgs);
-      } else {
+      } else if (accessibleObject instanceof Method) {
         returnObj = ((Method) accessibleObject).invoke(javascriptObject, javaArgs);
+      } else {
+        throw new UnmarshallException("Unexpected accessibleObject type");
       }
       // Call post invoke callbacks
       if (cbc != null) {
@@ -193,7 +199,7 @@ public class AccessibleObjectResolver {
           cbc.errorCallback(obj, javascriptObject, accessibleObject, e);
         }
       }
-      result = new RemoteException(requestId, exceptionTransformer.transform(e));
+      result = new RemoteFailedResult(requestId, exceptionTransformer.transform(e));
     }
     return result;
   }
@@ -246,11 +252,17 @@ public class AccessibleObjectResolver {
         LOG.debug("looking for method " + methodName + "(" + argSignature(arguments) + ")");
       }
       for (AccessibleObject accessibleObject : accessibleObjects) {
-        Class<?>[] parameterTypes = null;
+        Class<?>[] parameterTypes;
         if (accessibleObject instanceof Method) {
           parameterTypes = ((Method) accessibleObject).getParameterTypes();
         } else if (accessibleObject instanceof Constructor) {
           parameterTypes = ((Constructor<?>) accessibleObject).getParameterTypes();
+        } else {
+          // unexpected
+          if (LOG.isWarnEnabled()) {
+            LOG.warn("Unexpected accessibleObject: " + accessibleObject);
+          }
+          return null;
         }
 
         try {
@@ -329,6 +341,7 @@ public class AccessibleObjectResolver {
    * @param arguments The argumnts
    * @return A comma seperated string listing the arguments
    */
+  @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   private static String argSignature(JSONArray arguments) {
     StringBuffer buf = new StringBuffer();
     for (int i = 0; i < arguments.length(); i += 1) {

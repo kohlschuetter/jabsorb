@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * Information on the public methods of a class as reflected from the Class itself. This is produced
  * by the ClassAnalyzer and used in the JSONRPCBridge for resolving classes and methods to invoke
@@ -93,6 +95,7 @@ public class ClassData {
    *
    * @return Map of static methods that can be invoked for the class.
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public Map<AccessibleObjectKey, Set<AccessibleObject>> getConstructorMap() {
     return constructorMap;
   }
@@ -105,6 +108,7 @@ public class ClassData {
    *
    * @return Map of public instance methods which can be invoked for the class. this ClassData.
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public Map<AccessibleObjectKey, Set<AccessibleObject>> getMethodMap() {
     return methodMap;
   }
@@ -115,6 +119,7 @@ public class ClassData {
    *
    * @return Map of static methods that can be invoked for the class.
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public Map<AccessibleObjectKey, Set<AccessibleObject>> getStaticMethodMap() {
     return staticMethodMap;
   }

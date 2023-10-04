@@ -96,12 +96,12 @@ public class AsyncClient {
     proxyMap.remove(proxy);
   }
 
-  /**
-   * Allow access to the serializer
-   *
-   * @return The serializer for this class
-   */
-  public JSONSerializer getSerializer() {
-    return serializer;
-  }
+//  /**
+//   * Allow access to the serializer
+//   *
+//   * @return The serializer for this class
+//   */
+//  public JSONSerializer getSerializer() {
+//    return serializer;
+//  }
 }

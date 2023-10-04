@@ -63,6 +63,9 @@ class LocalArgResolverData {
 
   @Override
   public boolean equals(Object o) {
+    if (!(o instanceof LocalArgResolverData)) {
+      return false;
+    }
     LocalArgResolverData cmp = (LocalArgResolverData) o;
     return (argResolver.equals(cmp.argResolver) && argClazz.equals(cmp.argClazz) && contextInterface
         .equals(cmp.contextInterface));

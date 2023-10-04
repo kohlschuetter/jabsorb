@@ -29,6 +29,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
  * form is a string wrapped in curly braces with colons between the names and
@@ -112,6 +114,7 @@ public class JSONObject {
          */
         @Override
         @SuppressWarnings("lgtm[java/unchecked-cast-in-equals]")
+        @SuppressFBWarnings("EQ_UNUSUAL")
         public boolean equals(Object object) {
             return object == null || object == this;
         }
@@ -1075,6 +1078,7 @@ public class JSONObject {
      * @return The enum value associated with the key or defaultValue
      *            if the value is not found or cannot be assigned to <code>clazz</code>
      */
+    @SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
     public <E extends Enum<E>> E optEnum(Class<E> clazz, String key, E defaultValue) {
         try {
             Object val = this.opt(key);
@@ -2403,7 +2407,7 @@ public class JSONObject {
         try {
             return this.toString(0);
         } catch (Exception e) {
-            return null;
+            return "null";
         }
     }
 
@@ -2549,6 +2553,7 @@ public class JSONObject {
         return this.write(writer, 0, 0);
     }
 
+    @SuppressFBWarnings("EC_NULL_ARG")
     static final Writer writeValue(Writer writer, Object value,
             int indentFactor, int indent) throws JSONException, IOException {
         if (value == null || value.equals(null)) {

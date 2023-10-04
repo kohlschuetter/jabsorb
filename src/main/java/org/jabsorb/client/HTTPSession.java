@@ -71,12 +71,12 @@ public class HTTPSession implements Session {
     this.uri = uri;
   }
 
-  /**
-   * An option to set state from the outside. for example, to provide existing session parameters.
-   */
-  public void setState(HttpState state) {
-    this.state = state;
-  }
+  // /**
+  // * An option to set state from the outside. for example, to provide existing session parameters.
+  // */
+  // public void setState(HttpState state) {
+  // this.state = state;
+  // }
 
   @Override
   public JSONObject sendAndReceive(JSONObject message) {
@@ -104,7 +104,7 @@ public class HTTPSession implements Session {
       Object rawResponseMessage = tokener.nextValue();
       JSONObject responseMessage = (JSONObject) rawResponseMessage;
       if (responseMessage == null) {
-        throw new ClientError("Invalid response type - " + rawResponseMessage.getClass());
+        throw new ClientError("Invalid response type: null");
       }
 
       return responseMessage;

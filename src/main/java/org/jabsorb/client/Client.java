@@ -39,6 +39,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * A factory to create proxies for access to remote Jabsorb services.
  */
@@ -110,6 +112,7 @@ public class Client {
    *
    * @return The serializer for this class
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public JSONSerializer getSerializer() {
     return serializer;
   }
@@ -148,6 +151,7 @@ public class Client {
    * @param responseMessage The error message
    * @throws JSONException Rethrows the exception in the repsonse.
    */
+  @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   protected void processException(JSONObject responseMessage) throws JSONException {
     JSONObject error = (JSONObject) responseMessage.get("error");
     if (error != null) {

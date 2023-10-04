@@ -29,6 +29,8 @@ import java.util.List;
 
 import org.jabsorb.serializer.ProcessedObject;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * Represents an object that has been already processed by the JSONSerializer this is stored in the
  * SerializerState in order to detect circular references and duplicates.
@@ -53,6 +55,7 @@ public class FixupProcessedObject extends ProcessedObject {
    *          to java.
    * @param parent The object which contains the parameter "object"
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public FixupProcessedObject(Object object, FixupProcessedObject parent) {
     super(object);
     this.parent = parent;
@@ -65,6 +68,7 @@ public class FixupProcessedObject extends ProcessedObject {
    * @return the parent ProcessedObject of this ProcessedObject or null if this is the root of the
    *         Object hierarchy being processed.
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public FixupProcessedObject getParent() {
     return parent;
   }

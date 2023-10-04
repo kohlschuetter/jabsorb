@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 
 /**
  * A JSONArray is an ordered sequence of values. Its external text form is a
@@ -63,6 +65,7 @@ import java.util.Map;
  * @version 2016-08/15
  */
 @SuppressWarnings("PMD")
+@SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
 public class JSONArray implements Iterable<Object> {
 
     /**
@@ -1420,7 +1423,7 @@ public class JSONArray implements Iterable<Object> {
         try {
             return this.toString(0);
         } catch (Exception e) {
-            return null;
+            return "null";
         }
     }
 

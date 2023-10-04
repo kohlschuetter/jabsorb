@@ -40,6 +40,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -157,6 +159,7 @@ public class JSONRPCServlet extends HttpServlet {
    *
    * @param bridgeLocation The location of the JSONRPCBridge variable in the session
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public JSONRPCServlet(String bridgeLocation, JSONRPCBridge defaultBridge) {
     super();
     this.bridgeLocation = bridgeLocation;
@@ -252,10 +255,10 @@ public class JSONRPCServlet extends HttpServlet {
    * @throws IOException if an IOException occurs during processing.
    */
   @Override
-  @SuppressWarnings("PMD.CognitiveComplexity")
+  @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.NPathComplexity"})
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Use protected method in case someone wants to override it
-    JSONRPCBridge jsonBrdige = findBridge(request);
+    JSONRPCBridge jsonBridge = findBridge(request);
 
     // Decode using the charset in the request if it exists otherwise
     // use UTF-8 as this is what all browser implementations use.
@@ -267,31 +270,31 @@ public class JSONRPCServlet extends HttpServlet {
       charset = "UTF-8";
     }
 
-    BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(),
-        charset));
-
     String receiveString = (String) request.getAttribute("_jabsorb_beenHere");
+    try (BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(),
+        charset))) {
 
-    // if JSON data is found in a special request attribute, it means
-    // that a continuation was used and this request is being retried
-    // as a consequence of a Jetty continuation
-    // see http://blogs.webtide.com/gregw/2007/11/18/1195421880000.html
-    if (receiveString == null) {
-      // Read the request
-      CharArrayWriter data = new CharArrayWriter();
-      char[] buf = new char[BUF_SIZE];
-      int ret;
-      while ((ret = in.read(buf, 0, BUF_SIZE)) != -1) {
-        data.write(buf, 0, ret);
+      // if JSON data is found in a special request attribute, it means
+      // that a continuation was used and this request is being retried
+      // as a consequence of a Jetty continuation
+      // see http://blogs.webtide.com/gregw/2007/11/18/1195421880000.html
+      if (receiveString == null) {
+        // Read the request
+        CharArrayWriter data = new CharArrayWriter();
+        char[] buf = new char[BUF_SIZE];
+        int ret;
+        while ((ret = in.read(buf, 0, BUF_SIZE)) != -1) {
+          data.write(buf, 0, ret);
+        }
+        receiveString = data.toString();
+
+        // save the json-rpc data in a special request attribute, in case a jetty
+        // continuation exception (org.mortbay.jetty.RetryRequest) is thrown and this
+        // request is retried by the container
+        request.setAttribute("_jabsorb_beenHere", receiveString);
+      } else {
+        LOG.debug("jetty continuation resumed...");
       }
-      receiveString = data.toString();
-
-      // save the json-rpc data in a special request attribute, in case a jetty
-      // continuation exception (org.mortbay.jetty.RetryRequest) is thrown and this
-      // request is retried by the container
-      request.setAttribute("_jabsorb_beenHere", receiveString);
-    } else {
-      LOG.debug("jetty continuation resumed...");
     }
 
     if (LOG.isDebugEnabled()) {
@@ -305,7 +308,7 @@ public class JSONRPCServlet extends HttpServlet {
     JSONRPCResult jsonResult;
     try {
       jsonRequest = new JSONObject(receiveString);
-      jsonResult = jsonBrdige.call(new Object[] {request, response}, jsonRequest);
+      jsonResult = jsonBridge.call(new Object[] {request, response}, jsonRequest);
     } catch (JSONException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("can't parse call" + receiveString, e);

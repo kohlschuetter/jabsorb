@@ -47,7 +47,7 @@ public class FlatRequestParser extends RequestParser {
    *
    * @author William Becker
    */
-  private class FlatParser {
+  private static final class FlatParser {
     /**
      * The indexes of objects that have been read already mapped to the objects
      */

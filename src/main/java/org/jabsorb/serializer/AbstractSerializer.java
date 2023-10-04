@@ -28,6 +28,8 @@ import org.jabsorb.JSONSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * Convenience class for implementing Serializers providing default setOwner and canSerialize
  * implementations.
@@ -79,6 +81,7 @@ public abstract class AbstractSerializer implements Serializer {
    * @param ser The parent serialiser.
    */
   @Override
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public void setOwner(JSONSerializer ser) {
     this.ser = ser;
   }

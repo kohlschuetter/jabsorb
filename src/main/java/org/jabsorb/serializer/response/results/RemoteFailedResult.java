@@ -33,7 +33,7 @@ import org.json.JSONObject;
 /**
  * Special result for when a specific exception is thrown by the server.
  */
-public class RemoteException extends FailedResult {
+public class RemoteFailedResult extends FailedResult {
   /**
    * Denotes that an exception was thrown on the server
    */
@@ -45,7 +45,7 @@ public class RemoteException extends FailedResult {
    * @param id The id of the response
    * @param error The Exception which was thrown.
    */
-  public RemoteException(Object id, Object error) {
+  public RemoteFailedResult(Object id, Object error) {
     super(CODE_REMOTE_EXCEPTION, id, error);
   }
 
