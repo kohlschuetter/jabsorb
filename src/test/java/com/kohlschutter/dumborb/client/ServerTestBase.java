@@ -23,8 +23,6 @@
  */
 package com.kohlschutter.dumborb.client;
 
-import java.util.Set;
-
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
@@ -33,7 +31,6 @@ import org.eclipse.jetty.util.resource.ResourceFactory;
 import com.kohlschutter.dumborb.JSONRPCBridge;
 import com.kohlschutter.dumborb.JSONRPCServlet;
 import com.kohlschutter.dumborb.security.ClassResolver;
-import com.kohlschutter.dumborb.test.ITest;
 
 import junit.framework.TestCase;
 
@@ -41,8 +38,7 @@ import junit.framework.TestCase;
  * Test case that requires starting the jabsorb server
  */
 public abstract class ServerTestBase extends TestCase {
-  private static final JSONRPCBridge BRIDGE = new JSONRPCBridge(ClassResolver.withAllowedClasses(Set
-      .of(ITest.Wiggle.class, ITest.Waggle.class)));
+  private static final JSONRPCBridge BRIDGE = new JSONRPCBridge(ClassResolver.withDefaults());
 
   /**
    * Encapsulate Jetty hosting server initialization so that we could start it only once during the

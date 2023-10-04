@@ -25,7 +25,6 @@ package com.kohlschutter.dumborb.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -51,8 +50,7 @@ public class TestSerializer extends TestCase {
   @Override
   protected void setUp() throws Exception {
     ser = new JSONSerializer(FixupCircRefAndNonPrimitiveDupes.class,
-        new FixupsCircularReferenceHandler(), ClassResolver.withAllowedClasses(Set.of(
-            ITest.Waggle.class)));
+        new FixupsCircularReferenceHandler(), ClassResolver.withDefaults());
     ser.registerDefaultSerializers();
     ser.setMarshallClassHints(true);
   }

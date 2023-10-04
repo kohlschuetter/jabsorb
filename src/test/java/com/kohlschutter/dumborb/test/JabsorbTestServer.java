@@ -23,8 +23,6 @@
  */
 package com.kohlschutter.dumborb.test;
 
-import java.util.Set;
-
 import org.apache.jasper.servlet.JspServlet;
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
@@ -39,8 +37,7 @@ import com.kohlschutter.dumborb.security.ClassResolver;
  * A basic embedded jetty implementation which runs the jabsorb webapp
  */
 public class JabsorbTestServer {
-  private static final JSONRPCBridge BRIDGE = new JSONRPCBridge(ClassResolver.withAllowedClasses(Set
-      .of(ITest.Wiggle.class, ITest.Waggle.class)));
+  private static final JSONRPCBridge BRIDGE = new JSONRPCBridge(ClassResolver.withDefaults());
 
   /**
    * The directory on which the webapp is found

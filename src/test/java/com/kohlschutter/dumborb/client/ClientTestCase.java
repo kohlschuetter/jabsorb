@@ -26,7 +26,6 @@ package com.kohlschutter.dumborb.client;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Arrays;
-import java.util.Set;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -34,10 +33,6 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 
-import com.kohlschutter.dumborb.client.Client;
-import com.kohlschutter.dumborb.client.ClientError;
-import com.kohlschutter.dumborb.client.HTTPSession;
-import com.kohlschutter.dumborb.client.TransportRegistry;
 import com.kohlschutter.dumborb.security.ClassResolver;
 import com.kohlschutter.dumborb.test.ITest;
 
@@ -45,8 +40,7 @@ import com.kohlschutter.dumborb.test.ITest;
  * This test implements some of Jabsorb tests.
  */
 public class ClientTestCase extends ServerTestBase {
-  final ClassResolver classResolver = ClassResolver.withAllowedClasses(Set.of(ITest.Wiggle.class,
-      ITest.Waggle.class));
+  final ClassResolver classResolver = ClassResolver.withDefaults();
 
   HttpState state;
 

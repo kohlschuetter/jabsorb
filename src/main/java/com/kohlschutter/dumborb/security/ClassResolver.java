@@ -23,11 +23,16 @@
  */
 package com.kohlschutter.dumborb.security;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.kohlschutter.dumborb.serializer.UnmarshallException;
 
@@ -37,14 +42,22 @@ import com.kohlschutter.dumborb.serializer.UnmarshallException;
  * @author Christian Kohlschütter
  */
 public final class ClassResolver {
+  private static final Logger LOG = LoggerFactory.getLogger(ClassResolver.class);
+
   private static final Pattern PAT_ARRAY = Pattern.compile("^([\\[]+[L]?)(.*?)([;]*)$");
   private static final Set<String> DEFAULT_ALLOWED_CLASSES = Set.of("java.lang.Exception");
+  private static final Collection<String> DEFAULT_DISALLOWED_PREFIXES = Set.of("javax.", "com.sun.",
+      "sun.");
 
   private final Set<String> allowedClasses;
-  private final WeakHashMap<String, Class<?>> cachedDecisions = new WeakHashMap<>();
+  private final Collection<String> disallowedPrefixes;
 
-  private ClassResolver(Set<String> allowedClasses) {
+  private final ConcurrentHashMap<String, Class<?>> cachedResults = new ConcurrentHashMap<>();
+  private final WeakHashMap<String, Class<?>> cachedResultsWeak = new WeakHashMap<>();
+
+  private ClassResolver(Set<String> allowedClasses, Collection<String> disallowedPrefixes) {
     this.allowedClasses = allowedClasses;
+    this.disallowedPrefixes = disallowedPrefixes;
   }
 
   /**
@@ -57,20 +70,59 @@ public final class ClassResolver {
   }
 
   public static ClassResolver withDefaults() {
-    return withAllowedClassNames(DEFAULT_ALLOWED_CLASSES);
+    return withClassNames(DEFAULT_ALLOWED_CLASSES, DEFAULT_DISALLOWED_PREFIXES);
   }
 
-  public static ClassResolver withAllowedClasses(Set<Class<?>> allowedClasses) {
+  public static ClassResolver withClasses(Set<Class<?>> allowedClasses,
+      Collection<String> disallowedPrefixes) {
     return new ClassResolver(allowedClasses.stream().map((k) -> k.getName()).collect(Collectors
-        .toSet()));
+        .toSet()), disallowedPrefixes);
   }
 
-  public static ClassResolver withAllowedClassNames(Set<String> allowedClasses) {
-    return new ClassResolver(allowedClasses);
+  public static ClassResolver withClassNames(Set<String> allowedClasses,
+      Collection<String> disallowedPrefixes) {
+    return new ClassResolver(allowedClasses, disallowedPrefixes);
   }
 
+  private static Package packageFromClassName(String className) {
+    String packageName = className;
+    int dollar = packageName.indexOf('$');
+    if (dollar != -1) {
+      packageName = packageName.substring(0, dollar);
+    }
+
+    int lastDot = packageName.lastIndexOf('.');
+    if (lastDot == -1) {
+      return null;
+    }
+    packageName = packageName.substring(0, lastDot);
+
+    Package pkg = Thread.currentThread().getContextClassLoader().getDefinedPackage(packageName);
+    if (pkg == null) { // this happens
+      try {
+        pkg = Class.forName(packageName + ".package-info").getPackage();
+      } catch (ClassNotFoundException ignore) {
+        // pkg = Package.getPackage(packageName);
+      }
+    }
+    return pkg;
+  }
+
+  @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
   public Class<?> tryResolve(String className) {
-    Class<?> klazz = cachedDecisions.get(className);
+    if (className == null || className.isEmpty()) {
+      return null;
+    }
+
+    Class<?> klazz;
+
+    klazz = cachedResults.get(className);
+    if (klazz == null) {
+      synchronized (cachedResultsWeak) {
+        klazz = cachedResultsWeak.get(className);
+      }
+    }
+
     if (klazz == NotAccessible.class) {
       return null;
     } else if (klazz != null) {
@@ -78,15 +130,43 @@ public final class ClassResolver {
     }
 
     try {
-      if (!allowedClasses.contains(className)) {
+      boolean knownAllowed = false;
+      if (allowedClasses.contains(className)) {
+        knownAllowed = true;
+      } else {
         Matcher m = PAT_ARRAY.matcher(className);
-        if (!m.find()) {
+        if (m.find()) {
+          String basicClassName = m.group(2);
+          if (allowedClasses.contains(basicClassName)) {
+            knownAllowed = true;
+          }
+        }
+      }
+
+      // no default package shenanigans
+      if (className.indexOf('.') == -1) {
+        return klazz = null;
+      }
+
+      // no known disallowed packages
+      for (String prefix : disallowedPrefixes) {
+        if (className.startsWith(prefix)) {
           return klazz = null;
         }
-        String basicClassName = m.group(2);
-        if (!allowedClasses.contains(basicClassName)) {
-          return klazz = null;
+      }
+
+      boolean mayResolveClass = knownAllowed;
+
+      if (!knownAllowed) {
+        Package pkg = packageFromClassName(className);
+        if (pkg != null && pkg.isAnnotationPresent(DumborbConfiguredPackage.class)) {
+          // DumborbSafe safe = pkg.getAnnotation(DumborbConfiguredPackage.class);
+          mayResolveClass = true;
         }
+      }
+
+      if (!mayResolveClass) {
+        return klazz = null;
       }
 
       try {
@@ -95,9 +175,32 @@ public final class ClassResolver {
         return klazz = null;
       }
 
+      if (!knownAllowed) {
+        if (klazz.isAnnotationPresent(DumborbSafe.class)) {
+          // DumborbSafe safe = klazz.getAnnotation(DumborbSafe.class);
+          knownAllowed = true;
+        }
+      }
+
+      if (!knownAllowed) {
+        return klazz = null;
+      }
+
       return klazz;
     } finally {
-      cachedDecisions.put(className, klazz == null ? NotAccessible.class : klazz);
+      if (klazz == null) {
+        if (LOG.isWarnEnabled()) {
+          LOG.warn("Marking class '" + className + "' as not resolvable");
+        }
+        synchronized (cachedResultsWeak) {
+          cachedResultsWeak.put(className, NotAccessible.class);
+        }
+      } else {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Marking class '" + className + "' as resolvable");
+        }
+        cachedResults.put(className, klazz);
+      }
     }
   }
 
