@@ -489,7 +489,7 @@ public class Test implements Serializable, ITest {
   }
 
   // Reference Tests
-  static public class CallableRefTest implements Serializable, Comparable<Object> {
+  public static class CallableRefTest implements Serializable, Comparable<Object> {
 
     private final static long serialVersionUID = 2;
 
@@ -513,7 +513,7 @@ public class Test implements Serializable, ITest {
     }
   }
 
-  static public class RefTest implements Serializable {
+  public static class RefTest implements Serializable {
 
     private final static long serialVersionUID = 2;
 
