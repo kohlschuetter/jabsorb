@@ -37,11 +37,6 @@ import org.json.JSONException;
  */
 public class RawJSONArraySerializer extends AbstractSerializer {
   /**
-   * Unique serialisation id.
-   */
-  private final static long serialVersionUID = 2;
-
-  /**
    * Classes that this can serialise.
    */
   private static Class<?>[] _serializableClasses = new Class[] {JSONArray.class};

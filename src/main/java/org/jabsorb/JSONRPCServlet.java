@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.NotSerializableException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -136,22 +137,25 @@ public class JSONRPCServlet extends HttpServlet {
   private final static Logger log = LoggerFactory.getLogger(JSONRPCServlet.class);
 
   /**
-   * Unique serialisation id.
-   */
-  private final static long serialVersionUID = 2;
-
-  /**
    * The location of the JSONRPCBridge variable in the session
    */
   private final String bridgeLocation;
 
-  private final JSONRPCBridge defaultBridge;
+  private final transient JSONRPCBridge defaultBridge;
 
   /**
    * Creates a new JSONRPCServlet with the bridge in the "JSONRPCBridge" variable
    */
   public JSONRPCServlet(JSONRPCBridge defaultBridge) {
     this("JSONRPCBridge", defaultBridge);
+  }
+
+  private void readObject(java.io.ObjectInputStream in) throws IOException {
+    throw new NotSerializableException(JSONRPCServlet.class.getName());
+  }
+
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    throw new NotSerializableException(JSONRPCServlet.class.getName());
   }
 
   /**

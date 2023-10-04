@@ -24,17 +24,10 @@
  */
 package org.jabsorb.callback;
 
-import java.io.Serializable;
-
 /**
  * Container class for information about callbacks and the transport they are associated with.
  */
-public class CallbackData implements Serializable {
-  /**
-   * Generated version id.
-   */
-  private final static long serialVersionUID = 2;
-
+public class CallbackData {
   /**
    * The object implementing the InvocationCallback Interface
    */

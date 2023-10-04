@@ -41,11 +41,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ReferenceSerializer extends AbstractSerializer {
   /**
-   * Unique serialisation id.
-   */
-  private final static long serialVersionUID = 2;
-
-  /**
    * The logger for this class
    */
   private final static Logger log = LoggerFactory.getLogger(ReferenceSerializer.class);

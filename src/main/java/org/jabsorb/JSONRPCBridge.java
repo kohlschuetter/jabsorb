@@ -27,7 +27,6 @@ package org.jabsorb;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.AccessibleObject;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -98,16 +97,11 @@ import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
  * use them.
  * </p>
  */
-public class JSONRPCBridge implements Serializable {
+public final class JSONRPCBridge  {
   /**
    * Container for objects of which instances have been made
    */
-  protected static class ObjectInstance implements Serializable {
-    /**
-     * Unique serialisation id.
-     */
-    private final static long serialVersionUID = 2;
-
+  protected static class ObjectInstance  {
     /**
      * The class the object is of
      */
@@ -201,21 +195,11 @@ public class JSONRPCBridge implements Serializable {
    */
   private static final ExceptionTransformer IDENTITY_EXCEPTION_TRANSFORMER =
       new ExceptionTransformer() {
-        /**
-         * Unique serialisation id.
-         */
-        private final static long serialVersionUID = 2;
-
         @Override
         public Object transform(Throwable t) {
           return t;
         }
       };
-
-  /**
-   * Unique serialisation id.
-   */
-  private final static long serialVersionUID = 2;
 
   static {
     log = LoggerFactory.getLogger(JSONRPCBridge.class);
@@ -1077,5 +1061,4 @@ public class JSONRPCBridge implements Serializable {
     }
     return oi;
   }
-
 }

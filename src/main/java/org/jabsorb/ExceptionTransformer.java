@@ -24,12 +24,10 @@
  */
 package org.jabsorb;
 
-import java.io.Serializable;
-
 /**
  * Used to transform the exception to some object in JSONRPCResults
  */
-public interface ExceptionTransformer extends Serializable {
+public interface ExceptionTransformer {
 
   /**
    * Transform the exception to the format desired for transport to the client. This method should

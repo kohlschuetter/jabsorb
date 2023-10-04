@@ -24,7 +24,6 @@
  */
 package org.jabsorb.callback;
 
-import java.io.Serializable;
 import java.lang.reflect.AccessibleObject;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,12 +35,7 @@ import org.slf4j.LoggerFactory;
  * Class that is instantiated per bridge to maintain the list of callbacks and provides an interface
  * to invoke them.
  */
-public class CallbackController implements Serializable {
-  /**
-   * Generated version id.
-   */
-  private final static long serialVersionUID = 3;
-
+public class CallbackController {
   /**
    * The log used for this class.
    */

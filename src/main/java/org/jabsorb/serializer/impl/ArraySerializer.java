@@ -39,11 +39,6 @@ import org.json.JSONException;
  */
 public class ArraySerializer extends AbstractSerializer {
   /**
-   * Unique serialisation id.
-   */
-  private final static long serialVersionUID = 2;
-
-  /**
    * The classes that this can serialise
    */
   private final static Class<?>[] _serializableClasses = new Class[] {

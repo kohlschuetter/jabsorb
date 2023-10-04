@@ -24,7 +24,6 @@
  */
 package org.jabsorb;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -67,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * This class is the public entry point to the serialization code and provides methods for
  * marshalling Java objects into JSON objects and unmarshalling JSON objects into Java objects.
  */
-public class JSONSerializer implements Serializable {
+public class JSONSerializer {
   /**
    * The name of the field which holds the id of the message.
    */
@@ -97,11 +96,6 @@ public class JSONSerializer implements Serializable {
    * The logger for this class
    */
   private final static Logger log = LoggerFactory.getLogger(JSONSerializer.class);
-
-  /**
-   * Unique serialisation id.
-   */
-  private final static long serialVersionUID = 2;
 
   private final ClassResolver classResolver;
 

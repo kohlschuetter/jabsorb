@@ -24,15 +24,13 @@
  */
 package org.jabsorb.serializer;
 
-import java.io.Serializable;
-
 import org.jabsorb.JSONSerializer;
 
 /**
  * Interface to be implemented by custom serializer objects that convert to and from Java objects
  * and JSON objects.
  */
-public interface Serializer extends Serializable {
+public interface Serializer {
 
   /**
    * Determine if the given java,json class pair can be handled by this serializer. Both for
