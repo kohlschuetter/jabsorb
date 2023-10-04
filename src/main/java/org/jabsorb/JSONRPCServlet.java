@@ -105,6 +105,8 @@ import jakarta.servlet.http.HttpSession;
  */
 
 public class JSONRPCServlet extends HttpServlet {
+  private final static long serialVersionUID = -1; // not serializable, just to suppress a warning
+
   /**
    * The size of the buffer used for reading requests
    */
