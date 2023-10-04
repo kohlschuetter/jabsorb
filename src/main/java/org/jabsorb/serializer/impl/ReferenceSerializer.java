@@ -48,12 +48,12 @@ public class ReferenceSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class[] {};
+  private static Class<?>[] _serializableClasses = new Class<?>[] {};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class[] {};
+  private static Class<?>[] _JSONClasses = new Class<?>[] {};
 
   /**
    * A reference to the bridge

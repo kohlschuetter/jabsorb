@@ -41,7 +41,7 @@ public class ArraySerializer extends AbstractSerializer {
   /**
    * The classes that this can serialise
    */
-  private final static Class<?>[] _serializableClasses = new Class[] {
+  private final static Class<?>[] _serializableClasses = new Class<?>[] {
       int[].class, short[].class, long[].class, float[].class, double[].class, boolean[].class,
       Integer[].class, Short[].class, Long[].class, Float[].class, Double[].class, Boolean[].class,
       String[].class};
@@ -49,7 +49,7 @@ public class ArraySerializer extends AbstractSerializer {
   /**
    * The class that this serialises to
    */
-  private final static Class<?>[] _JSONClasses = new Class[] {JSONArray.class};
+  private final static Class<?>[] _JSONClasses = new Class<?>[] {JSONArray.class};
 
   @Override
   public Class<?>[] getSerializableClasses() {

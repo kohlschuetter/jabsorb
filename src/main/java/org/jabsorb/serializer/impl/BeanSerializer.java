@@ -94,14 +94,14 @@ public class BeanSerializer extends AbstractSerializer {
    *
    * TODO: Yay for bloat!
    */
-  private static Class<?>[] _serializableClasses = new Class[] {};
+  private static Class<?>[] _serializableClasses = new Class<?>[] {};
 
   /**
    * Classes that this can serialise to.
    *
    * TODO: Yay for bloat!
    */
-  private static Class<?>[] _JSONClasses = new Class[] {};
+  private static Class<?>[] _JSONClasses = new Class<?>[] {};
 
   /**
    * Analyses a bean, returning a BeanData with the data extracted from it.

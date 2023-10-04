@@ -39,13 +39,13 @@ public class StringSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class[] {
+  private static Class<?>[] _serializableClasses = new Class<?>[] {
       String.class, char.class, Character.class, byte[].class, char[].class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class[] {String.class, Integer.class};
+  private static Class<?>[] _JSONClasses = new Class<?>[] {String.class, Integer.class};
 
   @Override
   public Class<?>[] getJSONClasses() {

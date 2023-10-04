@@ -37,13 +37,13 @@ public class PrimitiveSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class[] {
+  private static Class<?>[] _serializableClasses = new Class<?>[] {
       int.class, byte.class, short.class, long.class, float.class, double.class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class[] {
+  private static Class<?>[] _JSONClasses = new Class<?>[] {
       Integer.class, Byte.class, Short.class, Long.class, Float.class, Double.class, String.class};
 
   @Override

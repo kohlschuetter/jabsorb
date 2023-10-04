@@ -37,7 +37,7 @@ public class EnumSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class[] {String.class};
+  private static Class<?>[] _JSONClasses = new Class<?>[] {String.class};
 
   /**
    * Classes that this can serialise.

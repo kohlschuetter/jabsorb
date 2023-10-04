@@ -39,12 +39,12 @@ public class RawJSONArraySerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class[] {JSONArray.class};
+  private static Class<?>[] _serializableClasses = new Class<?>[] {JSONArray.class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class[] {JSONArray.class};
+  private static Class<?>[] _JSONClasses = new Class<?>[] {JSONArray.class};
 
   @Override
   public Class<?>[] getJSONClasses() {

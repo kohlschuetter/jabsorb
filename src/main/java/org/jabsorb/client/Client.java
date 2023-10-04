@@ -131,8 +131,8 @@ public class Client implements InvocationHandler {
    * @return created proxy
    */
   public Object openProxy(String key, Class<?> klass) {
-    Object result = java.lang.reflect.Proxy.newProxyInstance(klass.getClassLoader(), new Class[] {
-        klass}, this);
+    Object result = java.lang.reflect.Proxy.newProxyInstance(klass.getClassLoader(),
+        new Class<?>[] {klass}, this);
     proxyMap.put(result, key);
     return result;
   }

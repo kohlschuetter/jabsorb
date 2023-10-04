@@ -37,12 +37,12 @@ public class BooleanSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class[] {boolean.class, Boolean.class};
+  private static Class<?>[] _serializableClasses = new Class<?>[] {boolean.class, Boolean.class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class[] {Boolean.class, String.class};
+  private static Class<?>[] _JSONClasses = new Class<?>[] {Boolean.class, String.class};
 
   @Override
   public Class<?>[] getJSONClasses() {

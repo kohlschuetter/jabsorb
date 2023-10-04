@@ -47,12 +47,12 @@ public class DictionarySerializer extends AbstractSerializer {
   /**
    * Classes that this can serialise.
    */
-  private static Class<?>[] _serializableClasses = new Class[] {Hashtable.class};
+  private static Class<?>[] _serializableClasses = new Class<?>[] {Hashtable.class};
 
   /**
    * Classes that this can serialise to.
    */
-  private static Class<?>[] _JSONClasses = new Class[] {JSONObject.class};
+  private static Class<?>[] _JSONClasses = new Class<?>[] {JSONObject.class};
 
   @Override
   public boolean canSerialize(Class<?> clazz, Class<?> jsonClazz) {
