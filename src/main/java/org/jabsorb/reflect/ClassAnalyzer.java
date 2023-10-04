@@ -47,22 +47,18 @@ import org.slf4j.LoggerFactory;
  * A &quot;factory&quot; for producing ClassData information from Class objects. Gathers the
  * ClassData information via reflection and internally caches it.
  */
-public class ClassAnalyzer {
+public final class ClassAnalyzer {
   /**
    * The logger for this class
    */
-  private static final Logger log = LoggerFactory.getLogger(ClassAnalyzer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ClassAnalyzer.class);
 
   /**
    * Classes that have been analysed
    *
    * key: Clazz, val ClassData
    */
-  private static final Map<Class<?>, ClassData> classCache;
-
-  static {
-    classCache = new HashMap<Class<?>, ClassData>();
-  }
+  private static final Map<Class<?>, ClassData> CLASS_CACHE = new HashMap<Class<?>, ClassData>();
 
   /**
    * <p>
@@ -79,11 +75,11 @@ public class ClassAnalyzer {
    */
   public static ClassData getClassData(Class<?> clazz) {
     ClassData cd;
-    synchronized (classCache) {
-      cd = classCache.get(clazz);
+    synchronized (CLASS_CACHE) {
+      cd = CLASS_CACHE.get(clazz);
       if (cd == null) {
         cd = analyzeClass(clazz);
-        classCache.put(clazz, cd);
+        CLASS_CACHE.put(clazz, cd);
       }
     }
     return cd;
@@ -93,7 +89,7 @@ public class ClassAnalyzer {
    * Empty the internal cache of ClassData information.
    */
   public static void invalidateCache() {
-    classCache.clear();
+    CLASS_CACHE.clear();
   }
 
   /**
@@ -106,7 +102,9 @@ public class ClassAnalyzer {
    *         invoked on the class.
    */
   private static ClassData analyzeClass(Class<?> clazz) {
-    log.info("analyzing " + clazz.getName());
+    if (LOG.isInfoEnabled()) {
+      LOG.info("analyzing " + clazz.getName());
+    }
     final List<AccessibleObject> constructors = new ArrayList<AccessibleObject>(Arrays.asList(clazz
         .getConstructors()));
     final List<AccessibleObject> memberMethods = new ArrayList<AccessibleObject>();
@@ -162,8 +160,8 @@ public class ClassAnalyzer {
             param = ((Method) accessibleObject).getParameterTypes();
           }
           // don't count locally resolved args
-          for (int n = 0; n < param.length; n++) {
-            if (LocalArgController.isLocalArg(param[n])) {
+          for (Class<?> cl : param) {
+            if (LocalArgController.isLocalArg(cl)) {
               continue;
             }
             argCount++;

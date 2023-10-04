@@ -31,20 +31,20 @@ import org.json.JSONArray;
 
 /**
  * Encapsulates a single fix up entry for a circular reference or duplicate detected during
- * processing of Java into JSON (aka marshalling.)
+ * processing of Java into JSON (aka marshalling).
  */
 public class FixUp {
   /**
    * A List of String|Integer's representing references to locate the place where this fixup entry
    * needs to be created.
    */
-  private List<?> fixupLocation;
+  private final List<?> fixupLocation;
 
   /**
    * List of String|Integer's representing references to locate the original location of the
    * circular reference or duplicate that this FixUp applies to.
    */
-  private List<?> originalLocation;
+  private final List<?> originalLocation;
 
   /**
    * Create a FixUp for a duplicate or circular reference.
@@ -58,15 +58,14 @@ public class FixUp {
   public FixUp(List<?> fixupLocation, List<?> originalLocation) {
     this.fixupLocation = new ArrayList<>(fixupLocation);
     // pop root object that won't be used in the fixup off the stack
-    if (this.fixupLocation.size() > 0) {
+    if (!this.fixupLocation.isEmpty()) {
       this.fixupLocation.remove(0);
     }
     this.originalLocation = new ArrayList<>(originalLocation);
     // pop root object that won't be used in the fixup off the stack
-    if (this.originalLocation.size() > 0) {
+    if (!this.originalLocation.isEmpty()) {
       this.originalLocation.remove(0);
     }
-
   }
 
   /**

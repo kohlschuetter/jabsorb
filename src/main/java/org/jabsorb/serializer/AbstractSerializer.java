@@ -52,20 +52,20 @@ public abstract class AbstractSerializer implements Serializer {
     boolean canJava = false;
     boolean canJSON = false;
 
-    Class<?>[] serializableClasses = getSerializableClasses();
-    for (int i = 0; i < serializableClasses.length; i++) {
-      if (clazz == serializableClasses[i]) {
+    for (Class<?> cl : getSerializableClasses()) {
+      if (cl == clazz) {
         canJava = true;
+        break;
       }
     }
 
     if (jsonClazz == null) {
       canJSON = true;
     } else {
-      Class<?>[] jsonClasses = getJSONClasses();
-      for (int i = 0; i < jsonClasses.length; i++) {
-        if (jsonClazz == jsonClasses[i]) {
+      for (Class<?> cl : getJSONClasses()) {
+        if (cl == jsonClazz) {
           canJSON = true;
+          break;
         }
       }
     }
@@ -94,7 +94,7 @@ public abstract class AbstractSerializer implements Serializer {
    */
   protected JSONObject marshallHints(JSONObject toAddTo, final Object objectWithClass)
       throws MarshallException {
-    if (ser.getMarshallClassHints()) {
+    if (ser.isMarshallClassHints()) {
       try {
         toAddTo.put(JSONSerializer.JAVA_CLASS_FIELD, objectWithClass.getClass().getName());
       } catch (JSONException e) {

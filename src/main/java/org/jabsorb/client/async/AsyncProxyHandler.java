@@ -44,6 +44,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AsyncProxyHandler implements InvocationHandler {
+  private static final String TO_STRING = "toString";
+  private static final String EQUALS = "equals";
+  private static final String HASH_CODE = "hashCode";
   // AsyncProxy methods
   private static final Method METHOD_GET_FUTURE_RESULT;
   private static final Method METHOD_SET_RESULT_CALLBACK;
@@ -80,23 +83,24 @@ public class AsyncProxyHandler implements InvocationHandler {
       throws Exception {
     assert (proxyObj instanceof AsyncProxy) : "Proxy object is not created by AsyncClient?";
 
-    final String methodName = method.getName();
-
-    if (methodName.equals("hashCode")) {
-      return System.identityHashCode(proxyObj);
-    } else if (methodName.equals("equals")) {
-      return (proxyObj == args[0] ? Boolean.TRUE : Boolean.FALSE);
-    } else if (methodName.equals("toString")) {
-      return proxyObj.getClass().getName() + '@' + Integer.toHexString(proxyObj.hashCode());
-    } else if (METHOD_GET_FUTURE_RESULT.equals(method)) {
-      return futureResult;
-    } else if (METHOD_SET_RESULT_CALLBACK.equals(method)) {
-
-      setResultCallback((AsyncResultCallback<Object, Object, Method>) args[0]);
-      return null;
+    switch (method.getName()) {
+      case HASH_CODE:
+        return System.identityHashCode(proxyObj);
+      case EQUALS:
+        return (proxyObj == args[0] // NOPMD
+            ? Boolean.TRUE : Boolean.FALSE);
+      case TO_STRING:
+        return proxyObj.getClass().getName() + '@' + Integer.toHexString(proxyObj.hashCode());
+      default:
+        if (METHOD_GET_FUTURE_RESULT.equals(method)) {
+          return futureResult;
+        } else if (METHOD_SET_RESULT_CALLBACK.equals(method)) {
+          setResultCallback((AsyncResultCallback<Object, Object, Method>) args[0]);
+          return null;
+        } else {
+          return doInvoke(proxyObj, method, args);
+        }
     }
-
-    return doInvoke(proxyObj, method, args);
   }
 
   /**

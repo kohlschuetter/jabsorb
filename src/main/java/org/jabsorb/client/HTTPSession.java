@@ -29,13 +29,11 @@ import java.net.URI;
 
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.jabsorb.client.TransportRegistry.SessionFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -55,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * </code>
  */
 public class HTTPSession implements Session {
-  private static final Logger log = LoggerFactory.getLogger(HTTPSession.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HTTPSession.class);
 
   /**
    * As per JSON-RPC Working Draft
@@ -83,8 +81,8 @@ public class HTTPSession implements Session {
   @Override
   public JSONObject sendAndReceive(JSONObject message) {
     try {
-      if (log.isDebugEnabled()) {
-        log.debug("Sending: " + message.toString(2));
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Sending: " + message.toString(2));
       }
       PostMethod postMethod = new PostMethod(uri.toString());
       postMethod.setRequestHeader("Content-Type", "text/plain");
@@ -110,11 +108,7 @@ public class HTTPSession implements Session {
       }
 
       return responseMessage;
-    } catch (HttpException e) {
-      throw new ClientError(e);
-    } catch (IOException e) {
-      throw new ClientError(e);
-    } catch (JSONException e) {
+    } catch (JSONException | IOException e) {
       throw new ClientError(e);
     }
   }

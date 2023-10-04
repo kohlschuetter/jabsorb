@@ -24,8 +24,10 @@
  */
 package org.jabsorb.serializer.impl;
 
-import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.jabsorb.JSONSerializer;
 import org.jabsorb.serializer.AbstractSerializer;
 import org.jabsorb.serializer.MarshallException;
 import org.jabsorb.serializer.ObjectMatch;
@@ -41,7 +43,7 @@ public class ArraySerializer extends AbstractSerializer {
   /**
    * The classes that this can serialise
    */
-  private static final Class<?>[] _serializableClasses = new Class<?>[] {
+  private static final Class<?>[] SERIALIZABLE_CLASSES = {
       int[].class, short[].class, long[].class, float[].class, double[].class, boolean[].class,
       Integer[].class, Short[].class, Long[].class, Float[].class, Double[].class, Boolean[].class,
       String[].class};
@@ -49,16 +51,16 @@ public class ArraySerializer extends AbstractSerializer {
   /**
    * The class that this serialises to
    */
-  private static final Class<?>[] _JSONClasses = new Class<?>[] {JSONArray.class};
+  private static final Class<?>[] JSON_CLASSES = new Class<?>[] {JSONArray.class};
 
   @Override
   public Class<?>[] getSerializableClasses() {
-    return _serializableClasses;
+    return SERIALIZABLE_CLASSES;
   }
 
   @Override
   public Class<?>[] getJSONClasses() {
-    return _JSONClasses;
+    return JSON_CLASSES;
   }
 
   @Override
@@ -90,6 +92,104 @@ public class ArraySerializer extends AbstractSerializer {
     return m;
   }
 
+  @FunctionalInterface
+  private interface ArrayUnmarshaller<T> {
+    T unmarshal(JSONSerializer ser, SerializerState state, Class<?> componentType, JSONArray jso)
+        throws UnmarshallException;
+  }
+
+  private static final Map<Class<?>, ArrayUnmarshaller<?>> UNMARSHAL_MAP = new HashMap<>();
+
+  private static <T> void registerUnmarshaller(Class<T> returnType,
+      ArrayUnmarshaller<T> unmarshaller) {
+    UNMARSHAL_MAP.put(returnType, unmarshaller);
+  }
+
+  static {
+    registerUnmarshaller( //
+        int[].class, (ser, state, cc, jso) -> {
+          int[] arr = new int[jso.length()];
+          state.setSerialized(jso, arr);
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).intValue();
+          }
+          return arr;
+        });
+    //
+    registerUnmarshaller( //
+        byte[].class, (ser, state, cc, jso) -> {
+          byte[] arr = new byte[jso.length()];
+          state.setSerialized(jso, arr);
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).byteValue();
+          }
+          return arr;
+        });
+    registerUnmarshaller( //
+        short[].class, (ser, state, cc, jso) -> {
+          short[] arr = new short[jso.length()];
+          state.setSerialized(jso, arr);
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).shortValue();
+          }
+          return arr;
+        });
+    registerUnmarshaller( //
+        long[].class, (ser, state, cc, jso) -> {
+          long[] arr = new long[jso.length()];
+          state.setSerialized(jso, arr);
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).longValue();
+          }
+          return arr;
+        });
+    registerUnmarshaller( //
+        float[].class, (ser, state, cc, jso) -> {
+          float[] arr = new float[jso.length()];
+          state.setSerialized(jso, arr);
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).floatValue();
+          }
+          return arr;
+        });
+    registerUnmarshaller( //
+        double[].class, (ser, state, cc, jso) -> {
+          double[] arr = new double[jso.length()];
+          state.setSerialized(jso, arr);
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).doubleValue();
+          }
+          return arr;
+        });
+    registerUnmarshaller( //
+        char[].class, (ser, state, cc, jso) -> {
+          char[] arr = new char[jso.length()];
+          state.setSerialized(jso, arr); // FIXME why was this missing in the original code?
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((String) ser.unmarshall(state, cc, jso.get(i))).charAt(0);
+          }
+          return arr;
+        });
+    registerUnmarshaller( //
+        boolean[].class, (ser, state, cc, jso) -> {
+          boolean[] arr = new boolean[jso.length()];
+          state.setSerialized(jso, arr);
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((Boolean) ser.unmarshall(state, cc, jso.get(i))).booleanValue();
+          }
+          return arr;
+        });
+    registerUnmarshaller( //
+        Object[].class, (ser, state, cc, jso) -> {
+          Object[] arr = new Object[jso.length()];
+          state.setSerialized(jso, arr);
+          for (int i = 0; i < arr.length; i++) {
+            arr[i] = ser.unmarshall(state, cc, jso.get(i));
+          }
+          return arr;
+        });
+  }
+
   @Override
   public Object unmarshall(SerializerState state, Class<?> clazz, Object o)
       throws UnmarshallException {
@@ -98,70 +198,9 @@ public class ArraySerializer extends AbstractSerializer {
     int i = 0;
     try {
       // TODO: Is there a nicer way of doing this without all the ifs?
-      if (clazz == int[].class) {
-        int[] arr = new int[jso.length()];
-        state.setSerialized(o, arr);
-        for (; i < jso.length(); i++) {
-          arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).intValue();
-        }
-        return arr;
-      } else if (clazz == byte[].class) {
-        byte[] arr = new byte[jso.length()];
-        state.setSerialized(o, arr);
-        for (; i < jso.length(); i++) {
-          arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).byteValue();
-        }
-        return arr;
-      } else if (clazz == short[].class) {
-        short[] arr = new short[jso.length()];
-        state.setSerialized(o, arr);
-        for (; i < jso.length(); i++) {
-          arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).shortValue();
-        }
-        return arr;
-      } else if (clazz == long[].class) {
-        long[] arr = new long[jso.length()];
-        state.setSerialized(o, arr);
-        for (; i < jso.length(); i++) {
-          arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).longValue();
-        }
-        return arr;
-      } else if (clazz == float[].class) {
-        float[] arr = new float[jso.length()];
-        state.setSerialized(o, arr);
-        for (; i < jso.length(); i++) {
-          arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).floatValue();
-        }
-        return arr;
-      } else if (clazz == double[].class) {
-        double[] arr = new double[jso.length()];
-        state.setSerialized(o, arr);
-        for (; i < jso.length(); i++) {
-          arr[i] = ((Number) ser.unmarshall(state, cc, jso.get(i))).doubleValue();
-        }
-        return arr;
-      } else if (clazz == char[].class) {
-        char[] arr = new char[jso.length()];
-        for (; i < jso.length(); i++) {
-          arr[i] = ((String) ser.unmarshall(state, cc, jso.get(i))).charAt(0);
-        }
-        return arr;
-      } else if (clazz == boolean[].class) {
-        boolean[] arr = new boolean[jso.length()];
-        state.setSerialized(o, arr);
-        for (; i < jso.length(); i++) {
-          arr[i] = ((Boolean) ser.unmarshall(state, cc, jso.get(i))).booleanValue();
-        }
-        return arr;
-      } else {
-        Object[] arr = (Object[]) Array.newInstance(clazz == java.lang.Object.class
-            ? java.lang.Object.class : cc, jso.length());
-        state.setSerialized(o, arr);
-        for (; i < jso.length(); i++) {
-          arr[i] = ser.unmarshall(state, cc, jso.get(i));
-        }
-        return arr;
-      }
+      ArrayUnmarshaller<?> aum = UNMARSHAL_MAP.computeIfAbsent(clazz, (k) -> UNMARSHAL_MAP.get(
+          Object[].class));
+      return aum.unmarshal(ser, state, cc, jso);
     } catch (UnmarshallException e) {
       throw new UnmarshallException("element " + i + " " + e.getMessage(), e);
     } catch (JSONException e) {

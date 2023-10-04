@@ -24,7 +24,6 @@
  */
 package org.jabsorb.client;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +42,13 @@ import org.json.JSONObject;
 /**
  * A factory to create proxies for access to remote Jabsorb services.
  */
-public class Client implements InvocationHandler {
+public class Client {
+  private static final String TO_STRING = "toString";
+
+  private static final String EQUALS = "equals";
+
+  private static final String HASH_CODE = "hashCode";
+
   /**
    * Maintain a unique id for each message
    */
@@ -109,21 +114,6 @@ public class Client implements InvocationHandler {
     return serializer;
   }
 
-  // This method is public because of the inheritance from the InvokationHandler.
-  // It should never be called directly.
-  @Override
-  public Object invoke(Object proxyObj, Method method, Object[] args) throws Exception {
-    String methodName = method.getName();
-    if (methodName.equals("hashCode")) {
-      return System.identityHashCode(proxyObj);
-    } else if (methodName.equals("equals")) {
-      return (proxyObj == args[0] ? Boolean.TRUE : Boolean.FALSE);
-    } else if (methodName.equals("toString")) {
-      return proxyObj.getClass().getName() + '@' + Integer.toHexString(proxyObj.hashCode());
-    }
-    return invoke(proxyMap.get(proxyObj), method.getName(), args, method.getReturnType());
-  }
-
   /**
    * Create a proxy for communicating with the remote service.
    *
@@ -132,8 +122,22 @@ public class Client implements InvocationHandler {
    * @return created proxy
    */
   public Object openProxy(String key, Class<?> klass) {
-    Object result = java.lang.reflect.Proxy.newProxyInstance(klass.getClassLoader(),
-        new Class<?>[] {klass}, this);
+    Object result = java.lang.reflect.Proxy.newProxyInstance(Thread.currentThread()
+        .getContextClassLoader(), new Class<?>[] {klass}, //
+        (Object proxyObj, Method method, Object[] args) -> {
+          String methodName = method.getName();
+          switch (methodName) {
+            case HASH_CODE:
+              return System.identityHashCode(proxyObj);
+            case EQUALS:
+              return (proxyObj == args[0] // NOPMD
+                  ? Boolean.TRUE : Boolean.FALSE);
+            case TO_STRING:
+              return proxyObj.getClass().getName() + '@' + Integer.toHexString(proxyObj.hashCode());
+            default:
+              return invoke(proxyMap.get(proxyObj), method.getName(), args, method.getReturnType());
+          }
+        });
     proxyMap.put(result, key);
     return result;
   }

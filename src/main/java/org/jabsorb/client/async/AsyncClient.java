@@ -79,8 +79,9 @@ public class AsyncClient {
    * @return created proxy
    */
   public Object openProxy(final String key, final Class<?> klass) {
-    final Object result = java.lang.reflect.Proxy.newProxyInstance(klass.getClassLoader(),
-        new Class<?>[] {klass, AsyncProxy.class}, new AsyncProxyHandler(key, session, serializer));
+    final Object result = java.lang.reflect.Proxy.newProxyInstance(Thread.currentThread()
+        .getContextClassLoader(), new Class<?>[] {klass, AsyncProxy.class}, new AsyncProxyHandler(
+            key, session, serializer));
 
     proxyMap.put(result, key);
     return result;

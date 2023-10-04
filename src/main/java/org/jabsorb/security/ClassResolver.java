@@ -41,6 +41,13 @@ public final class ClassResolver {
   private static final Pattern PAT_ARRAY = Pattern.compile("^([\\[]+[L]?)(.*?)([;]*)$");
   private static final Set<String> DEFAULT_ALLOWED_CLASSES = Set.of("java.lang.Exception");
 
+  private final Set<String> allowedClasses;
+  private final WeakHashMap<String, Class<?>> cachedDecisions = new WeakHashMap<>();
+
+  private ClassResolver(Set<String> allowedClasses) {
+    this.allowedClasses = allowedClasses;
+  }
+
   /**
    * Sentinel class.
    */
@@ -49,14 +56,7 @@ public final class ClassResolver {
       throw new IllegalStateException("No instances");
     }
   }
-
-  private final Set<String> allowedClasses;
-  private final WeakHashMap<String, Class<?>> cachedDecisions = new WeakHashMap<>();
-
-  private ClassResolver(Set<String> allowedClasses) {
-    this.allowedClasses = allowedClasses;
-  }
-
+  
   public static ClassResolver withDefaults() {
     return withAllowedClassNames(DEFAULT_ALLOWED_CLASSES);
   }

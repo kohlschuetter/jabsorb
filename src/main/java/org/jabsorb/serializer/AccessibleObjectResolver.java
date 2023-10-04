@@ -55,25 +55,25 @@ public class AccessibleObjectResolver {
   /**
    * The logger for this class
    */
-  private static final Logger log = LoggerFactory.getLogger(AccessibleObjectResolver.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AccessibleObjectResolver.class);
 
   /**
    * This is used to order the preference of primitives, as used when overloading a method. Eg, with
    * a(int x) and a(float x), a(1) should call a(int x).
    */
-  private static final Map<String, Integer> primitiveRankings;
+  private static final Map<String, Integer> PRIMITIVE_RANKINGS;
 
   static {
     // Ranks the primitives
     int counter = 0;
-    primitiveRankings = new HashMap<String, Integer>();
-    primitiveRankings.put("byte", counter++);
-    primitiveRankings.put("short", counter++);
-    primitiveRankings.put("int", counter++);
-    primitiveRankings.put("long", counter++);
-    primitiveRankings.put("float", counter++);
-    primitiveRankings.put("double", counter++);
-    primitiveRankings.put("boolean", counter++);
+    PRIMITIVE_RANKINGS = new HashMap<String, Integer>();
+    PRIMITIVE_RANKINGS.put("byte", counter++);
+    PRIMITIVE_RANKINGS.put("short", counter++);
+    PRIMITIVE_RANKINGS.put("int", counter++);
+    PRIMITIVE_RANKINGS.put("long", counter++);
+    PRIMITIVE_RANKINGS.put("float", counter++);
+    PRIMITIVE_RANKINGS.put("double", counter++);
+    PRIMITIVE_RANKINGS.put("boolean", counter++);
   }
 
   /**
@@ -92,6 +92,7 @@ public class AccessibleObjectResolver {
    * @param exceptionTransformer Renders the exception into a suitable text format
    * @return The result of the call transformed into json in a JSONRPCResult
    */
+  @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity"})
   public static JSONRPCResult invokeAccessibleObject(AccessibleObject accessibleObject,
       Object[] context, JSONArray arguments, Object javascriptObject, Object requestId,
       JSONSerializer serializer, CallbackController cbc,
@@ -101,12 +102,12 @@ public class AccessibleObjectResolver {
     try {
       final boolean isConstructor = accessibleObject instanceof Constructor;
 
-      if (log.isDebugEnabled()) {
+      if (LOG.isDebugEnabled()) {
         if (!isConstructor) {
-          log.debug("invoking " + ((Method) accessibleObject).getReturnType().getName() + " "
+          LOG.debug("invoking " + ((Method) accessibleObject).getReturnType().getName() + " " // NOPMD.GuardLogStatement
               + ((Method) accessibleObject).getName() + "(" + argSignature(accessibleObject) + ")");
         } else {
-          log.debug("invoking " + ((Constructor<?>) accessibleObject).getName() + " " + "("
+          LOG.debug("invoking " + ((Constructor<?>) accessibleObject).getName() + " " + "(" // NOPMD.GuardLogStatement
               + argSignature(accessibleObject) + ")");
         }
       }
@@ -125,8 +126,8 @@ public class AccessibleObjectResolver {
 
       // Call pre invoke callbacks
       if (cbc != null) {
-        for (int i = 0; i < context.length; i++) {
-          cbc.preInvokeCallback(context[i], javascriptObject, accessibleObject, javaArgs);
+        for (Object obj : context) {
+          cbc.preInvokeCallback(obj, javascriptObject, accessibleObject, javaArgs);
         }
       }
 
@@ -135,12 +136,13 @@ public class AccessibleObjectResolver {
       if (isConstructor) {
         returnObj = ((Constructor<?>) accessibleObject).newInstance(javaArgs);
       } else {
+        System.out.println("INVOKE " + accessibleObject + " with " + javaArgs);
         returnObj = ((Method) accessibleObject).invoke(javascriptObject, javaArgs);
       }
       // Call post invoke callbacks
       if (cbc != null) {
-        for (int i = 0; i < context.length; i++) {
-          cbc.postInvokeCallback(context[i], javascriptObject, accessibleObject, returnObj);
+        for (Object obj : context) {
+          cbc.postInvokeCallback(obj, javascriptObject, accessibleObject, returnObj);
         }
       }
 
@@ -152,24 +154,32 @@ public class AccessibleObjectResolver {
       // Handle exceptions creating exception results and
       // calling error callbacks
     } catch (UnmarshallException e) {
-      log.error(e.getMessage());
+      if (LOG.isErrorEnabled()) {
+        LOG.error(e.getMessage());
+      }
       if (cbc != null) {
-        for (int i = 0; i < context.length; i++) {
-          cbc.errorCallback(context[i], javascriptObject, accessibleObject, e);
+        for (Object obj : context) {
+          cbc.errorCallback(obj, javascriptObject, accessibleObject, e);
         }
       }
       result = new FailedResult(FailedResult.CODE_ERR_UNMARSHALL, requestId, e.getMessage());
     } catch (MarshallException e) {
-      log.error(e.getMessage());
+      if (LOG.isErrorEnabled()) {
+        LOG.error(e.getMessage());
+      }
       if (cbc != null) {
-        for (int i = 0; i < context.length; i++) {
-          cbc.errorCallback(context[i], javascriptObject, accessibleObject, e);
+        for (Object obj : context) {
+          cbc.errorCallback(obj, javascriptObject, accessibleObject, e);
         }
       }
       result = new FailedResult(FailedResult.CODE_ERR_MARSHALL, requestId, e.getMessage());
-    } catch (Throwable e) {
-      if (e instanceof InvocationTargetException) {
-        e = ((InvocationTargetException) e).getTargetException();
+    } catch (Throwable e) { // NOPMD.AvoidCatchingThrowable
+      e.printStackTrace();
+      if (LOG.isErrorEnabled()) {
+        LOG.error(e.getMessage());
+      }
+      if (e instanceof InvocationTargetException) { // NOPMD.AvoidInstanceofChecksInCatchClause
+        e = ((InvocationTargetException) e).getTargetException(); // NOPMD.AvoidReassigningCatchVariables
       }
 
       // handle Jetty continuations-- this is kind of a hack
@@ -180,8 +190,8 @@ public class AccessibleObjectResolver {
       }
 
       if (cbc != null) {
-        for (int i = 0; i < context.length; i++) {
-          cbc.errorCallback(context[i], javascriptObject, accessibleObject, e);
+        for (Object obj : context) {
+          cbc.errorCallback(obj, javascriptObject, accessibleObject, e);
         }
       }
       result = new RemoteException(requestId, exceptionTransformer.transform(e));
@@ -208,6 +218,7 @@ public class AccessibleObjectResolver {
    * @return the Method that most closely matches the call signature, or null if there is not a
    *         match.
    */
+  @SuppressWarnings("PMD.CognitiveComplexity")
   public static AccessibleObject resolveMethod(
       Map<AccessibleObjectKey, Set<AccessibleObject>> methodMap, String methodName,
       JSONArray arguments, JSONSerializer serializer) {
@@ -219,7 +230,7 @@ public class AccessibleObjectResolver {
     AccessibleObjectKey mk = new AccessibleObjectKey(methodName, arguments.length());
     // of AccessibleObject
     Set<AccessibleObject> accessibleObjects = methodMap.get(mk);
-    if (accessibleObjects == null || accessibleObjects.size() == 0) {
+    if (accessibleObjects == null || accessibleObjects.isEmpty()) {
       return null;
     } else if (accessibleObjects.size() == 1) {
       return accessibleObjects.iterator().next();
@@ -232,8 +243,8 @@ public class AccessibleObjectResolver {
       // to determine which one matches the best
 
       Collection<AccessibleObjectCandidate> candidates = new ArrayList<AccessibleObjectCandidate>();
-      if (log.isDebugEnabled()) {
-        log.debug("looking for method " + methodName + "(" + argSignature(arguments) + ")");
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("looking for method " + methodName + "(" + argSignature(arguments) + ")");
       }
       for (AccessibleObject accessibleObject : accessibleObjects) {
         Class<?>[] parameterTypes = null;
@@ -246,13 +257,13 @@ public class AccessibleObjectResolver {
         try {
           candidates.add(tryUnmarshallArgs(accessibleObject, arguments, parameterTypes,
               serializer));
-          if (log.isDebugEnabled()) {
-            log.debug("+++ possible match with method " + methodName + "(" + argSignature(
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("+++ possible match with method " + methodName + "(" + argSignature(
                 accessibleObject) + ")");
           }
         } catch (Exception e) {
-          if (log.isDebugEnabled()) {
-            log.debug("xxx " + e.getMessage() + " in " + methodName + "(" + argSignature(
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("xxx " + e.getMessage() + " in " + methodName + "(" + argSignature(
                 accessibleObject) + ")");
           }
         }
@@ -275,8 +286,8 @@ public class AccessibleObjectResolver {
       }
       if (best != null) {
         AccessibleObject ao = best.getAccessibleObject();
-        if (log.isDebugEnabled()) {
-          log.debug("found method " + methodName + "(" + argSignature(ao) + ")");
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("found method " + methodName + "(" + argSignature(ao) + ")");
         }
         return ao;
       }
@@ -306,7 +317,7 @@ public class AccessibleObjectResolver {
     StringBuffer buf = new StringBuffer();
     for (int i = 0; i < param.length; i++) {
       if (i > 0) {
-        buf.append(",");
+        buf.append(',');
       }
       buf.append(param[i].getName());
     }
@@ -323,7 +334,7 @@ public class AccessibleObjectResolver {
     StringBuffer buf = new StringBuffer();
     for (int i = 0; i < arguments.length(); i += 1) {
       if (i > 0) {
-        buf.append(",");
+        buf.append(',');
       }
       Object jso;
 
@@ -369,8 +380,8 @@ public class AccessibleObjectResolver {
         // We need to do a special check first between the classes, because
         // isAssignableFrom() doesn't work between primitives.
         if (parameterClass.isPrimitive() && parameterClass1.isPrimitive()) {
-          if ((primitiveRankings.get(parameterClass.getName())).intValue() < (primitiveRankings.get(
-              parameterClass1.getName())).intValue()) {
+          if ((PRIMITIVE_RANKINGS.get(parameterClass.getName())).intValue() < (PRIMITIVE_RANKINGS
+              .get(parameterClass1.getName())).intValue()) {
             c++;
           } else {
             c1++;

@@ -47,7 +47,7 @@ import java.util.concurrent.Future;
  * @author matthijs
  */
 public interface AsyncProxy {
-  public Future<Object> getFutureResult();
+  Future<Object> getFutureResult();
 
-  public void setResultCallback(AsyncResultCallback<Object, Object, Method> resultCallback);
+  void setResultCallback(AsyncResultCallback<Object, Object, Method> resultCallback);
 }

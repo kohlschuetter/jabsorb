@@ -28,7 +28,6 @@ package org.jabsorb;
  * Used to transform the exception to some object in JSONRPCResults
  */
 public interface ExceptionTransformer {
-
   /**
    * Transform the exception to the format desired for transport to the client. This method should
    * not itself throw an exception.
@@ -36,6 +35,5 @@ public interface ExceptionTransformer {
    * @param t The exception to be transformed
    * @return one of the JSON-compatible types (JSONObject, String, Boolean etc.), or a Throwable
    */
-  public Object transform(Throwable t);
-
+  Object transform(Throwable t);
 }

@@ -224,7 +224,7 @@ public class BeanSerializer extends AbstractSerializer {
             + prop + " " + getMethod + ": " + e.getMessage(), e);
       }
       try {
-        if (result != null || ser.getMarshallNullAttributes()) {
+        if (result != null || ser.isMarshallNullAttributes()) {
           try {
             Object json = ser.marshall(state, o, result, prop);
             val.put(prop, json);

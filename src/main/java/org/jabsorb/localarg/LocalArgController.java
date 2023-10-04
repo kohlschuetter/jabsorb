@@ -50,15 +50,12 @@ public class LocalArgController {
   /**
    * The logger for this class
    */
-  private static final Logger log = LoggerFactory.getLogger(LocalArgController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LocalArgController.class);
 
-  /**
-   * Key: argClazz (ie Class), Value: HashSet<LocalArgResolverData>
-   */
-  private static Map<Class<?>, Set<LocalArgResolverData>> localArgResolverMap;
+  private static final Map<Class<?>, Set<LocalArgResolverData>> RESOLVER_MAP =
+      new HashMap<Class<?>, Set<LocalArgResolverData>>();
 
   static {
-    localArgResolverMap = new HashMap<Class<?>, Set<LocalArgResolverData>>();
     // Make sure this doesn't happen until after the variables are assigned!
     LocalArgController.registerLocalArgResolver(HttpServletRequest.class, HttpServletRequest.class,
         new HttpServletRequestArgResolver());
@@ -78,8 +75,8 @@ public class LocalArgController {
    * @return true if the class can be resolved to a local argument.
    */
   public static boolean isLocalArg(Class<?> param) {
-    synchronized (localArgResolverMap) {
-      return localArgResolverMap.containsKey(param);
+    synchronized (RESOLVER_MAP) {
+      return RESOLVER_MAP.containsKey(param);
     }
   }
 
@@ -96,17 +93,20 @@ public class LocalArgController {
    */
   public static void registerLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
       LocalArgResolver argResolver) {
-    synchronized (localArgResolverMap) {
-      Set<LocalArgResolverData> resolverSet = localArgResolverMap.get(argClazz);
+    synchronized (RESOLVER_MAP) {
+      Set<LocalArgResolverData> resolverSet = RESOLVER_MAP.get(argClazz);
       if (resolverSet == null) {
         resolverSet = new HashSet<LocalArgResolverData>();
-        localArgResolverMap.put(argClazz, resolverSet);
+        RESOLVER_MAP.put(argClazz, resolverSet);
       }
       resolverSet.add(new LocalArgResolverData(argResolver, argClazz, contextInterface));
       ClassAnalyzer.invalidateCache();
     }
-    log.info("registered local arg resolver " + argResolver.getClass().getName()
-        + " for local class " + argClazz.getName() + " with context " + contextInterface.getName());
+    if (LOG.isInfoEnabled()) {
+      LOG.info("registered local arg resolver " + argResolver.getClass().getName()
+          + " for local class " + argClazz.getName() + " with context " + contextInterface
+              .getName());
+    }
   }
 
   /**
@@ -120,12 +120,12 @@ public class LocalArgController {
    */
   public static Object resolveLocalArg(Object[] context, Class<?> param)
       throws UnmarshallException {
-    Set<LocalArgResolverData> resolverSet = localArgResolverMap.get(param);
+    Set<LocalArgResolverData> resolverSet = RESOLVER_MAP.get(param);
     for (LocalArgResolverData resolverData : resolverSet) {
-      for (int j = 0; j < context.length; j++) {
-        if (resolverData.understands(context[j])) {
+      for (Object obj : context) {
+        if (resolverData.understands(obj)) {
           try {
-            return resolverData.getArgResolver().resolveArg(context[j]);
+            return resolverData.getArgResolver().resolveArg(obj);
           } catch (LocalArgResolveException e) {
             throw new UnmarshallException("error resolving local argument: " + e, e);
           }
@@ -144,21 +144,26 @@ public class LocalArgController {
    */
   public static void unregisterLocalArgResolver(Class<?> argClazz, Class<?> contextInterface,
       LocalArgResolver argResolver) {
-    synchronized (localArgResolverMap) {
-      Set<LocalArgResolverData> resolverSet = localArgResolverMap.get(argClazz);
+    synchronized (RESOLVER_MAP) {
+      Set<LocalArgResolverData> resolverSet = RESOLVER_MAP.get(argClazz);
       if (resolverSet == null || !resolverSet.remove(new LocalArgResolverData(argResolver, argClazz,
           contextInterface))) {
-        log.warn("local arg resolver " + argResolver.getClass().getName()
-            + " not registered for local class " + argClazz.getName() + " with context "
-            + contextInterface.getName());
+        if (LOG.isWarnEnabled()) {
+          LOG.warn("local arg resolver " + argResolver.getClass().getName()
+              + " not registered for local class " + argClazz.getName() + " with context "
+              + contextInterface.getName());
+        }
         return;
       }
       if (resolverSet.isEmpty()) {
-        localArgResolverMap.remove(argClazz);
+        RESOLVER_MAP.remove(argClazz);
       }
       ClassAnalyzer.invalidateCache();
     }
-    log.info("unregistered local arg resolver " + argResolver.getClass().getName()
-        + " for local class " + argClazz.getName() + " with context " + contextInterface.getName());
+    if (LOG.isInfoEnabled()) {
+      LOG.info("unregistered local arg resolver " + argResolver.getClass().getName()
+          + " for local class " + argClazz.getName() + " with context " + contextInterface
+              .getName());
+    }
   }
 }

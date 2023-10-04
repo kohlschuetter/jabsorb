@@ -45,8 +45,7 @@ public interface SerializerState {
    *         should be created by marshalling the current object.
    * @throws MarshallException if a scope error occurs (this won't normally occur.
    */
-  public Object checkObject(Object parent, Object currentObject, Object ref)
-      throws MarshallException;
+  Object checkObject(Object parent, Object currentObject, Object ref) throws MarshallException;
 
   /**
    * Creates a json object with the data in <code>json</code> stored at <code>key</code>
@@ -56,7 +55,7 @@ public interface SerializerState {
    * @return A new JSONObject with the data stored within it.
    * @throws JSONException If an exception occurs storing the data.
    */
-  public JSONObject createObject(String key, Object json) throws JSONException;
+  JSONObject createObject(String key, Object json) throws JSONException;
 
   /**
    * Creates a result to be returned to the jabsorb client.
@@ -65,7 +64,7 @@ public interface SerializerState {
    * @param json The serialized object
    * @return Some kind of SuccessfulResult
    */
-  public SuccessfulResult createResult(Object requestId, Object json);
+  SuccessfulResult createResult(Object requestId, Object json);
 
   /**
    * If the given object has already been processed, return the ProcessedObject wrapper for that
@@ -75,7 +74,7 @@ public interface SerializerState {
    * @return ProcessedObject wrapper for the given object or null if the object hasn't been
    *         processed yet in this SerializerState.
    */
-  public ProcessedObject getProcessedObject(Object object);
+  ProcessedObject getProcessedObject(Object object);
 
   /**
    * Pop off one level from the scope stack of the current location during processing. If we are
@@ -83,7 +82,7 @@ public interface SerializerState {
    *
    * @throws MarshallException If called when currentLocation is empty
    */
-  public void pop() throws MarshallException;
+  void pop() throws MarshallException;
 
   /**
    * Record the given object as a ProcessedObject and push into onto the scope stack. This is only
@@ -98,7 +97,7 @@ public interface SerializerState {
    *          pushed/processed.
    * @return The object that was pushed
    */
-  public Object push(Object parent, Object obj, Object ref);
+  Object push(Object parent, Object obj, Object ref);
 
   /**
    * Tells the serializer state that marshalling for the given object has been completed
@@ -106,7 +105,7 @@ public interface SerializerState {
    * @param marshalledObject What the object was marshalled into
    * @param java The object that was marshalled
    */
-  public void setMarshalled(Object marshalledObject, Object java);
+  void setMarshalled(Object marshalledObject, Object java);
 
   /**
    * Associate the incoming source object being serialized to it's serialized representation.
@@ -121,7 +120,7 @@ public interface SerializerState {
    * @throws UnmarshallException if the source object is null, or is not already stored within a
    *           ProcessedObject.
    */
-  public void setSerialized(Object source, Object target) throws UnmarshallException;
+  void setSerialized(Object source, Object target) throws UnmarshallException;
 
   /**
    * Much simpler version of push to just account for the fact that an object has been processed
@@ -130,5 +129,5 @@ public interface SerializerState {
    *
    * @param obj Object to account for as being processed.
    */
-  public void store(Object obj);
+  void store(Object obj);
 }

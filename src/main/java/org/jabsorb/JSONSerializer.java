@@ -67,6 +67,12 @@ import org.slf4j.LoggerFactory;
  * marshalling Java objects into JSON objects and unmarshalling JSON objects into Java objects.
  */
 public class JSONSerializer {
+
+  /**
+   * The logger for this class
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(JSONSerializer.class);
+
   /**
    * The name of the field which holds the id of the message.
    */
@@ -91,11 +97,6 @@ public class JSONSerializer {
    * The name of the field which holds the result of the method.
    */
   public static final String RESULT_FIELD = "result";
-
-  /**
-   * The logger for this class
-   */
-  private static final Logger log = LoggerFactory.getLogger(JSONSerializer.class);
 
   private final ClassResolver classResolver;
 
@@ -218,7 +219,7 @@ public class JSONSerializer {
    *
    * @return whether Java Class hints are included in the serialised JSON objects
    */
-  public boolean getMarshallClassHints() {
+  public boolean isMarshallClassHints() {
     return marshallClassHints;
   }
 
@@ -229,7 +230,7 @@ public class JSONSerializer {
    *
    * @return boolean value as to whether null attributes will be in the serialized JSON objects
    */
-  public boolean getMarshallNullAttributes() {
+  public boolean isMarshallNullAttributes() {
     return marshallNullAttributes;
   }
 
@@ -297,8 +298,8 @@ public class JSONSerializer {
   public Object marshall(SerializerState state, Object parent, Object java, Object ref)
       throws MarshallException {
     if (java == null) {
-      if (log.isDebugEnabled()) {
-        log.debug("marshall null");
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("marshall null");
       }
       return JSONObject.NULL;
     }
@@ -307,8 +308,8 @@ public class JSONSerializer {
       return stateResult;
     }
     try {
-      if (log.isDebugEnabled()) {
-        log.debug("marshall class " + java.getClass().getName());
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("marshall class " + java.getClass().getName());
       }
       Serializer s = getSerializer(java.getClass(), null);
       if (s != null) {
@@ -337,8 +338,8 @@ public class JSONSerializer {
   public void registerCallableReference(Class<?> clazz) {
     // TODO: speed this code up!
     ReferenceSerializer ser = null;
-    for (int i = 0; i < serializerList.size(); i++) {
-      Serializer s = serializerList.get(i);
+
+    for (Serializer s : serializerList) {
       if (s.getClass().equals(ReferenceSerializer.class)) {
         ser = (ReferenceSerializer) s;
         break;
@@ -382,8 +383,8 @@ public class JSONSerializer {
     Class<?>[] classes = s.getSerializableClasses();
     synchronized (serializerSet) {
       if (!serializerSet.contains(s)) {
-        if (log.isDebugEnabled()) {
-          log.debug("registered serializer " + s.getClass().getName());
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("registered serializer " + s.getClass().getName());
         }
         s.setOwner(this);
         serializerSet.add(s);
@@ -524,7 +525,7 @@ public class JSONSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no class hint");
     }
-    if (json == null || json == JSONObject.NULL) {
+    if (json == null || json == JSONObject.NULL) { // NOPMD
       if (!javaClass.isPrimitive()) {
         return ObjectMatch.NULL;
       }
@@ -612,7 +613,7 @@ public class JSONSerializer {
     if (javaClass == null) {
       throw new UnmarshallException("no class hint");
     }
-    if (json == null || json == JSONObject.NULL) {
+    if (json == null || json == JSONObject.NULL) { // NOPMD
       if (!javaClass.isPrimitive()) {
         return null;
       }
@@ -700,8 +701,8 @@ public class JSONSerializer {
    * @return The found Serializer for the types specified or null if none could be found.
    */
   private Serializer getSerializer(Class<?> clazz, Class<?> jsoClazz) {
-    if (log.isDebugEnabled()) {
-      log.debug("looking for serializer - java:" + (clazz == null ? "null" : clazz.getName())
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("looking for serializer - java:" + (clazz == null ? "null" : clazz.getName())
           + " json:" + (jsoClazz == null ? "null" : jsoClazz.getName()));
     }
 
@@ -709,16 +710,16 @@ public class JSONSerializer {
       {
         Serializer s = serializableMap.get(clazz);
         if (s != null && s.canSerialize(clazz, jsoClazz)) {
-          if (log.isDebugEnabled()) {
-            log.debug("direct match serializer " + s.getClass().getName());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("direct match serializer " + s.getClass().getName());
           }
           return s;
         }
       }
       for (Serializer s : serializerList) {
         if (s.canSerialize(clazz, jsoClazz)) {
-          if (log.isDebugEnabled()) {
-            log.debug("search found serializer " + s.getClass().getName());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("search found serializer " + s.getClass().getName());
           }
           return s;
         }

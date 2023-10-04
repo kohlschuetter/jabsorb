@@ -33,19 +33,6 @@ import java.util.Map;
  */
 public class TransportRegistry {
   /**
-   * A factory used to create transport sessions. Register with #registerTransport.
-   */
-  public interface SessionFactory {
-    /**
-     * Creates the new session
-     *
-     * @param uri URI used to open this session
-     * @return The new session
-     */
-    Session newSession(URI uri);
-  }
-
-  /**
    * Maps schemes (eg "http") to session factories
    */
   private final Map<String, SessionFactory> registry;

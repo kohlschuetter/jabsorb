@@ -28,7 +28,6 @@ package org.jabsorb.localarg;
  * Interface to be implemented by objects registered to locally resolve method arguments using
  * transport context information.
  */
-
 public interface LocalArgResolver {
   /**
    * Resolve an argument locally using the given context information.
@@ -40,5 +39,5 @@ public interface LocalArgResolver {
    * @throws LocalArgResolveException when unable to resolve context information into the local
    *           argument object.
    */
-  public Object resolveArg(Object context) throws LocalArgResolveException;
+  Object resolveArg(Object context) throws LocalArgResolveException;
 }

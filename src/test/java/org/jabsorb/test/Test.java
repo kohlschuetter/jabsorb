@@ -69,7 +69,7 @@ public class Test implements Serializable, ITest {
   // Overload tests
 
   @Override
-  public String[] echo(String strings[]) {
+  public String[] echo(String[] strings) {
     return strings;
   }
 

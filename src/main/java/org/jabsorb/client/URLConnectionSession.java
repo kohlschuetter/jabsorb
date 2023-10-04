@@ -89,10 +89,8 @@ public class URLConnectionSession implements Session {
         throw new ClientError("Invalid response type - " + rawResponseMessage.getClass());
       }
       return responseMessage;
-    } catch (IOException ex) {
-      throw new ClientError(ex);
-    } catch (JSONException ex) {
-      throw new ClientError(ex);
+    } catch (JSONException | IOException e) {
+      throw new ClientError(e);
     }
   }
 

@@ -27,16 +27,16 @@ package org.jabsorb.reflect;
 /**
  * A key for identifying a method and the number of arguments to that method uniquely.
  */
-public class AccessibleObjectKey {
+public final class AccessibleObjectKey {
   /**
    * The name of the method
    */
-  private String methodName;
+  private final String methodName;
 
   /**
    * The number of arguments passed to the method
    */
-  private int numArgs;
+  private final int numArgs;
 
   /**
    * Create a MethodKey for a given method name and the number of arguments that that method takes.
@@ -85,5 +85,4 @@ public class AccessibleObjectKey {
   public int hashCode() {
     return methodName.hashCode() * numArgs;
   }
-
 }

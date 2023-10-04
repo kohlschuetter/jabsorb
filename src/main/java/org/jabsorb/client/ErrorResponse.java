@@ -37,8 +37,8 @@ public class ErrorResponse extends ClientError {
    * Generated id
    */
   private static final long serialVersionUID = 1L;
-  private String message;
-  private String trace;
+  private final String message;
+  private final String trace;
 
   public ErrorResponse(Integer code, String message, String trace) {
     super(ErrorResponse.formatMessage(code));

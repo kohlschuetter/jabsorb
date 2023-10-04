@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class AsyncSessionUtil {
-  private static final Logger log = LoggerFactory.getLogger(AsyncSessionUtil.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AsyncSessionUtil.class);
 
   public static Session toSyncSession(final AsyncSession asyncSession) {
     // unwrap if possible
@@ -83,9 +83,9 @@ public class AsyncSessionUtil {
       try {
         response = result.get();
       } catch (final InterruptedException e) {
-        log.error("sendAndReceive was interrupted", e);
+        LOG.error("sendAndReceive was interrupted", e);
       } catch (final ExecutionException e) {
-        log.error("sendAndReceive could not properly execute", e);
+        LOG.error("sendAndReceive could not properly execute", e);
       }
 
       return response;
@@ -132,7 +132,7 @@ public class AsyncSessionUtil {
             try {
               callback.onAsyncResult(AsyncedSyncSession.this, result, request);
             } catch (final Exception e) {
-              throw new RuntimeException(e);
+              LOG.warn("Callback threw exception", e);
             }
           }
         }

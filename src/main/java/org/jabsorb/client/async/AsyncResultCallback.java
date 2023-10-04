@@ -44,5 +44,5 @@ public interface AsyncResultCallback<S, R, C> {
    * @param result The result of the operation
    * @param context Optional context data
    */
-  public void onAsyncResult(S source, Future<R> result, C context);
+  void onAsyncResult(S source, Future<R> result, C context);
 }

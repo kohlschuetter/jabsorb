@@ -40,6 +40,6 @@ public interface ErrorInvocationCallback extends InvocationCallback {
    * @param accessibleObject Method/constructor that failed the invocation.
    * @param error Error resulting from the invocation.
    */
-  public void invocationError(Object context, Object instance, AccessibleObject accessibleObject,
+  void invocationError(Object context, Object instance, AccessibleObject accessibleObject,
       Throwable error);
 }

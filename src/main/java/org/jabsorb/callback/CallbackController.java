@@ -39,7 +39,7 @@ public class CallbackController {
   /**
    * The log used for this class.
    */
-  private static final Logger log = LoggerFactory.getLogger(CallbackController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CallbackController.class);
 
   /**
    * Holds all callbacks registered with this controller. Type: CallbackData
@@ -71,7 +71,7 @@ public class CallbackController {
           ErrorInvocationCallback ecb = (ErrorInvocationCallback) cbdata.getCallback();
           try {
             ecb.invocationError(context, instance, accessibleObject, error);
-          } catch (Throwable th) {
+          } catch (Throwable th) { // NOPMD
             // Ignore all errors in callback, don't want
             // event listener to bring everything to its knees.
           }
@@ -134,8 +134,8 @@ public class CallbackController {
     synchronized (callbackSet) {
       callbackSet.add(new CallbackData(callback, contextInterface));
     }
-    if (log.isDebugEnabled()) {
-      log.debug("registered callback " + callback.getClass().getName() + " with context interface "
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("registered callback " + callback.getClass().getName() + " with context interface "
           + contextInterface.getName());
     }
   }
@@ -151,8 +151,8 @@ public class CallbackController {
     synchronized (callbackSet) {
       callbackSet.remove(new CallbackData(callback, contextInterface));
     }
-    if (log.isDebugEnabled()) {
-      log.debug("unregistered callback " + callback.getClass().getName() + " with context "
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("unregistered callback " + callback.getClass().getName() + " with context "
           + contextInterface.getName());
     }
   }

@@ -45,7 +45,7 @@ public interface InvocationCallback extends Serializable {
    * @param arguments The arguments passed to the method
    * @throws Exception if the invocation doesn't work.
    */
-  public void preInvoke(Object context, Object instance, AccessibleObject accessibleObject,
+  void preInvoke(Object context, Object instance, AccessibleObject accessibleObject,
       Object[] arguments) throws Exception;
 
   /**
@@ -58,7 +58,7 @@ public interface InvocationCallback extends Serializable {
    * @param result The returned result from the method
    * @throws Exception if the invocation doesn't work.
    */
-  public void postInvoke(Object context, Object instance, AccessibleObject accessibleObject,
-      Object result) throws Exception;
+  void postInvoke(Object context, Object instance, AccessibleObject accessibleObject, Object result)
+      throws Exception;
 
 }

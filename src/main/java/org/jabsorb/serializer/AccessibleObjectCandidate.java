@@ -59,8 +59,8 @@ public class AccessibleObjectCandidate {
           "parameter types and matches need to be of the same size");
     }
     this.accessibleObject = accessibleObject;
-    this.parameterTypes = parameterTypes;
-    this.match = matches;
+    this.parameterTypes = parameterTypes.clone();
+    this.match = matches.clone();
   }
 
   /**
@@ -71,8 +71,8 @@ public class AccessibleObjectCandidate {
   public ObjectMatch getMatch() {
     // TODO: Why this hard coded value?? Wouldn't it be better to say OKAY?
     int mismatch = ObjectMatch.OKAY.getMismatch();
-    for (int i = 0; i < match.length; i++) {
-      mismatch = Math.max(mismatch, match[i].getMismatch());
+    for (ObjectMatch m : match) {
+      mismatch = Math.max(mismatch, m.getMismatch());
     }
     // TODO: Comparing like this is quite dodgy!
     if (mismatch == ObjectMatch.OKAY.getMismatch()) {
@@ -92,8 +92,9 @@ public class AccessibleObjectCandidate {
    *
    * @return The parameter types
    */
-  public Class<?>[] getParameterTypes() {
-    return parameterTypes;
+  @SuppressWarnings("PMD.MethodReturnsInternalArray")
+  Class<?>[] getParameterTypes() {
+    return parameterTypes; 
   }
 
   /**
