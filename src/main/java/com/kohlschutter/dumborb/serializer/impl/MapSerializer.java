@@ -1,12 +1,11 @@
 /*
- * jabsorb - a Java to JavaScript Advanced Object Request Broker
- * http://www.jabsorb.org
+ * dumborb - a Java to JavaScript Advanced Object Request Broker
  *
- * Copyright 2007-2009 The jabsorb team
+ * Copyright 2022-2023 Christian Kohlschütter
  *
+ * based on jabsorb Copyright 2007-2009 The jabsorb team
  * based on original code from
  * JSON-RPC-Java - a JSON-RPC to Java Bridge with dynamic invocation
- *
  * Copyright Metaparadigm Pte. Ltd. 2004.
  * Michael Clark <michael@metaparadigm.com>
  *
@@ -23,8 +22,8 @@
  * limitations under the License.
  */
 package com.kohlschutter.dumborb.serializer.impl;
-// CPD-OFF
 
+// CPD-OFF
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
