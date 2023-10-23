@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.json.JSONArray;
@@ -104,7 +103,7 @@ public final class JSONRPCBridge {
   /**
    * The prefix for callable references, as sent in messages.
    */
-  private static final String CALLABLE_REFERENCE_METHOD_PREFIX = ".ref";
+  private static final String CALLABLE_REFERENCE_METHOD_PREFIX = ";ref";
 
   /**
    * The string identifying constuctor calls.
@@ -114,7 +113,7 @@ public final class JSONRPCBridge {
   /**
    * The prefix for objects, as sent in messages.
    */
-  private static final String OBJECT_METHOD_PREFIX = ".obj";
+  private static final String OBJECT_METHOD_PREFIX = ";obj";
 
   /**
    * A simple transformer that makes no change.
@@ -307,16 +306,13 @@ public final class JSONRPCBridge {
       final String className;
       final String methodName;
       {
-        StringTokenizer t = new StringTokenizer(encodedMethod, ".");
-        if (t.hasMoreElements()) {
-          className = t.nextToken();
-        } else {
-          className = null;
-        }
-        if (t.hasMoreElements()) {
-          methodName = t.nextToken();
-        } else {
+        int lastDot = encodedMethod.lastIndexOf('.');
+        if(lastDot == -1) {
+          className = encodedMethod;
           methodName = null;
+        } else {
+          className = encodedMethod.substring(0, lastDot);
+          methodName = encodedMethod.substring(lastDot + 1);
         }
       }
       // #3: Get the id of the object (if it exists) from the className

@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kohlschutter.dumbo.annotations.DumboSafe;
 import com.kohlschutter.dumborb.serializer.UnmarshallException;
 
 /**
@@ -44,7 +45,7 @@ import com.kohlschutter.dumborb.serializer.UnmarshallException;
 public final class ClassResolver {
   private static final Logger LOG = LoggerFactory.getLogger(ClassResolver.class);
 
-  private static final Pattern PAT_ARRAY = Pattern.compile("^([\\[]+[L]?)(.*?)([;]*)$");
+  private static final Pattern PAT_ARRAY = Pattern.compile("^(?:[\\[]+[L]?)(?<name>.+?)(?:[;]+)?$");
   private static final Set<String> DEFAULT_ALLOWED_CLASSES = Set.of("java.lang.Exception");
   private static final Collection<String> DEFAULT_DISALLOWED_PREFIXES = Set.of("javax.", "com.sun.",
       "sun.");
@@ -84,29 +85,29 @@ public final class ClassResolver {
     return new ClassResolver(allowedClasses, disallowedPrefixes);
   }
 
-  private static Package packageFromClassName(String className) {
-    String packageName = className;
-    int dollar = packageName.indexOf('$');
-    if (dollar != -1) {
-      packageName = packageName.substring(0, dollar);
-    }
-
-    int lastDot = packageName.lastIndexOf('.');
-    if (lastDot == -1) {
-      return null;
-    }
-    packageName = packageName.substring(0, lastDot);
-
-    Package pkg = Thread.currentThread().getContextClassLoader().getDefinedPackage(packageName);
-    if (pkg == null) { // this happens
-      try {
-        pkg = Class.forName(packageName + ".package-info").getPackage();
-      } catch (ClassNotFoundException ignore) {
-        // pkg = Package.getPackage(packageName);
-      }
-    }
-    return pkg;
-  }
+//  private static Package packageFromClassName(String className) {
+//    String packageName = className;
+//    int dollar = packageName.indexOf('$');
+//    if (dollar != -1) {
+//      packageName = packageName.substring(0, dollar);
+//    }
+//
+//    int lastDot = packageName.lastIndexOf('.');
+//    if (lastDot == -1) {
+//      return null;
+//    }
+//    packageName = packageName.substring(0, lastDot);
+//
+//    Package pkg = Thread.currentThread().getContextClassLoader().getDefinedPackage(packageName);
+//    if (pkg == null) { // this happens
+//      try {
+//        pkg = Class.forName(packageName + ".package-info").getPackage();
+//      } catch (ClassNotFoundException ignore) {
+//        // pkg = Package.getPackage(packageName);
+//      }
+//    }
+//    return pkg;
+//  }
 
   @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
   public Class<?> tryResolve(String className) {
@@ -136,8 +137,8 @@ public final class ClassResolver {
       } else {
         Matcher m = PAT_ARRAY.matcher(className);
         if (m.find()) {
-          String basicClassName = m.group(2);
-          if (allowedClasses.contains(basicClassName)) {
+          String basicClassName = m.group("name");
+          if (basicClassName != null && allowedClasses.contains(basicClassName)) {
             knownAllowed = true;
           }
         }
@@ -155,35 +156,24 @@ public final class ClassResolver {
         }
       }
 
-      boolean mayResolveClass = knownAllowed;
-
-      if (!knownAllowed) {
-        Package pkg = packageFromClassName(className);
-        if (pkg != null && pkg.isAnnotationPresent(DumborbConfiguredPackage.class)) {
-          // DumborbSafe safe = pkg.getAnnotation(DumborbConfiguredPackage.class);
-          mayResolveClass = true;
-        }
-      }
-
-      if (!mayResolveClass) {
-        return klazz = null;
-      }
+      ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
       try {
-        klazz = Class.forName(className);
+        klazz = Class.forName(className, false, classLoader);
       } catch (ClassNotFoundException e) {
         return klazz = null;
       }
 
-      if (!knownAllowed) {
-        if (klazz.isAnnotationPresent(DumborbSafe.class)) {
-          // DumborbSafe safe = klazz.getAnnotation(DumborbSafe.class);
-          knownAllowed = true;
-        }
+      if (klazz == null) {
+        return null;
       }
 
       if (!knownAllowed) {
-        return klazz = null;
+        if (klazz.isAnnotationPresent(DumboSafe.class)) {
+          knownAllowed = true;
+        } else {
+          return klazz = null;
+        }
       }
 
       return klazz;

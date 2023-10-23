@@ -32,10 +32,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import com.kohlschutter.dumborb.security.DumborbSafe;
+import com.kohlschutter.dumbo.annotations.DumboSafe;
 
 public interface ITest {
-  @DumborbSafe
+  @DumboSafe
   public static class Waggle implements Serializable {
 
     private static final long serialVersionUID = 2;
@@ -85,7 +85,7 @@ public interface ITest {
     }
   }
 
-  @DumborbSafe
+  @DumboSafe
   public static class Wiggle implements Serializable {
 
     private static final long serialVersionUID = 2;
