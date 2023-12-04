@@ -27,8 +27,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -45,10 +43,12 @@ import com.kohlschutter.dumborb.serializer.UnmarshallException;
 public final class ClassResolver {
   private static final Logger LOG = LoggerFactory.getLogger(ClassResolver.class);
 
-  private static final Pattern PAT_ARRAY = Pattern.compile("^(?:[\\[]+[L]?)(?<name>.+?)(?:[;]+)?$");
   private static final Set<String> DEFAULT_ALLOWED_CLASSES = Set.of("java.lang.Exception");
   private static final Collection<String> DEFAULT_DISALLOWED_PREFIXES = Set.of("javax.", "com.sun.",
       "sun.");
+
+  // JVM's restriction is 65535, probably for Spring
+  private static final int MAX_CLASSNAME_LENGTH = 256;
 
   private final Set<String> allowedClasses;
   private final Collection<String> disallowedPrefixes;
@@ -113,6 +113,8 @@ public final class ClassResolver {
   public Class<?> tryResolve(String className) {
     if (className == null || className.isEmpty()) {
       return null;
+    } else if (className.length() > MAX_CLASSNAME_LENGTH) {
+      return null;
     }
 
     Class<?> klazz;
@@ -135,18 +137,33 @@ public final class ClassResolver {
       if (allowedClasses.contains(className)) {
         knownAllowed = true;
       } else {
-        Matcher m = PAT_ARRAY.matcher(className);
-        if (m.find()) {
-          String basicClassName = m.group("name");
-          if (basicClassName != null && allowedClasses.contains(basicClassName)) {
-            knownAllowed = true;
-          }
+        int start = 0;
+        int end = className.length();
+        if (className.charAt(end - 1) == ';') {
+          end--;
         }
-      }
 
-      // no default package shenanigans
-      if (className.indexOf('.') == -1) {
-        return klazz = null;
+        while (start < end && (className.charAt(0) == '[')) {
+          start++;
+        }
+        if (start > 0 && className.charAt(start) == 'L') {
+          start++;
+        }
+
+        if (start >= end) {
+          // invalid
+          return klazz = null;
+        }
+
+        // no default package shenanigans
+        if (className.indexOf('.') == -1) {
+          return klazz = null;
+        }
+
+        String basicClassName = className.substring(start, end);
+        if (basicClassName != null && allowedClasses.contains(basicClassName)) {
+          knownAllowed = true;
+        }
       }
 
       // no known disallowed packages
