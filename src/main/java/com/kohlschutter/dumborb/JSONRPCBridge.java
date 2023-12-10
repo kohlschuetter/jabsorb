@@ -91,7 +91,7 @@ import com.kohlschutter.dumborb.serializer.response.results.SuccessfulResult;
  * use them.
  * </p>
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.CouplingBetweenObjects"})
 public final class JSONRPCBridge {
   /**
    * The logger for this class.

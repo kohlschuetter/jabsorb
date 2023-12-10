@@ -26,6 +26,7 @@ package com.kohlschutter.dumborb.client.async;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 import com.kohlschutter.dumborb.JSONSerializer;
 import com.kohlschutter.dumborb.client.ClientError;
 import com.kohlschutter.dumborb.security.ClassResolver;
@@ -57,6 +58,7 @@ public class AsyncClient {
    *
    * @param session transport session to use for this connection
    */
+  @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
   public AsyncClient(final AsyncSession session, ClassResolver resolver) {
     try {
       this.session = session;

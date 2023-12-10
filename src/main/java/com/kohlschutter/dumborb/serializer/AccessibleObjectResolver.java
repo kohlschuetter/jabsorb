@@ -154,7 +154,7 @@ public class AccessibleObjectResolver {
 
       // Handle exceptions creating exception results and
       // calling error callbacks
-    } catch (UnmarshallException e) {
+    } catch (UnmarshallException e) { // NOPMD.ExceptionAsFlowControl
       if (LOG.isErrorEnabled()) {
         LOG.error(e.getMessage());
       }
@@ -374,6 +374,7 @@ public class AccessibleObjectResolver {
    * @param methodCandidate1 The other of the methodCandidates to compare
    * @return The better of the two candidates
    */
+  @SuppressWarnings("PMD.UnnecessaryBoxing")
   private static AccessibleObjectCandidate betterSignature(
       AccessibleObjectCandidate methodCandidate, AccessibleObjectCandidate methodCandidate1) {
     final Class<?>[] parameters = methodCandidate.getParameterTypes();

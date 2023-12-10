@@ -42,6 +42,7 @@ import com.kohlschutter.dumborb.serializer.UnmarshallException;
 /**
  * Responsible for serializing Java arrays.
  */
+@SuppressWarnings("PMD.ForLoopCanBeForeach")
 public class ArraySerializer extends AbstractSerializer {
   /**
    * The classes that this can serialize.
@@ -180,7 +181,7 @@ public class ArraySerializer extends AbstractSerializer {
           boolean[] arr = new boolean[jso.length()];
           state.setSerialized(jso, arr);
           for (int i = 0; i < arr.length; i++) {
-            arr[i] = ((Boolean) ser.unmarshall(state, cc, jso.get(i))).booleanValue();
+            arr[i] = ((Boolean) ser.unmarshall(state, cc, jso.get(i)));
           }
           return arr;
         });

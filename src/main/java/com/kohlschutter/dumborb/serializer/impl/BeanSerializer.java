@@ -82,7 +82,7 @@ public class BeanSerializer extends AbstractSerializer {
   /**
    * Stores the readable and writable properties for the Bean.
    */
-  private static class BeanData {
+  private static final class BeanData {
     // TODO: Legacy comment. WTF?
     // in absence of getters and setters, these fields are
     // public to allow subclasses to access.

@@ -65,7 +65,7 @@ public class StringSerializer extends AbstractSerializer {
     } else if (o instanceof byte[]) {
       return new String((byte[]) o, StandardCharsets.UTF_8);
     } else if (o instanceof char[]) {
-      return new String((char[]) o);
+      return String.valueOf((char[]) o);
     } else {
       return o;
     }
@@ -97,7 +97,7 @@ public class StringSerializer extends AbstractSerializer {
     Object returnValue;
     String val = jso instanceof String ? (String) jso : jso.toString();
     if (clazz == char.class) {
-      returnValue = Character.valueOf(val.charAt(0));
+      returnValue = val.charAt(0);
     } else if (clazz == byte[].class) {
       returnValue = val.getBytes(StandardCharsets.UTF_8);
     } else if (clazz == char[].class) {

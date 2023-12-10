@@ -75,6 +75,7 @@ public class Client {
    *
    * @param session transport session to use for this connection
    */
+  @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
   public Client(Session session, ClassResolver resolver) {
     try {
       this.session = session;

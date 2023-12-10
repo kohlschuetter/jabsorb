@@ -53,7 +53,7 @@ public class AccessibleObjectCandidate {
    * @param parameterTypes The parameters of the accessibleObject
    * @param matches How well this matches the requested method/constructor
    */
-  @SuppressFBWarnings("EI_EXPOSE_REP2")
+  @SuppressFBWarnings({"EI_EXPOSE_REP2", "CT_CONSTRUCTOR_THROW"})
   public AccessibleObjectCandidate(AccessibleObject accessibleObject, Class<?>[] parameterTypes,
       ObjectMatch[] matches) {
     if (parameterTypes.length != matches.length) {

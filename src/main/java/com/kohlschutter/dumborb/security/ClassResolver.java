@@ -53,7 +53,9 @@ public final class ClassResolver {
   private final Set<String> allowedClasses;
   private final Collection<String> disallowedPrefixes;
 
+  @SuppressWarnings("PMD.LooseCoupling")
   private final ConcurrentHashMap<String, Class<?>> cachedResults = new ConcurrentHashMap<>();
+  @SuppressWarnings("PMD.LooseCoupling")
   private final WeakHashMap<String, Class<?>> cachedResultsWeak = new WeakHashMap<>();
 
   private ClassResolver(Set<String> allowedClasses, Collection<String> disallowedPrefixes) {
@@ -109,7 +111,9 @@ public final class ClassResolver {
   // return pkg;
   // }
 
-  @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
+  @SuppressWarnings({
+      "PMD.CognitiveComplexity", "PMD.CyclomaticComplexity", "PMD.NPathComplexity",
+      "PMD.NcssCount"})
   public Class<?> tryResolve(String className) {
     if (className == null || className.isEmpty()) {
       return null;
