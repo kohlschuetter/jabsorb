@@ -54,133 +54,18 @@
     </scm>
     <build>
         <plugins>
-            <!-- plugin> <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId> 
-				<version>2.4</version> <configuration> <archive>
-            <manifestFile>META-INF/MANIFEST.MF</manifestFile> 
-				<manifestEntries> <Bundle-Version>${project.version}</Bundle-Version>
-            </manifestEntries> 
-				</archive> </configuration> </plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestFile>
-                            ${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>5.1.9</version>
-                <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <supportIncrementalBuild>true</supportIncrementalBuild>
-                    <instructions>
-                        <Bundle-SymbolicName>dumborb;singleton:=true</Bundle-SymbolicName>
-                        <Export-Package>
-                            org.json,com.kohlschutter.dumborb.callback,com.kohlschutter.dumborb.localarg.impl;uses:="com.kohlschutter.dumborb.localarg",com.kohlschutter.dumborb.reflect;uses:="com.kohlschutter.dumborb.localarg,com.kohlschutter.dumborb",com.kohlschutter.dumborb.reflect.copy;uses:="com.kohlschutter.dumborb.localarg,com.kohlschutter.dumborb",com.kohlschutter.dumborb.serializer.impl;uses:="org.json,com.kohlschutter.dumborb.serializer,com.kohlschutter.dumborb",com.kohlschutter.dumborb.serializer;uses:="com.kohlschutter.dumborb,org.json,com.kohlschutter.dumborb.callback,com.kohlschutter.dumborb.reflect,com.kohlschutter.dumborb.localarg",com.kohlschutter.dumborb.client;uses:="org.json,com.kohlschutter.dumborb.serializer,com.kohlschutter.dumborb",com.kohlschutter.dumborb;uses:="org.json,com.kohlschutter.dumborb.callback,com.kohlschutter.dumborb.reflect,com.kohlschutter.dumborb.serializer.impl,com.kohlschutter.dumborb.serializer,com.kohlschutter.dumborb.localarg",com.kohlschutter.dumborb.localarg;uses:="com.kohlschutter.dumborb.localarg.impl,com.kohlschutter.dumborb.reflect,com.kohlschutter.dumborb.serializer,com.kohlschutter.dumborb"</Export-Package>
-                        <Import-Package>javax.servlet;version="[2.5,5)",
-                            javax.servlet.http;version="[2.5,5)",
-                            org.slf4j</Import-Package>
-                        <Require-Bundle></Require-Bundle>
-                        <Application-Name>dumborb-${project.version}</Application-Name>
-                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Permissions>all-permissions</Permissions>
-                        <Codebase>*</Codebase>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jarsigner-plugin</artifactId>
-				<version>3.0.0</version>
-				<executions>
-					<execution>
-						<id>sign</id>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>verify</id>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <failOnWarnings>false</failOnWarnings>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!-- invoke with: mvn formatter:format -->
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>com/kohlschutter/**/*.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!-- invoke with: mvn license:format -->
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <configuration>
-                    <failIfMissing>${license.strict}</failIfMissing>
-                    <header>${kohlschutter.project.notice.file}</header>
-                    <includes>
-                        <include>src/main/java/com/kohlschutter/**/*.java</include>
-                        <include>src/test/java/com/kohlschutter/**/*.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/package-info.java</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
                     <excludes>org/json/**</excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <failOnWarnings>false</failOnWarnings>
                 </configuration>
             </plugin>
         </plugins>
