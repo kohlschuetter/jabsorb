@@ -45,7 +45,7 @@ public class MarshallException extends Exception {
    * Creates a new MarshallException.
    *
    * @param msg the message to be displayed
-   * @param cause the cause. (A <tt>null</tt> value is permitted, and indicates that the cause is
+   * @param cause the cause. (A {@code null} value is permitted, and indicates that the cause is
    *          nonexistent or unknown.)
    */
   public MarshallException(String msg, Throwable cause) {

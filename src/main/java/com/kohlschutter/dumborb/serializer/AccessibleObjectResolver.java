@@ -202,10 +202,10 @@ public class AccessibleObjectResolver {
 
   /**
    * Resolve which method the caller is requesting
-   * <p/>
+   * <p>
    * If a method with the requested number of arguments does not exist at all, null will be
    * returned.
-   * <p/>
+   * <p>
    * If the object or class (for static methods) being invoked contains more than one overloaded
    * methods that match the method key signature, find the closest matching method to invoke
    * according to the JSON arguments being passed in.

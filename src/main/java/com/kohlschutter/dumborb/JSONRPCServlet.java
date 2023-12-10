@@ -52,11 +52,9 @@ import jakarta.servlet.http.HttpSession;
  * <p>
  * This servlet handles JSON-RPC requests over HTTP and hands them to a JSONRPCBridge instance
  * (either a global instance or one in the user's HttpSession).
- * </p>
  * <p>
  * The following can be added to your web.xml to export the servlet under the URI
  * &quot;<code>/JSON-RPC</code>&quot;
- * </p>
  *
  * <pre>
  * &lt;servlet&gt;
@@ -74,27 +72,22 @@ import jakarta.servlet.http.HttpSession;
  * &lt;/servlet-mapping&gt;
  * </pre>
  *
- * </p>
  * The JSONRPCServlet looks for a session specific bridge object under the attribute
  * <code>"JSONRPCBridge"</code> in the HttpSession associated with the request (without creating a
  * session if one does not already exist). If it can't find a session specific bridge instance, it
  * will default to invoking against the default bridge.
- * </p>
  * <p>
  * Using a session specific bridge allows you to export certain object instances or classes only to
  * specific users, and of course these instances could be stateful and contain data specific to the
  * user's session.
- * </p>
  * <p>
  * An example or creating a session specific bridge in JSP is as follows:
- * </p>
  * <code>
  * &lt;jsp:useBean id="JSONRPCBridge" scope="session"
  *   class="com.kohlschutter.dumborb.JSONRPCBridge"/&gt;
  * </code>
  * <p>
  * An example in Java (i.e. in another Servlet):
- * </p>
  * <code>
  * HttpSession session = request.getSession();<br />
  * JSONRPCBridge bridge = (JSONRPCBridge) session.getAttribute("JSONRPCBridge");<br>
@@ -177,35 +170,27 @@ public class JSONRPCServlet extends HttpServlet {
    * parameters.
    * <p>
    * At this time, only gzip_threshold is looked for.
-   * </p>
    * <p>
    * If it is found, and a valid Integer is specified, then that is used for the GZIP_THRESHOLD.
-   * </p>
    * <p>
    * If an invalid Integer is specified, then the GZIP_THRESHOLD is set to -1 which disables GZIP
    * compression.
-   * </p>
    * <p>
    * The gzip_threshold indicates the response size at which the servlet will attempt to gzip the
    * response if it can.
-   * </p>
    * <p>
    * Set this to -1 if you want to disable gzip compression for some reason, or if you have another
    * filter or other mechanism to handle gzipping for you.
-   * </p>
    * <p>
    * Set this to 0 to attempt to gzip all responses from this servlet. otherwise, set it to the
    * minimum response size at which gzip compression is attempted.
-   * </p>
    * <p>
    * <b>NOTE:</b> if the browser making the request does not accept gzip compressed content, or the
    * result of gzipping would cause the response size to be larger (this could happen with very
    * small responses) then the content will be returned without gzipping, regardless.
-   * </p>
    * <p>
    * of this setting, so it is very reasonable idea to set this to 0 for maximum bandwidth savings,
    * at the (very minor) expense of having the server attempt to gzip all responses.
-   * </p>
    *
    * @param config ServletConfig from container.
    * @throws ServletException if something goes wrong during initialization.

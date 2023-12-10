@@ -255,10 +255,10 @@ public class JSONSerializer {
 
   /**
    * Marshall java into an equivalent json representation (JSONObject or JSONArray.)
-   * <p/>
+   * <p>
    * This involves finding the correct Serializer for the class of the given java object and then
    * invoking it to marshall the java object into json.
-   * <p/>
+   * <p>
    * The Serializer will invoke this method recursively while marshalling complex object graphs.
    *
    * @param parent parent object of the object being converted. this can be null if it's the root
@@ -278,10 +278,10 @@ public class JSONSerializer {
 
   /**
    * Marshall java into an equivalent json representation (JSONObject or JSONArray.)
-   * <p/>
+   * <p>
    * This involves finding the correct Serializer for the class of the given java object and then
    * invoking it to marshall the java object into json.
-   * <p/>
+   * <p>
    * The Serializer will invoke this method recursively while marshalling complex object graphs.
    *
    * @param state can be used by the underlying Serializer objects to hold state while marshalling.
@@ -453,12 +453,12 @@ public class JSONSerializer {
    * ObjectMatch instance is returned which contains a number indicating the number of fields that
    * did not match. Therefore when a given parameter could potentially match in more that one way,
    * this is a metric to compare these ObjectMatches to determine which one matches more closely.
-   * </p>
+   * 
    * <p>
    * This is only used when there are overloaded method names that are being called from JSON-RPC to
    * determine which call signature the method call matches most closely and therefore which method
    * is the intended target method to call.
-   * </p>
+   * 
    *
    * @param clazz optional java class to unmarshall to- if set to null then it will be looked for
    *          via the javaClass hinting mechanism.
@@ -478,12 +478,12 @@ public class JSONSerializer {
    * ObjectMatch instance is returned which contains a number indicating the number of fields that
    * did not match. Therefore when a given parameter could potentially match in more that one way,
    * this is a metric to compare these ObjectMatches to determine which one matches more closely.
-   * </p>
+   * 
    * <p>
    * This is only used when there are overloaded method names that are being called from JSON-RPC to
    * determine which call signature the method call matches most closely and therefore which method
    * is the intended target method to call.
-   * </p>
+   * 
    *
    * @param state used by the underlying Serializer objects to hold state while unmarshalling for
    *          detecting circular references and duplicates.
@@ -551,7 +551,7 @@ public class JSONSerializer {
 
   /**
    * Unmarshall json into an equivalent java object.
-   * <p/>
+   * <p>
    * This involves finding the correct Serializer to use and then delegating to that Serializer to
    * unmarshall for us. This method will be invoked recursively as Serializers unmarshall complex
    * object graphs.
@@ -569,7 +569,7 @@ public class JSONSerializer {
 
   /**
    * Unmarshall json into an equivalent java object.
-   * <p/>
+   * <p>
    * This involves finding the correct Serializer to use and then delegating to that Serializer to
    * unmarshall for us. This method will be invoked recursively as Serializers unmarshall complex
    * object graphs.
@@ -642,13 +642,13 @@ public class JSONSerializer {
   /**
    * Find the corresponding java Class type from json (as represented by a JSONObject or JSONArray,)
    * using the javaClass hinting mechanism.
-   * <p/>
+   * <p>
    * If the Object is a JSONObject, the simple javaClass property is looked for. If it is a
    * JSONArray then this method is invoked recursively on the first element of the array.
-   * <p/>
+   * <p>
    * then the Class is returned as an array type for the type of class hinted by the first Object in
    * the array.
-   * <p/>
+   * <p>
    * If the object is neither a JSONObject or JSONArray, return the Class of the object directly.
    * (this implies a primitive type, such as String, Integer or Boolean)
    *
@@ -657,7 +657,7 @@ public class JSONSerializer {
    *         Class of the Object passed in, if that object is not a JSONArray or JSONObject.
    * @throws UnmarshallException if javaClass hint was not found (except for null case or primitive
    *           object case), or the javaClass hint is not a valid java class.
-   *           <p/>
+   *           <p>
    *           todo: the name of this method is a bit misleading because it doesn't actually get the
    *           class from todo: the javaClass hint if the type of Object passed in is not
    *           JSONObject|JSONArray.

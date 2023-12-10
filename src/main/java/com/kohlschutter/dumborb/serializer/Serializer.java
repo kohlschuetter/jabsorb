@@ -46,7 +46,7 @@ public interface Serializer {
   /**
    * Get the json java classes that this Serializer is able to serialize from json into java and
    * deserialize into json from java.
-   * <p/>
+   * <p>
    * These will typically be primitive class type wrappers or JSONObject, JSONArray.
    *
    * @return json side java classes that can be serialized/deserialized by this serializer.
