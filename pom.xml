@@ -140,7 +140,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <failOnWarnings>false</failOnWarnings>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
             <plugin>
