@@ -85,29 +85,29 @@ public final class ClassResolver {
     return new ClassResolver(allowedClasses, disallowedPrefixes);
   }
 
-//  private static Package packageFromClassName(String className) {
-//    String packageName = className;
-//    int dollar = packageName.indexOf('$');
-//    if (dollar != -1) {
-//      packageName = packageName.substring(0, dollar);
-//    }
-//
-//    int lastDot = packageName.lastIndexOf('.');
-//    if (lastDot == -1) {
-//      return null;
-//    }
-//    packageName = packageName.substring(0, lastDot);
-//
-//    Package pkg = Thread.currentThread().getContextClassLoader().getDefinedPackage(packageName);
-//    if (pkg == null) { // this happens
-//      try {
-//        pkg = Class.forName(packageName + ".package-info").getPackage();
-//      } catch (ClassNotFoundException ignore) {
-//        // pkg = Package.getPackage(packageName);
-//      }
-//    }
-//    return pkg;
-//  }
+  // private static Package packageFromClassName(String className) {
+  // String packageName = className;
+  // int dollar = packageName.indexOf('$');
+  // if (dollar != -1) {
+  // packageName = packageName.substring(0, dollar);
+  // }
+  //
+  // int lastDot = packageName.lastIndexOf('.');
+  // if (lastDot == -1) {
+  // return null;
+  // }
+  // packageName = packageName.substring(0, lastDot);
+  //
+  // Package pkg = Thread.currentThread().getContextClassLoader().getDefinedPackage(packageName);
+  // if (pkg == null) { // this happens
+  // try {
+  // pkg = Class.forName(packageName + ".package-info").getPackage();
+  // } catch (ClassNotFoundException ignore) {
+  // // pkg = Package.getPackage(packageName);
+  // }
+  // }
+  // return pkg;
+  // }
 
   @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
   public Class<?> tryResolve(String className) {

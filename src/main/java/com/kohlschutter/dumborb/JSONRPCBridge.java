@@ -307,7 +307,7 @@ public final class JSONRPCBridge {
       final String methodName;
       {
         int lastDot = encodedMethod.lastIndexOf('.');
-        if(lastDot == -1) {
+        if (lastDot == -1) {
           className = encodedMethod;
           methodName = null;
         } else {
