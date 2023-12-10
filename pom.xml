@@ -49,6 +49,8 @@
     </licenses>
     <scm>
         <url>https://github.com/kohlschuetter/jabsorb</url>
+        <connection>scm:git:git@github.com:kohlschuetter/jabsorb.git</connection>
+        <developerConnection>scm:git:git@github.com:kohlschuetter/jabsorb.git</developerConnection>
     </scm>
     <build>
         <plugins>
