@@ -1,5 +1,4 @@
 package org.json;
-//NOPMD
 
 /*
 Public Domain.
@@ -85,6 +84,9 @@ import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
  * @version 2016-08-15
  */
 @SuppressWarnings("PMD")
+@SuppressFBWarnings({
+    "CT_CONSTRUCTOR_THROW", "BX_UNBOXING_IMMEDIATELY_REBOXED", "DCN_NULLPOINTER_EXCEPTION",
+    "NP_TOSTRING_COULD_RETURN_NULL", "EQ_UNUSUAL", "EC_NULL_ARG"})
 public class JSONObject {
     /**
      * JSONObject.NULL is equivalent to the value that JavaScript calls null,
@@ -150,7 +152,6 @@ public class JSONObject {
      */
     private final Map<String, Object> map;
 
-    @SuppressWarnings("rawtypes")
     public Class<? extends Map> getMapType() {
         return map.getClass();
     }
@@ -214,22 +215,14 @@ public class JSONObject {
             throw x.syntaxError("A JSONObject text must begin with '{'");
         }
         for (;;) {
-            char prev = x.getPrevious();
             c = x.nextClean();
             switch (c) {
             case 0:
                 throw x.syntaxError("A JSONObject text must end with '}'");
             case '}':
                 return;
-            case '{':
-            case '[':
-                if(prev=='{') {
-                    throw x.syntaxError("A JSON Object can not directly nest another JSON Object or JSON Array.");
-                }
-                // fall through
             default:
-                x.back();
-                key = x.nextValue().toString();
+                key = x.nextSimpleValue(c).toString();
             }
 
             // The key is followed by ':'.
@@ -261,6 +254,9 @@ public class JSONObject {
             case ',':
                 if (x.nextClean() == '}') {
                     return;
+                }
+                if (x.end()) {
+                    throw x.syntaxError("A JSONObject text must end with '}'");
                 }
                 x.back();
                 break;
@@ -294,6 +290,7 @@ public class JSONObject {
         	    }
                 final Object value = e.getValue();
                 if (value != null) {
+                    testValidity(value);
                     this.map.put(String.valueOf(e.getKey()), wrap(value));
                 }
             }
@@ -357,6 +354,8 @@ public class JSONObject {
      * @param bean
      *            An object that has getter methods that should be used to make
      *            a JSONObject.
+     * @throws JSONException
+     *            If a getter returned a non-finite number.
      */
     public JSONObject(Object bean) {
         this();
@@ -486,7 +485,7 @@ public class JSONObject {
      *            If the key is <code>null</code>.
      */
     public JSONObject accumulate(String key, Object value) throws JSONException {
-        value = makeValid(value);
+        testValidity(value);
         Object object = this.opt(key);
         if (object == null) {
             this.put(key,
@@ -518,7 +517,7 @@ public class JSONObject {
      *            If the key is <code>null</code>.
      */
     public JSONObject append(String key, Object value) throws JSONException {
-        value = makeValid(value);
+        testValidity(value);
         Object object = this.opt(key);
         if (object == null) {
             this.put(key, new JSONArray().put(value));
@@ -1021,10 +1020,11 @@ public class JSONObject {
         if (number == null) {
             throw new JSONException("Null pointer");
         }
+        testValidity(number);
 
         // Shave off trailing zeros and decimal point, if possible.
 
-        String string = makeValid(number).toString();
+        String string = number.toString();
         if (string.indexOf('.') > 0 && string.indexOf('e') < 0
                 && string.indexOf('E') < 0) {
             while (string.endsWith("0")) {
@@ -1059,7 +1059,6 @@ public class JSONObject {
      *            A key string.
      * @return The enum value associated with the key or null if not found
      */
-    @SuppressWarnings("null")
     public <E extends Enum<E>> E optEnum(Class<E> clazz, String key) {
         return this.optEnum(clazz, key, null);
     }
@@ -1078,7 +1077,6 @@ public class JSONObject {
      * @return The enum value associated with the key or defaultValue
      *            if the value is not found or cannot be assigned to <code>clazz</code>
      */
-    @SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
     public <E extends Enum<E>> E optEnum(Class<E> clazz, String key, E defaultValue) {
         try {
             Object val = this.opt(key);
@@ -1123,6 +1121,45 @@ public class JSONObject {
      * @return The truth.
      */
     public boolean optBoolean(String key, boolean defaultValue) {
+        Object val = this.opt(key);
+        if (NULL.equals(val)) {
+            return defaultValue;
+        }
+        if (val instanceof Boolean){
+            return ((Boolean) val).booleanValue();
+        }
+        try {
+            // we'll use the get anyway because it does string conversion.
+            return this.getBoolean(key);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Get an optional boolean object associated with a key. It returns false if there
+     * is no such key, or if the value is not Boolean.TRUE or the String "true".
+     *
+     * @param key
+     *            A key string.
+     * @return The truth.
+     */
+    public Boolean optBooleanObject(String key) {
+        return this.optBooleanObject(key, false);
+    }
+
+    /**
+     * Get an optional boolean object associated with a key. It returns the
+     * defaultValue if there is no such key, or if it is not a Boolean or the
+     * String "true" or "false" (case insensitive).
+     *
+     * @param key
+     *            A key string.
+     * @param defaultValue
+     *            The default.
+     * @return The truth.
+     */
+    public Boolean optBooleanObject(String key, Boolean defaultValue) {
         Object val = this.opt(key);
         if (NULL.equals(val)) {
             return defaultValue;
@@ -1297,15 +1334,43 @@ public class JSONObject {
         if (val == null) {
             return defaultValue;
         }
-        final double doubleValue = val.doubleValue();
-        // if (Double.isNaN(doubleValue) || Double.isInfinite(doubleValue)) {
-        // return defaultValue;
-        // }
-        return doubleValue;
+        return val.doubleValue();
     }
 
     /**
-     * Get the optional double value associated with an index. NaN is returned
+     * Get an optional Double object associated with a key, or NaN if there is no such
+     * key or if its value is not a number. If the value is a string, an attempt
+     * will be made to evaluate it as a number.
+     *
+     * @param key
+     *            A string which is the key.
+     * @return An object which is the value.
+     */
+    public Double optDoubleObject(String key) {
+        return this.optDoubleObject(key, Double.NaN);
+    }
+
+    /**
+     * Get an optional Double object associated with a key, or the defaultValue if
+     * there is no such key or if its value is not a number. If the value is a
+     * string, an attempt will be made to evaluate it as a number.
+     *
+     * @param key
+     *            A key string.
+     * @param defaultValue
+     *            The default.
+     * @return An object which is the value.
+     */
+    public Double optDoubleObject(String key, Double defaultValue) {
+        Number val = this.optNumber(key);
+        if (val == null) {
+            return defaultValue;
+        }
+        return val.doubleValue();
+    }
+
+    /**
+     * Get the optional float value associated with an index. NaN is returned
      * if there is no value for the index, or if the value is not a number and
      * cannot be converted to a number.
      *
@@ -1318,7 +1383,7 @@ public class JSONObject {
     }
 
     /**
-     * Get the optional double value associated with an index. The defaultValue
+     * Get the optional float value associated with an index. The defaultValue
      * is returned if there is no value for the index, or if the value is not a
      * number and cannot be converted to a number.
      *
@@ -1334,6 +1399,42 @@ public class JSONObject {
             return defaultValue;
         }
         final float floatValue = val.floatValue();
+        // if (Float.isNaN(floatValue) || Float.isInfinite(floatValue)) {
+        // return defaultValue;
+        // }
+        return floatValue;
+    }
+
+    /**
+     * Get the optional Float object associated with an index. NaN is returned
+     * if there is no value for the index, or if the value is not a number and
+     * cannot be converted to a number.
+     *
+     * @param key
+     *            A key string.
+     * @return The object.
+     */
+    public Float optFloatObject(String key) {
+        return this.optFloatObject(key, Float.NaN);
+    }
+
+    /**
+     * Get the optional Float object associated with an index. The defaultValue
+     * is returned if there is no value for the index, or if the value is not a
+     * number and cannot be converted to a number.
+     *
+     * @param key
+     *            A key string.
+     * @param defaultValue
+     *            The default object.
+     * @return The object.
+     */
+    public Float optFloatObject(String key, Float defaultValue) {
+        Number val = this.optNumber(key);
+        if (val == null) {
+            return defaultValue;
+        }
+        final Float floatValue = val.floatValue();
         // if (Float.isNaN(floatValue) || Float.isInfinite(floatValue)) {
         // return defaultValue;
         // }
@@ -1373,6 +1474,38 @@ public class JSONObject {
     }
 
     /**
+     * Get an optional Integer object associated with a key, or zero if there is no
+     * such key or if the value is not a number. If the value is a string, an
+     * attempt will be made to evaluate it as a number.
+     *
+     * @param key
+     *            A key string.
+     * @return An object which is the value.
+     */
+    public Integer optIntegerObject(String key) {
+        return this.optIntegerObject(key, 0);
+    }
+
+    /**
+     * Get an optional Integer object associated with a key, or the default if there
+     * is no such key or if the value is not a number. If the value is a string,
+     * an attempt will be made to evaluate it as a number.
+     *
+     * @param key
+     *            A key string.
+     * @param defaultValue
+     *            The default.
+     * @return An object which is the value.
+     */
+    public Integer optIntegerObject(String key, Integer defaultValue) {
+        final Number val = this.optNumber(key, null);
+        if (val == null) {
+            return defaultValue;
+        }
+        return val.intValue();
+    }
+
+    /**
      * Get an optional JSONArray associated with a key. It returns null if there
      * is no such key, or if its value is not a JSONArray.
      *
@@ -1381,8 +1514,22 @@ public class JSONObject {
      * @return A JSONArray which is the value.
      */
     public JSONArray optJSONArray(String key) {
-        Object o = this.opt(key);
-        return o instanceof JSONArray ? (JSONArray) o : null;
+        return this.optJSONArray(key, null);
+    }
+
+    /**
+     * Get an optional JSONArray associated with a key, or the default if there
+     * is no such key, or if its value is not a JSONArray.
+     *
+     * @param key
+     *            A key string.
+     * @param defaultValue
+     *            The default.
+     * @return A JSONArray which is the value.
+     */
+    public JSONArray optJSONArray(String key, JSONArray defaultValue) {
+        Object object = this.opt(key);
+        return object instanceof JSONArray ? (JSONArray) object : defaultValue;
     }
 
     /**
@@ -1435,6 +1582,39 @@ public class JSONObject {
      * @return An object which is the value.
      */
     public long optLong(String key, long defaultValue) {
+        final Number val = this.optNumber(key, null);
+        if (val == null) {
+            return defaultValue;
+        }
+
+        return val.longValue();
+    }
+
+    /**
+     * Get an optional Long object associated with a key, or zero if there is no
+     * such key or if the value is not a number. If the value is a string, an
+     * attempt will be made to evaluate it as a number.
+     *
+     * @param key
+     *            A key string.
+     * @return An object which is the value.
+     */
+    public Long optLongObject(String key) {
+        return this.optLongObject(key, 0L);
+    }
+
+    /**
+     * Get an optional Long object associated with a key, or the default if there
+     * is no such key or if the value is not a number. If the value is a string,
+     * an attempt will be made to evaluate it as a number.
+     *
+     * @param key
+     *            A key string.
+     * @param defaultValue
+     *            The default.
+     * @return An object which is the value.
+     */
+    public Long optLongObject(String key, Long defaultValue) {
         final Number val = this.optNumber(key, null);
         if (val == null) {
             return defaultValue;
@@ -1521,6 +1701,8 @@ public class JSONObject {
      *
      * @param bean
      *            the bean
+     * @throws JSONException
+     *            If a getter returned a non-finite number.
      */
     private void populateMap(Object bean) {
         populateMap(bean, Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>()));
@@ -1548,21 +1730,22 @@ public class JSONObject {
                         final Object result = method.invoke(bean);
                         if (result != null) {
                             // check cyclic dependency and throw error if needed
-                            // the wrap and populateMap combination method is 
+                            // the wrap and populateMap combination method is
                             // itself DFS recursive
                             if (objectsRecord.contains(result)) {
                                 throw recursivelyDefinedObjectException(key);
                             }
-                            
+
                             objectsRecord.add(result);
 
+                            testValidity(result);
                             this.map.put(key, wrap(result, objectsRecord));
 
                             objectsRecord.remove(result);
 
                             // we don't use the result anywhere outside of wrap
                             // if it's a resource we should be sure to close it
-                            // after calling toString 
+                            // after calling toString
                             if (result instanceof Closeable) {
                                 try {
                                     ((Closeable) result).close();
@@ -1634,7 +1817,6 @@ public class JSONObject {
      * @return the {@link Annotation} if the annotation exists on the current method
      *         or one of its super class definitions
      */
-    @SuppressWarnings("null")
     private static <A extends Annotation> A getAnnotation(final Method m, final Class<A> annotationClass) {
         // if we have invalid data the result is null
         if (m == null || annotationClass == null) {
@@ -1875,7 +2057,7 @@ public class JSONObject {
             throw new NullPointerException("Null key.");
         }
         if (value != null) {
-            value = makeValid(value);
+            testValidity(value);
             this.map.put(key, value);
         } else {
             this.remove(key);
@@ -2011,15 +2193,14 @@ public class JSONObject {
      *            A String
      * @return A String correctly formatted for insertion in a JSON text.
      */
+    @SuppressWarnings("resource")
     public static String quote(String string) {
         StringWriter sw = new StringWriter();
-        synchronized (sw.getBuffer()) {
-            try {
-                return quote(string, sw).toString();
-            } catch (IOException ignored) {
-                // will never happen - we are writing to a string writer
-                return "";
-            }
+        try {
+            return quote(string, sw).toString();
+        } catch (IOException ignored) {
+            // will never happen - we are writing to a string writer
+            return "";
         }
     }
 
@@ -2211,14 +2392,21 @@ public class JSONObject {
      * returns for this function are BigDecimal, Double, BigInteger, Long, and Integer.
      * When a Double is returned, it should always be a valid Double and not NaN or +-infinity.
      *
-     * @param val value to convert
+     * @param input value to convert
      * @return Number representation of the value.
      * @throws NumberFormatException thrown if the value is not a valid number. A public
      *      caller should catch this and wrap it in a {@link JSONException} if applicable.
      */
-    protected static Number stringToNumber(final String val) throws NumberFormatException {
+    protected static Number stringToNumber(final String input) throws NumberFormatException {
+        String val = input;
+        if (val.startsWith(".")){
+            val = "0"+val;
+        }
+        if (val.startsWith("-.")){
+            val = "-0."+val.substring(2);
+        }
         char initial = val.charAt(0);
-        if ((initial >= '0' && initial <= '9') || initial == '-') {
+        if ((initial >= '0' && initial <= '9') || initial == '-' ) {
             // decimal representation
             if (isDecimalNotation(val)) {
                 // Use a BigDecimal all the time so we keep the original
@@ -2235,25 +2423,26 @@ public class JSONObject {
                     try {
                         Double d = Double.valueOf(val);
                         if(d.isNaN() || d.isInfinite()) {
-                            throw new NumberFormatException("val ["+val+"] is not a valid number.");
+                            throw new NumberFormatException("val ["+input+"] is not a valid number.");
                         }
                         return d;
                     } catch (NumberFormatException ignore) {
-                        throw new NumberFormatException("val ["+val+"] is not a valid number.");
+                        throw new NumberFormatException("val ["+input+"] is not a valid number.");
                     }
                 }
             }
-            // block items like 00 01 etc. Java number parsers treat these as Octal.
+            val = removeLeadingZerosOfNumber(input);
+            initial = val.charAt(0);
             if(initial == '0' && val.length() > 1) {
                 char at1 = val.charAt(1);
                 if(at1 >= '0' && at1 <= '9') {
-                    throw new NumberFormatException("val ["+val+"] is not a valid number.");
+                    throw new NumberFormatException("val ["+input+"] is not a valid number.");
                 }
             } else if (initial == '-' && val.length() > 2) {
                 char at1 = val.charAt(1);
                 char at2 = val.charAt(2);
                 if(at1 == '0' && at2 >= '0' && at2 <= '9') {
-                    throw new NumberFormatException("val ["+val+"] is not a valid number.");
+                    throw new NumberFormatException("val ["+input+"] is not a valid number.");
                 }
             }
             // integer representation.
@@ -2273,7 +2462,7 @@ public class JSONObject {
             }
             return bi;
         }
-        throw new NumberFormatException("val ["+val+"] is not a valid number.");
+        throw new NumberFormatException("val ["+input+"] is not a valid number.");
     }
 
     /**
@@ -2309,14 +2498,35 @@ public class JSONObject {
          * produced, then the value will just be a string.
          */
 
-        char initial = string.charAt(0);
-        if ((initial >= '0' && initial <= '9') || initial == '-') {
+        if (potentialNumber(string)) {
             try {
                 return stringToNumber(string);
             } catch (Exception ignore) {
             }
         }
         return string;
+    }
+
+
+    private static boolean potentialNumber(String value){
+        if (value == null || value.isEmpty()){
+            return false;
+        }
+        return potentialPositiveNumberStartingAtIndex(value, (value.charAt(0)=='-'?1:0));
+    }
+
+    private static boolean potentialPositiveNumberStartingAtIndex(String value,int index){
+        if (index >= value.length()){
+            return false;
+        }
+        return digitAtIndex(value, (value.charAt(index)=='.'?index+1:index));
+    }
+
+    private static boolean digitAtIndex(String value, int index){
+        if (index >= value.length()){
+            return false;
+        }
+        return value.charAt(index) >= '0' && value.charAt(index) <= '9';
     }
 
     /**
@@ -2331,40 +2541,6 @@ public class JSONObject {
         if (o instanceof Number && !numberIsFinite((Number) o)) {
             throw new JSONException("JSON does not allow non-finite numbers.");
         }
-    }
-
-    /**
-     * Make an object valid for JSON (i.e., fix NaN and Infinity).
-     *
-     * @param o
-     *            The object to test.
-     * @return The object, or a converted form.
-     * @throws JSONException
-     *             If o is a non-finite number.
-     */
-    public static Object makeValid(Object o) throws JSONException {
-      if (o instanceof Number && !numberIsFinite((Number) o)) {
-        if (o instanceof Double) {
-          Double d = (Double) o;
-          if (d.isNaN()) {
-            return "NaN";
-          } else if (d.isInfinite()) {
-            return d.doubleValue() < 0 ? "-Infinity" : "Infinity";
-          }
-        } else if (o instanceof Float) {
-          Float d = (Float) o;
-          if (d.isNaN()) {
-            return "NaN";
-          } else if (d.isInfinite()) {
-            return d.doubleValue() < 0 ? "-Infinity" : "Infinity";
-          }
-        }
-        throw new JSONException(
-            "JSON does not allow non-finite numbers, and no conversion is implemented for type: "
-                + o.getClass());
-      } else {
-        return o;
-      }
     }
 
     /**
@@ -2407,7 +2583,7 @@ public class JSONObject {
         try {
             return this.toString(0);
         } catch (Exception e) {
-            return "null";
+            return null;
         }
     }
 
@@ -2437,11 +2613,10 @@ public class JSONObject {
      * @throws JSONException
      *             If the object contains an invalid number.
      */
+    @SuppressWarnings("resource")
     public String toString(int indentFactor) throws JSONException {
         StringWriter w = new StringWriter();
-        synchronized (w.getBuffer()) {
-            return this.write(w, indentFactor, 0).toString();
-        }
+        return this.write(w, indentFactor, 0).toString();
     }
 
     /**
@@ -2553,7 +2728,7 @@ public class JSONObject {
         return this.write(writer, 0, 0);
     }
 
-    @SuppressFBWarnings("EC_NULL_ARG")
+    @SuppressWarnings("resource")
     static final Writer writeValue(Writer writer, Object value,
             int indentFactor, int indent) throws JSONException, IOException {
         if (value == null || value.equals(null)) {
@@ -2631,6 +2806,7 @@ public class JSONObject {
      * @throws JSONException if a called function has an error or a write error
      * occurs
      */
+    @SuppressWarnings("resource")
     public Writer write(Writer writer, int indentFactor, int indent)
             throws JSONException {
         try {
@@ -2751,5 +2927,25 @@ public class JSONObject {
         return new JSONException(
             "JavaBean object contains recursively defined member variable of key " + quote(key)
         );
+    }
+
+    /**
+     * For a prospective number, remove the leading zeros
+     * @param value prospective number
+     * @return number without leading zeros
+     */
+    private static String removeLeadingZerosOfNumber(String value){
+        if (value.equals("-")){return value;}
+        boolean negativeFirstChar = (value.charAt(0) == '-');
+        int counter = negativeFirstChar ? 1:0;
+        while (counter < value.length()){
+            if (value.charAt(counter) != '0'){
+                if (negativeFirstChar) {return "-".concat(value.substring(counter));}
+                return value.substring(counter);
+            }
+            ++counter;
+        }
+        if (negativeFirstChar) {return "-0";}
+        return "0";
     }
 }
