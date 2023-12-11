@@ -81,14 +81,12 @@ import jakarta.servlet.http.HttpSession;
  * specific users, and of course these instances could be stateful and contain data specific to the
  * user's session.
  * <p>
- * An example or creating a session specific bridge in JSP is as follows:
- * <code>
+ * An example or creating a session specific bridge in JSP is as follows: <code>
  * &lt;jsp:useBean id="JSONRPCBridge" scope="session"
  *   class="com.kohlschutter.dumborb.JSONRPCBridge"/&gt;
  * </code>
  * <p>
- * An example in Java (i.e. in another Servlet):
- * <code>
+ * An example in Java (i.e. in another Servlet): <code>
  * HttpSession session = request.getSession();<br />
  * JSONRPCBridge bridge = (JSONRPCBridge) session.getAttribute("JSONRPCBridge");<br>
  * if(bridge == null) {<br />

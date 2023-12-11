@@ -453,12 +453,12 @@ public class JSONSerializer {
    * ObjectMatch instance is returned which contains a number indicating the number of fields that
    * did not match. Therefore when a given parameter could potentially match in more that one way,
    * this is a metric to compare these ObjectMatches to determine which one matches more closely.
-   * 
+   *
    * <p>
    * This is only used when there are overloaded method names that are being called from JSON-RPC to
    * determine which call signature the method call matches most closely and therefore which method
    * is the intended target method to call.
-   * 
+   *
    *
    * @param clazz optional java class to unmarshall to- if set to null then it will be looked for
    *          via the javaClass hinting mechanism.
@@ -478,12 +478,12 @@ public class JSONSerializer {
    * ObjectMatch instance is returned which contains a number indicating the number of fields that
    * did not match. Therefore when a given parameter could potentially match in more that one way,
    * this is a metric to compare these ObjectMatches to determine which one matches more closely.
-   * 
+   *
    * <p>
    * This is only used when there are overloaded method names that are being called from JSON-RPC to
    * determine which call signature the method call matches most closely and therefore which method
    * is the intended target method to call.
-   * 
+   *
    *
    * @param state used by the underlying Serializer objects to hold state while unmarshalling for
    *          detecting circular references and duplicates.
