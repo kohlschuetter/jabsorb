@@ -175,7 +175,6 @@ public class AccessibleObjectResolver {
       }
       result = new FailedResult(FailedResult.CODE_ERR_MARSHALL, requestId, e.getMessage());
     } catch (Throwable e) { // NOPMD.AvoidCatchingThrowable
-      e.printStackTrace();
       if (LOG.isErrorEnabled()) {
         LOG.error(e.getMessage());
       }
