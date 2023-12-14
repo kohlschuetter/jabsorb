@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -47,7 +48,7 @@ public class URLConnectionSession implements Session {
    *
    * @param url The URL.
    */
-  URLConnectionSession(URL url) {
+  public URLConnectionSession(URL url) {
     this.url = url;
   }
 
@@ -60,7 +61,11 @@ public class URLConnectionSession implements Session {
   public JSONObject sendAndReceive(JSONObject message) {
     try {
       URLConnection connection = url.openConnection();
+      if (connection instanceof HttpURLConnection) {
+        ((HttpURLConnection) connection).setRequestMethod("POST");
+      }
       connection.setDoOutput(true);
+      connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
       // As per http://java.sun.com/docs/books/tutorial/networking/urls/readingWriting.html
       try (Writer request = new OutputStreamWriter(connection.getOutputStream(),
           StandardCharsets.UTF_8)) {
