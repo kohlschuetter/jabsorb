@@ -43,7 +43,8 @@ import com.kohlschutter.dumborb.serializer.UnmarshallException;
 public final class ClassResolver {
   private static final Logger LOG = LoggerFactory.getLogger(ClassResolver.class);
 
-  private static final Set<String> DEFAULT_ALLOWED_CLASSES = Set.of("java.lang.Exception", "java.util.HashMap"); // FIXME
+  private static final Set<String> DEFAULT_ALLOWED_CLASSES = Set.of("java.lang.Exception",
+      "java.util.HashMap"); // FIXME
   private static final Collection<String> DEFAULT_DISALLOWED_PREFIXES = Set.of("javax.", "com.sun.",
       "sun.");
 
