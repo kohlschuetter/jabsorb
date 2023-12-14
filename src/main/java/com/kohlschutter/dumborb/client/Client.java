@@ -120,12 +120,14 @@ public class Client {
   /**
    * Create a proxy for communicating with the remote service.
    *
+   * @param <T> The type of the service.
    * @param key the remote object key
    * @param klass the class of the interface the remote object should adhere to
    * @return created proxy
    */
-  public Object openProxy(String key, Class<?> klass) {
-    Object result = java.lang.reflect.Proxy.newProxyInstance(Thread.currentThread()
+  public <T> T openProxy(String key, Class<T> klass) {
+    @SuppressWarnings("unchecked")
+    T result = (T) java.lang.reflect.Proxy.newProxyInstance(Thread.currentThread()
         .getContextClassLoader(), new Class<?>[] {klass}, //
         (Object proxyObj, Method method, Object[] args) -> {
           String methodName = method.getName();
@@ -136,7 +138,14 @@ public class Client {
               return (proxyObj == args[0] // NOPMD
                   ? Boolean.TRUE : Boolean.FALSE);
             case TO_STRING:
-              return proxyObj.getClass().getName() + '@' + Integer.toHexString(proxyObj.hashCode());
+              String name = klass.getName();
+              if (!name.equals(key)) {
+                name = key + "/" + name;
+              }
+
+              return "DumborbProxy[" + name + "]@" + Integer.toHexString(proxyObj.hashCode());
+            // return proxyObj.getClass().getName() + '@' +
+            // Integer.toHexString(proxyObj.hashCode());
             default:
               return invoke(proxyMap.get(proxyObj), method.getName(), args, method.getReturnType());
           }
