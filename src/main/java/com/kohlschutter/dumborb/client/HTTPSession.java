@@ -94,7 +94,7 @@ public class HTTPSession implements Session {
 
       int statusCode = postMethod.getStatusCode();
       if (statusCode != HttpStatus.SC_OK) {
-        throw new ClientError("HTTP Status - " + HttpStatus.getStatusText(statusCode) + " ("
+        throw new ClientException("HTTP Status - " + HttpStatus.getStatusText(statusCode) + " ("
             + statusCode + ")");
       }
 
@@ -103,12 +103,12 @@ public class HTTPSession implements Session {
       Object rawResponseMessage = tokener.nextValue();
       JSONObject responseMessage = (JSONObject) rawResponseMessage;
       if (responseMessage == null) {
-        throw new ClientError("Invalid response type: null");
+        throw new ClientException("Invalid response type: null");
       }
 
       return responseMessage;
     } catch (JSONException | IOException e) {
-      throw new ClientError(e);
+      throw new ClientException(e);
     }
   }
 

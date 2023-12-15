@@ -88,7 +88,7 @@ public class ClientTestCase extends ServerTestBase {
       ITest badTest = (ITest) badClient.openProxy("test", ITest.class);
       badTest.voidFunction();
       fail();
-    } catch (ClientError err) {
+    } catch (ClientException err) {
       // Cool, we got error!
     }
   }
@@ -156,7 +156,7 @@ public class ClientTestCase extends ServerTestBase {
     ITest proxyObject = (ITest) client.openProxy("test", ITest.class);
     try {
       proxyObject.voidFunction();
-    } catch (ClientError ex) {
+    } catch (ClientException ex) {
       if (!(ex.getCause() instanceof ConnectException))
         fail("expected ConnectException, got " + ex.getCause().getClass().getName());
     }

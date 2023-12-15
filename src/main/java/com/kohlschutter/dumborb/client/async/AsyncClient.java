@@ -28,7 +28,7 @@ import java.util.Map;
 
 import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 import com.kohlschutter.dumborb.JSONSerializer;
-import com.kohlschutter.dumborb.client.ClientError;
+import com.kohlschutter.dumborb.client.ClientException;
 import com.kohlschutter.dumborb.security.ClassResolver;
 import com.kohlschutter.dumborb.serializer.request.fixups.FixupsCircularReferenceHandler;
 import com.kohlschutter.dumborb.serializer.response.fixups.FixupCircRefAndNonPrimitiveDupes;
@@ -68,7 +68,7 @@ public class AsyncClient {
           new FixupsCircularReferenceHandler(), resolver);
       this.serializer.registerDefaultSerializers();
     } catch (final Exception e) {
-      throw new ClientError(e);
+      throw new ClientException(e);
     }
   }
 

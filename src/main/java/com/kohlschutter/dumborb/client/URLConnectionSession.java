@@ -24,9 +24,7 @@
 package com.kohlschutter.dumborb.client;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -66,34 +64,27 @@ public class URLConnectionSession implements Session {
       }
       connection.setDoOutput(true);
       connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
-      // As per http://java.sun.com/docs/books/tutorial/networking/urls/readingWriting.html
+      onConnection(connection);
+
       try (Writer request = new OutputStreamWriter(connection.getOutputStream(),
           StandardCharsets.UTF_8)) {
-        request.write(message.toString());
+        message.write(request);
       }
-      // TODO the following sequence of reading a string out of output stream is too complicated
-      // there must be a simpler way
-      StringBuffer builder = new StringBuffer(1024);
-      char[] buffer = new char[1024];
-      try (Reader reader = new InputStreamReader(connection.getInputStream(),
-          StandardCharsets.UTF_8)) {
-        while (true) {
-          int bytesRead = reader.read(buffer);
-          if (bytesRead < 0) {
-            break;
-          }
-          builder.append(buffer, 0, bytesRead);
-        }
-      }
-      JSONTokener tokener = new JSONTokener(builder.toString());
+
+      JSONTokener tokener = new JSONTokener(connection.getInputStream());
       Object rawResponseMessage = tokener.nextValue();
-      JSONObject responseMessage = (JSONObject) rawResponseMessage;
-      if (responseMessage == null) {
-        throw new ClientError("Invalid response type - null");
+      if (rawResponseMessage == null) {
+        throw new ClientException("Invalid response type - null");
+      } else if (!(rawResponseMessage instanceof JSONObject)) {
+        throw new ClientException("Invalid response type: not an object, got: " + rawResponseMessage
+            .getClass());
       }
-      return responseMessage;
+      return (JSONObject) rawResponseMessage;
     } catch (JSONException | IOException e) {
-      throw new ClientError(e);
+      throw new ClientException(e);
     }
+  }
+
+  protected void onConnection(URLConnection connection) {
   }
 }

@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Exception created from the JSON-RPC error response.
  */
-public class ErrorResponse extends ClientError {
+public class ErrorResponse extends ClientException {
   private static final long serialVersionUID = 1L;
   private final String message;
   private final String trace;

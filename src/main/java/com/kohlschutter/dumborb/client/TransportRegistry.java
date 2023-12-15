@@ -59,7 +59,7 @@ public class TransportRegistry {
       // Fallback
       return new URLConnectionSession(uri.toURL());
     } catch (Exception e) {
-      throw new ClientError(e);
+      throw new ClientException(e);
     }
   }
 

@@ -43,7 +43,7 @@ import com.kohlschutter.dumborb.serializer.response.results.FailedResult;
 /**
  * A factory to create proxies for access to remote Jabsorb services.
  */
-public class Client {
+public class Client implements SessionAccess {
   private static final String TO_STRING = "toString";
 
   private static final String EQUALS = "equals";
@@ -85,8 +85,13 @@ public class Client {
           new FixupsCircularReferenceHandler(), resolver);
       this.serializer.registerDefaultSerializers();
     } catch (Exception e) {
-      throw new ClientError(e);
+      throw new ClientException(e);
     }
+  }
+
+  @Override
+  public Session getDumborbClientSession() {
+    return session;
   }
 
   /**
@@ -128,7 +133,7 @@ public class Client {
   public <T> T openProxy(String key, Class<T> klass) {
     @SuppressWarnings("unchecked")
     T result = (T) java.lang.reflect.Proxy.newProxyInstance(Thread.currentThread()
-        .getContextClassLoader(), new Class<?>[] {klass}, //
+        .getContextClassLoader(), new Class<?>[] {klass, SessionAccess.class}, //
         (Object proxyObj, Method method, Object[] args) -> {
           String methodName = method.getName();
           switch (methodName) {
@@ -146,6 +151,8 @@ public class Client {
               return "DumborbProxy[" + name + "]@" + Integer.toHexString(proxyObj.hashCode());
             // return proxyObj.getClass().getName() + '@' +
             // Integer.toHexString(proxyObj.hashCode());
+            case SessionAccess.METHOD_NAME:
+              return getDumborbClientSession();
             default:
               return invoke(proxyMap.get(proxyObj), method.getName(), args, method.getReturnType());
           }
