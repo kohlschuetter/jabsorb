@@ -85,7 +85,7 @@ public class ClientTestCase extends ServerTestBase {
     Client badClient = new Client(registry.createSession("http://non-existing-server:99"),
         classResolver);
     try {
-      ITest badTest = (ITest) badClient.openProxy("test", ITest.class);
+      ITest badTest = badClient.openProxy("test", ITest.class);
       badTest.voidFunction();
       fail();
     } catch (ClientException err) {
@@ -96,7 +96,7 @@ public class ClientTestCase extends ServerTestBase {
   public void testStandardSession() {
     Client client = new Client(getRegistry().createSession(getServiceRootURL() + "/JSON-RPC"),
         classResolver);
-    ITest test = (ITest) client.openProxy("test", ITest.class);
+    ITest test = client.openProxy("test", ITest.class);
     basicClientTest(test);
   }
 
@@ -118,7 +118,7 @@ public class ClientTestCase extends ServerTestBase {
 
   public void testHTTPSession() {
     Client client = new Client(newHTTPSession(getServiceURL()), classResolver);
-    ITest test = (ITest) client.openProxy("test", ITest.class);
+    ITest test = client.openProxy("test", ITest.class);
     basicClientTest(test);
   }
 
@@ -153,7 +153,7 @@ public class ClientTestCase extends ServerTestBase {
     int proxyPort = 40888; // hopefully, the port is unused
     proxiedSession.getHostConfiguration().setProxy("localhost", proxyPort);
     Client client = new Client(proxiedSession, classResolver);
-    ITest proxyObject = (ITest) client.openProxy("test", ITest.class);
+    ITest proxyObject = client.openProxy("test", ITest.class);
     try {
       proxyObject.voidFunction();
     } catch (ClientException ex) {
