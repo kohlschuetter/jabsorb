@@ -33,6 +33,7 @@ import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.RecordComponent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -158,6 +159,19 @@ public class BeanSerializer extends AbstractSerializer {
         readableProps.put(prop.getName(), lookup.unreflect(readMethod));
       }
     }
+
+    RecordComponent[] recordComponents = clazz.getRecordComponents();
+    if (recordComponents != null) {
+      // record classes
+      for (RecordComponent rc : recordComponents) {
+        String name = rc.getName();
+        Method readMethod = clazz.getMethod(name);
+        if (readMethod != null) {
+          readableProps.put(name, lookup.unreflect(readMethod));
+        }
+      }
+    }
+
     return new BeanData(constructor, readableProps, writableProps);
   }
 
