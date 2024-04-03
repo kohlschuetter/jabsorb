@@ -95,6 +95,7 @@ import jakarta.servlet.http.HttpSession;
  * }<br />
  * </code>
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public class JSONRPCServlet extends HttpServlet {
   private static final long serialVersionUID = -1; // not serializable, just to suppress a warning
 
