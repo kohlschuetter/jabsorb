@@ -43,8 +43,8 @@ public interface InvocationCallback<C> {
    * @param arguments The arguments passed to the method
    * @throws Exception if the invocation doesn't work.
    */
-  void preInvoke(C context, Object instance, AccessibleObject accessibleObject,
-      Object[] arguments) throws Exception;
+  void preInvoke(C context, Object instance, AccessibleObject accessibleObject, Object[] arguments)
+      throws Exception;
 
   /**
    * Callback after invocation of an RPC method.
@@ -57,7 +57,7 @@ public interface InvocationCallback<C> {
    * @param error Error (if execution was unsuccessful)
    * @throws Exception if the invocation doesn't work.
    */
-  void postInvoke(C context, Object instance, AccessibleObject accessibleObject, Object result, Throwable error)
-      throws Exception;
+  void postInvoke(C context, Object instance, AccessibleObject accessibleObject, Object result,
+      Throwable error) throws Exception;
 
 }

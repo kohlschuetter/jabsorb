@@ -67,7 +67,8 @@ public final class CallbackController {
       for (CallbackData cbdata : callbackSet) {
         if (cbdata.understands(context) && (cbdata
             .getCallback() instanceof ErrorInvocationCallback)) {
-          ErrorInvocationCallback<Object> ecb = (ErrorInvocationCallback<Object>) cbdata.getCallback();
+          ErrorInvocationCallback<Object> ecb = (ErrorInvocationCallback<Object>) cbdata
+              .getCallback();
           try {
             ecb.invocationError(context, instance, accessibleObject, error);
           } catch (Throwable th) { // NOPMD

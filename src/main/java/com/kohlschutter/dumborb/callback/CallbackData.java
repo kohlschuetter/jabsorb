@@ -47,7 +47,7 @@ final class CallbackData {
    */
   @SuppressWarnings("unchecked")
   CallbackData(InvocationCallback<?> cb, Class<?> contextInterface) {
-    this.cb = (InvocationCallback<Object>)cb;
+    this.cb = (InvocationCallback<Object>) cb;
     this.contextInterface = contextInterface;
   }
 
