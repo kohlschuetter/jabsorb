@@ -23,7 +23,6 @@
  */
 package com.kohlschutter.dumborb.callback;
 
-import java.io.Serializable;
 import java.lang.reflect.AccessibleObject;
 
 /**
@@ -31,9 +30,9 @@ import java.lang.reflect.AccessibleObject;
  * JSONRPCBridge.
  *
  * Any registered InvocationCallback can optionally throw an Exception to cause any given invocation
- * to fail. This could be used as a simpe security mechanism.
+ * to fail. This could be used as a simple security mechanism.
  */
-public interface InvocationCallback<C> extends Serializable {
+public interface InvocationCallback<C> {
   /**
    * Callback before invocation of an RPC method.
    *
