@@ -30,7 +30,7 @@ final class CallbackData {
   /**
    * The object implementing the InvocationCallback Interface.
    */
-  private final InvocationCallback cb;
+  private final InvocationCallback<Object> cb;
 
   /**
    * The type of transport Context interface the callback is interested in eg.
@@ -45,8 +45,9 @@ final class CallbackData {
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
    */
-  CallbackData(InvocationCallback cb, Class<?> contextInterface) {
-    this.cb = cb;
+  @SuppressWarnings("unchecked")
+  CallbackData(InvocationCallback<?> cb, Class<?> contextInterface) {
+    this.cb = (InvocationCallback<Object>)cb;
     this.contextInterface = contextInterface;
   }
 
@@ -70,7 +71,7 @@ final class CallbackData {
    *
    * @return InvocationCallback
    */
-  public InvocationCallback getCallback() {
+  public InvocationCallback<Object> getCallback() {
     return cb;
   }
 

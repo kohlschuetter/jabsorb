@@ -29,7 +29,7 @@ import java.lang.reflect.AccessibleObject;
  * Interface to be implemented by objects registered for invocation callbacks that include error
  * information.
  */
-public interface ErrorInvocationCallback extends InvocationCallback {
+public interface ErrorInvocationCallback<C extends Object> extends InvocationCallback<C> {
   /**
    * Listener for exceptions thrown from an RPC service.
    *
@@ -39,6 +39,6 @@ public interface ErrorInvocationCallback extends InvocationCallback {
    * @param accessibleObject Method/constructor that failed the invocation.
    * @param error Error resulting from the invocation.
    */
-  void invocationError(Object context, Object instance, AccessibleObject accessibleObject,
+  void invocationError(C context, Object instance, AccessibleObject accessibleObject,
       Throwable error);
 }

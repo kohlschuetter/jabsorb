@@ -566,6 +566,7 @@ public class Test implements Serializable, ITest {
 
   // Callback tests
 
+  @SuppressWarnings("null")
   public void setCallback(JSONRPCBridge bridge, boolean flag) {
     if (flag) {
       bridge.registerCallback(cb, HttpServletRequest.class);
@@ -574,12 +575,12 @@ public class Test implements Serializable, ITest {
     }
   }
 
-  public static InvocationCallback cb = new InvocationCallback() {
+  public static InvocationCallback<HttpServletRequest> cb = new InvocationCallback<HttpServletRequest>() {
 
     private static final long serialVersionUID = 2;
 
     @Override
-    public void preInvoke(Object context, Object instance, AccessibleObject m, Object arguments[])
+    public void preInvoke(HttpServletRequest context, Object instance, AccessibleObject m, Object arguments[])
         throws Exception {
       System.out.print("Test.preInvoke");
       if (instance != null) {
@@ -593,7 +594,7 @@ public class Test implements Serializable, ITest {
     }
 
     @Override
-    public void postInvoke(Object context, Object instance, AccessibleObject m, Object result, Throwable error)
+    public void postInvoke(HttpServletRequest context, Object instance, AccessibleObject m, Object result, Throwable error)
         throws Exception {
       // Nothing done
     }

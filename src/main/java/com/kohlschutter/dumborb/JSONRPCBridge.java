@@ -535,8 +535,9 @@ public final class JSONRPCBridge {
    * @param callback The object implementing the InvocationCallback Interface
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
+   * @param <C> The context type.
    */
-  public void registerCallback(InvocationCallback callback, Class<?> contextInterface) {
+  public <C> void registerCallback(InvocationCallback<C> callback, Class<C> contextInterface) {
     if (cbc == null) {
       cbc = new CallbackController();
     }
@@ -703,7 +704,7 @@ public final class JSONRPCBridge {
    * @param callback The previously registered InvocationCallback object
    * @param contextInterface The previously registered transport Context interface.
    */
-  public void unregisterCallback(InvocationCallback callback, Class<?> contextInterface) {
+  public <C> void unregisterCallback(InvocationCallback<C> callback, Class<C> contextInterface) {
     if (cbc == null) {
       return;
     }

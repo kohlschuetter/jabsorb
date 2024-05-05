@@ -67,7 +67,7 @@ public final class CallbackController {
       for (CallbackData cbdata : callbackSet) {
         if (cbdata.understands(context) && (cbdata
             .getCallback() instanceof ErrorInvocationCallback)) {
-          ErrorInvocationCallback ecb = (ErrorInvocationCallback) cbdata.getCallback();
+          ErrorInvocationCallback<Object> ecb = (ErrorInvocationCallback<Object>) cbdata.getCallback();
           try {
             ecb.invocationError(context, instance, accessibleObject, error);
           } catch (Throwable th) { // NOPMD
@@ -128,8 +128,9 @@ public final class CallbackController {
    * @param callback The object implementing the InvocationCallback Interface
    * @param contextInterface The type of transport Context interface the callback is interested in
    *          eg. HttpServletRequest.class for the servlet transport.
+   * @param <T> The context type.
    */
-  public void registerCallback(InvocationCallback callback, Class<?> contextInterface) {
+  public <T> void registerCallback(InvocationCallback<T> callback, Class<T> contextInterface) {
     synchronized (callbackSet) {
       callbackSet.add(new CallbackData(callback, contextInterface));
     }
@@ -144,8 +145,9 @@ public final class CallbackController {
    *
    * @param callback The previously registered InvocationCallback object
    * @param contextInterface The previously registered transport Context interface.
+   * @param <T> The context type.
    */
-  public void unregisterCallback(InvocationCallback callback, Class<?> contextInterface) {
+  public <T> void unregisterCallback(InvocationCallback<T> callback, Class<T> contextInterface) {
     synchronized (callbackSet) {
       callbackSet.remove(new CallbackData(callback, contextInterface));
     }

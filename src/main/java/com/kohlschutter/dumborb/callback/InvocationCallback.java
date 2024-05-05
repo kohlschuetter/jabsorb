@@ -33,7 +33,7 @@ import java.lang.reflect.AccessibleObject;
  * Any registered InvocationCallback can optionally throw an Exception to cause any given invocation
  * to fail. This could be used as a simpe security mechanism.
  */
-public interface InvocationCallback extends Serializable {
+public interface InvocationCallback<C> extends Serializable {
   /**
    * Callback before invocation of an RPC method.
    *
@@ -44,7 +44,7 @@ public interface InvocationCallback extends Serializable {
    * @param arguments The arguments passed to the method
    * @throws Exception if the invocation doesn't work.
    */
-  void preInvoke(Object context, Object instance, AccessibleObject accessibleObject,
+  void preInvoke(C context, Object instance, AccessibleObject accessibleObject,
       Object[] arguments) throws Exception;
 
   /**
@@ -58,7 +58,7 @@ public interface InvocationCallback extends Serializable {
    * @param error Error (if execution was unsuccessful)
    * @throws Exception if the invocation doesn't work.
    */
-  void postInvoke(Object context, Object instance, AccessibleObject accessibleObject, Object result, Throwable error)
+  void postInvoke(C context, Object instance, AccessibleObject accessibleObject, Object result, Throwable error)
       throws Exception;
 
 }
