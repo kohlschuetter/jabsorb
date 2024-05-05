@@ -55,9 +55,10 @@ public interface InvocationCallback extends Serializable {
    * @param instance The object instance or null if it is a static method.
    * @param accessibleObject Method/constructor that failed the invocation.
    * @param result The returned result from the method
+   * @param error Error (if execution was unsuccessful)
    * @throws Exception if the invocation doesn't work.
    */
-  void postInvoke(Object context, Object instance, AccessibleObject accessibleObject, Object result)
+  void postInvoke(Object context, Object instance, AccessibleObject accessibleObject, Object result, Throwable error)
       throws Exception;
 
 }

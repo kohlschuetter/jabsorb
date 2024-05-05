@@ -593,7 +593,7 @@ public class Test implements Serializable, ITest {
     }
 
     @Override
-    public void postInvoke(Object context, Object instance, AccessibleObject m, Object result)
+    public void postInvoke(Object context, Object instance, AccessibleObject m, Object result, Throwable error)
         throws Exception {
       // Nothing done
     }

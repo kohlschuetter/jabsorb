@@ -132,18 +132,25 @@ public class AccessibleObjectResolver {
       }
 
       // Invoke the method
-      final Object returnObj;
-      if (isConstructor) {
-        returnObj = ((Constructor<?>) accessibleObject).newInstance(javaArgs);
-      } else if (accessibleObject instanceof Method) {
-        returnObj = ((Method) accessibleObject).invoke(javascriptObject, javaArgs);
-      } else {
-        throw new UnmarshallException("Unexpected accessibleObject type");
-      }
-      // Call post invoke callbacks
-      if (cbc != null) {
-        for (Object obj : context) {
-          cbc.postInvokeCallback(obj, javascriptObject, accessibleObject, returnObj);
+      Object returnObj = null;
+      Throwable error = null;
+      try {
+        if (isConstructor) {
+          returnObj = ((Constructor<?>) accessibleObject).newInstance(javaArgs);
+        } else if (accessibleObject instanceof Method) {
+          returnObj = ((Method) accessibleObject).invoke(javascriptObject, javaArgs);
+        } else {
+          throw new UnmarshallException("Unexpected accessibleObject type");
+        }
+      } catch (Error | Exception e) {
+        error = e;
+        throw e;
+      } finally {
+        // Call post invoke callbacks
+        if (cbc != null) {
+          for (Object obj : context) {
+            cbc.postInvokeCallback(obj, javascriptObject, accessibleObject, returnObj, error);
+          }
         }
       }
 

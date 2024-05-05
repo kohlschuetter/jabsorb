@@ -87,14 +87,15 @@ public final class CallbackController {
    * @param instance The object instance or null if it is a static method.
    * @param accessibleObject The method/constructor that was just called.
    * @param result The object that was returned.
+   * @param error Error (if unsuccessful).
    * @throws Exception if postInvoke fails
    */
   public void postInvokeCallback(Object context, Object instance, AccessibleObject accessibleObject,
-      Object result) throws Exception {
+      Object result, Throwable error) throws Exception {
     synchronized (callbackSet) {
       for (CallbackData cbdata : callbackSet) {
         if (cbdata.understands(context)) {
-          cbdata.getCallback().postInvoke(context, instance, accessibleObject, result);
+          cbdata.getCallback().postInvoke(context, instance, accessibleObject, result, error);
         }
       }
     }
