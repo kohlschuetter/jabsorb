@@ -187,7 +187,8 @@ public class MapSerializer extends AbstractSerializer {
     JSONObject jso = (JSONObject) o;
     String javaClass;
     try {
-      javaClass = jso.getString(JSONSerializer.JAVA_CLASS_FIELD);
+      javaClass = jso.has(JSONSerializer.JAVA_CLASS_FIELD) ? jso.getString(
+          JSONSerializer.JAVA_CLASS_FIELD) : null;
     } catch (JSONException e) {
       throw new UnmarshallException("Could not read javaClass", e);
     }
