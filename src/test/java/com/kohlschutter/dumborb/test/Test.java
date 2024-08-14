@@ -577,9 +577,6 @@ public class Test implements Serializable, ITest {
 
   public static InvocationCallback<HttpServletRequest> cb =
       new InvocationCallback<HttpServletRequest>() {
-
-        private static final long serialVersionUID = 2;
-
         @Override
         public void preInvoke(HttpServletRequest context, Object instance, AccessibleObject m,
             Object arguments[]) throws Exception {
