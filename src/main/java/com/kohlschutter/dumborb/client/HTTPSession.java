@@ -55,7 +55,7 @@ public class HTTPSession implements Session {
   private static final Logger LOG = LoggerFactory.getLogger(HTTPSession.class);
 
   /**
-   * As per JSON-RPC Working Draft
+   * As per JSON-RPC Working Draft.
    * http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html#RequestHeaders
    */
   static final String JSON_CONTENT_TYPE = "application/json";

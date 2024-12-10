@@ -30,7 +30,7 @@ import org.json.JSONArray;
 
 /**
  * Encapsulates a single fix up entry for a circular reference or duplicate detected during
- * processing of Java into JSON (aka marshalling.)
+ * processing of Java into JSON (aka marshalling).
  */
 public class FixUp {
   /**

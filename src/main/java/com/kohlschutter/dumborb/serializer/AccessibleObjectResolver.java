@@ -142,7 +142,7 @@ public class AccessibleObjectResolver {
         } else {
           throw new UnmarshallException("Unexpected accessibleObject type");
         }
-      } catch (Error | Exception e) {
+      } catch (Error | Exception e) { // NOPMD.ExceptionAsFlowControl
         error = e;
         throw e;
       } finally {

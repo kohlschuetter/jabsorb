@@ -156,6 +156,7 @@ public class JSONRPCServlet extends HttpServlet {
     this.defaultBridge = defaultBridge;
   }
 
+  @SuppressFBWarnings("MC_OVERRIDABLE_METHOD_CALL_IN_READ_OBJECT") // https://github.com/spotbugs/spotbugs/issues/2957
   private void readObject(java.io.ObjectInputStream unused) throws IOException {
     throw new NotSerializableException(JSONRPCServlet.class.getName());
   }
