@@ -192,14 +192,14 @@ public final class JSONRPCBridge {
       final Class<? extends SerializerState> serializerStateClass, ClassResolver classResolver) {
     {
       if (serializerStateClass == null) {
-        LOG.info("Using default serializer state");
-      } else if (LOG.isInfoEnabled()) {
-        LOG.info("Using serializer state: " + serializerStateClass.getCanonicalName());
+        LOG.debug("Using default serializer state");
+      } else if (LOG.isDebugEnabled()) {
+        LOG.debug("Using serializer state: {}", serializerStateClass.getCanonicalName());
       }
       if (requestParser == null) {
-        LOG.info("Using default request parser");
-      } else if (LOG.isInfoEnabled()) {
-        LOG.info("Using request parser: " + requestParser.getClass().getCanonicalName());
+        LOG.debug("Using default request parser");
+      } else if (LOG.isDebugEnabled()) {
+        LOG.debug("Using request parser: {}", requestParser.getClass().getCanonicalName());
       }
     }
 

@@ -99,8 +99,8 @@ public final class ClassAnalyzer {
    *         invoked on the class.
    */
   private static ClassData analyzeClass(Class<?> clazz) {
-    if (LOG.isInfoEnabled()) {
-      LOG.info("analyzing " + clazz.getName());
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("analyzing {}", clazz.getName());
     }
     final List<AccessibleObject> constructors = new ArrayList<AccessibleObject>(Arrays.asList(clazz
         .getConstructors()));
