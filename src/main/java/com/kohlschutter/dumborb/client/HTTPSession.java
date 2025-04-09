@@ -25,14 +25,14 @@ package com.kohlschutter.dumborb.client;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.eclipse.jetty.client.ContentResponse;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.StringRequestContent;
+import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -62,8 +62,6 @@ public class HTTPSession implements Session {
 
   protected HttpClient client;
 
-  protected HttpState state;
-
   protected URI uri;
 
   public HTTPSession(URI uri) {
@@ -78,27 +76,28 @@ public class HTTPSession implements Session {
   // }
 
   @Override
-  public JSONObject sendAndReceive(JSONObject message) {
+  public JSONObject sendAndReceive(JSONObject message) throws IOException {
     try {
       if (LOG.isDebugEnabled()) {
         LOG.debug("Sending: " + message.toString(2));
       }
-      PostMethod postMethod = new PostMethod(uri.toString());
-      postMethod.setRequestHeader("Content-Type", "text/plain");
 
-      RequestEntity requestEntity = new StringRequestEntity(message.toString(), JSON_CONTENT_TYPE,
-          null);
-      postMethod.setRequestEntity(requestEntity);
-      // http().getHostConfiguration().setProxy(proxyHost, proxyPort);
-      http().executeMethod(null, postMethod, state);
+      Request postRequest = http().POST(uri.toString()).body(new StringRequestContent(
+          JSON_CONTENT_TYPE, message.toString()));
+      ContentResponse response;
+      try {
+        response = postRequest.send();
+      } catch (InterruptedException | TimeoutException | ExecutionException e) {
+        throw new IOException(e);
+      }
 
-      int statusCode = postMethod.getStatusCode();
-      if (statusCode != HttpStatus.SC_OK) {
-        throw new ClientException("HTTP Status - " + HttpStatus.getStatusText(statusCode) + " ("
+      int statusCode = response.getStatus();
+      if (statusCode != HttpStatus.OK_200) {
+        throw new ClientException("HTTP Status - " + HttpStatus.getMessage(statusCode) + " ("
             + statusCode + ")");
       }
 
-      JSONTokener tokener = new JSONTokener(postMethod.getResponseBodyAsString());
+      JSONTokener tokener = new JSONTokener(response.getContentAsString());
 
       Object rawResponseMessage = tokener.nextValue();
       JSONObject responseMessage = (JSONObject) rawResponseMessage;
@@ -112,30 +111,25 @@ public class HTTPSession implements Session {
     }
   }
 
-  /**
-   * Expose commons-httpclient host configuration, for setting configuration parameters like proxy.
-   *
-   * @return host configuration of the current HttpClient object
-   */
-  public HostConfiguration getHostConfiguration() {
-    return http().getHostConfiguration();
-  }
-
-  HttpClient http() {
+  HttpClient http() throws IOException {
     if (client == null) {
       client = new HttpClient();
-      if (state == null) {
-        state = new HttpState();
+      try {
+        client.start();
+      } catch (Exception e) {
+        throw new IOException(e);
       }
-      client.setState(state);
     }
     return client;
   }
 
   @Override
-  public void close() {
-    state.clear();
-    state = null;
+  public void close() throws Exception {
+    if (client != null) {
+      HttpClient cl = client;
+      client = null;
+      cl.stop();
+    }
   }
 
   static class Factory implements SessionFactory {

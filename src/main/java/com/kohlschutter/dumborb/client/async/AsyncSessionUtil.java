@@ -23,6 +23,7 @@
  */
 package com.kohlschutter.dumborb.client.async;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -87,7 +88,7 @@ final class AsyncSessionUtil {
     }
 
     @Override
-    public void close() {
+    public void close() throws Exception {
       asyncSession.close();
     }
   }
@@ -116,9 +117,13 @@ final class AsyncSessionUtil {
       new Thread() {
         @Override
         public void run() {
-          final JSONObject response = session.sendAndReceive(request);
-
-          result.complete(response);
+          final JSONObject response;
+          try {
+            response = session.sendAndReceive(request);
+            result.complete(response);
+          } catch (IOException e) {
+            result.completeExceptionally(e);
+          }
 
           if (callback != null) {
             try {
@@ -134,7 +139,7 @@ final class AsyncSessionUtil {
     }
 
     @Override
-    public void close() {
+    public void close() throws Exception {
       session.close();
     }
   }

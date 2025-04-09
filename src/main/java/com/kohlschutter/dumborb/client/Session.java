@@ -23,22 +23,19 @@
  */
 package com.kohlschutter.dumborb.client;
 
+import java.io.IOException;
+
 import org.json.JSONObject;
 
 /**
  * Transport session. May have state associated with it.
  */
-public interface Session {
+public interface Session extends AutoCloseable {
   /**
    * Synchronously send JSON message and receive the result.
    *
    * @param message A JSON message to send
    * @return the JSON result message
    */
-  JSONObject sendAndReceive(JSONObject message);
-
-  /**
-   * Close the session and release the resources if necessary.
-   */
-  void close();
+  JSONObject sendAndReceive(JSONObject message) throws IOException;
 }

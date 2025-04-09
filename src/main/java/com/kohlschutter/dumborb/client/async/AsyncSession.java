@@ -23,7 +23,6 @@
  */
 package com.kohlschutter.dumborb.client.async;
 
-import java.io.Closeable;
 import java.util.concurrent.Future;
 
 import org.json.JSONObject;
@@ -33,7 +32,7 @@ import org.json.JSONObject;
  *
  * @author matthijs
  */
-public interface AsyncSession extends Closeable {
+public interface AsyncSession extends AutoCloseable {
   /**
    * Asynchronously sends the given JSON request.
    *
@@ -51,7 +50,4 @@ public interface AsyncSession extends Closeable {
    */
   Future<JSONObject> send(JSONObject request,
       AsyncResultCallback<AsyncSession, JSONObject, JSONObject> callback);
-
-  @Override
-  void close();
 }
