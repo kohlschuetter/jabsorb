@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -85,9 +86,7 @@ import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
  */
 //@SuppressWarnings("PMD")
 @SuppressWarnings("all")
-@SuppressFBWarnings({
-    "CT_CONSTRUCTOR_THROW", "BX_UNBOXING_IMMEDIATELY_REBOXED", "DCN_NULLPOINTER_EXCEPTION",
-    "NP_TOSTRING_COULD_RETURN_NULL", "EQ_UNUSUAL", "EC_NULL_ARG"})
+@SuppressFBWarnings({"CT_CONSTRUCTOR_THROW", "DCN_NULLPOINTER_EXCEPTION", "REDOS"})
 public class JSONObject {
     /**
      * JSONObject.NULL is equivalent to the value that JavaScript calls null,
@@ -1166,7 +1165,7 @@ public class JSONObject {
             return defaultValue;
         }
         if (val instanceof Boolean){
-            return ((Boolean) val).booleanValue();
+            return ((Boolean) val);
         }
         try {
             // we'll use the get anyway because it does string conversion.
@@ -2584,7 +2583,8 @@ public class JSONObject {
         try {
             return this.toString(0);
         } catch (Exception e) {
-            return null;
+          e.printStackTrace();
+            return "";
         }
     }
 
@@ -2732,7 +2732,7 @@ public class JSONObject {
     @SuppressWarnings("resource")
     static final Writer writeValue(Writer writer, Object value,
             int indentFactor, int indent) throws JSONException, IOException {
-        if (value == null || value.equals(null)) {
+        if (Objects.equals(value, null)) {
             writer.write("null");
         } else if (value instanceof JSONString) {
             Object o;

@@ -28,6 +28,7 @@ import java.net.URI;
 /**
  * A factory used to create transport sessions. Register with #registerTransport.
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface SessionFactory {
   /**
    * Creates the new session.

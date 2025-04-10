@@ -81,13 +81,11 @@ public class ReferenceSerializer extends AbstractSerializer {
             || jsonClazz == JSONObject.class));
   }
 
-  @SuppressFBWarnings("EI_EXPOSE_REP")
   @Override
   public Collection<Class<?>> getSerializableClasses() {
     return SERIALIZABLE_CLASSES;
   }
 
-  @SuppressFBWarnings("EI_EXPOSE_REP")
   @Override
   public Collection<Class<?>> getJSONClasses() {
     return JSON_CLASSES;

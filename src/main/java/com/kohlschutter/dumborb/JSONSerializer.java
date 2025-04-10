@@ -40,6 +40,7 @@ import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 import com.kohlschutter.dumborb.security.ClassResolver;
 import com.kohlschutter.dumborb.serializer.MarshallException;
 import com.kohlschutter.dumborb.serializer.ObjectMatch;
@@ -405,6 +406,7 @@ public class JSONSerializer {
    * @param marshallClassHints flag to enable/disable inclusion of Java class hints in the
    *          serialized JSON objects
    */
+  @SuppressFBWarnings("AT_STALE_THREAD_WRITE_OF_PRIMITIVE")
   public void setMarshallClassHints(boolean marshallClassHints) {
     this.marshallClassHints = marshallClassHints;
   }
@@ -417,6 +419,7 @@ public class JSONSerializer {
    * @param marshallNullAttributes flag to enable/disable marshalling of null attributes in the
    *          serialized JSON objects
    */
+  @SuppressFBWarnings("AT_STALE_THREAD_WRITE_OF_PRIMITIVE")
   public void setMarshallNullAttributes(boolean marshallNullAttributes) {
     this.marshallNullAttributes = marshallNullAttributes;
   }

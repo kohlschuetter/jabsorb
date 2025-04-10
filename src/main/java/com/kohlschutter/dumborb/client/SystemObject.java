@@ -23,6 +23,7 @@
  */
 package com.kohlschutter.dumborb.client;
 
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface SystemObject {
   String[] listMethods();
 }

@@ -35,19 +35,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
+
 /**
  * Transport based on {@link URLConnection}.
  */
 public class URLConnectionSession implements Session {
-  URL url;
+  final URL url;
 
   /**
    * Create a URLConnection transport.
    *
    * @param url The URL.
    */
-  public URLConnectionSession(URL url) {
+  @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
+  public URLConnectionSession(URL url) throws IllegalArgumentException {
     this.url = url;
+    String proto = url.getProtocol();
+    if (!"http".equals(proto) && !"https".equals(proto)) {
+      throw new IllegalArgumentException("Unsupported protocol in URL: " + url);
+    }
   }
 
   @Override
@@ -56,6 +63,7 @@ public class URLConnectionSession implements Session {
   }
 
   @Override
+  @SuppressFBWarnings("URLCONNECTION_SSRF_FD")
   public JSONObject sendAndReceive(JSONObject message) {
     try {
       URLConnection connection = url.openConnection();

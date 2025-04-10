@@ -88,7 +88,7 @@ public class HTTPSession implements Session {
       try {
         response = postRequest.send();
       } catch (InterruptedException | TimeoutException | ExecutionException e) {
-        throw new IOException(e);
+        throw new ClientException(e);
       }
 
       int statusCode = response.getStatus();

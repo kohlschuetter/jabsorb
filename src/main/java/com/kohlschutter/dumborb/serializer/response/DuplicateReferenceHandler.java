@@ -32,6 +32,7 @@ import com.kohlschutter.dumborb.serializer.MarshallException;
  *
  * @author William Becker
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface DuplicateReferenceHandler {
   /**
    * Signals that a duplicate reference was found.

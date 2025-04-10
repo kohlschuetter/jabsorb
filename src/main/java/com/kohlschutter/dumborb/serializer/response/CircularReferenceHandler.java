@@ -32,6 +32,7 @@ import com.kohlschutter.dumborb.serializer.MarshallException;
  *
  * @author William Becker
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface CircularReferenceHandler {
   /**
    * Signals that a circular reference was found.

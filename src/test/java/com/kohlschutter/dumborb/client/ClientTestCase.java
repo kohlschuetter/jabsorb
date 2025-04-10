@@ -116,22 +116,22 @@ public class ClientTestCase extends ServerTestBase {
     assertEquals(doublo, test.echoDoubleObject(doublo));
   }
 
-//  // TODO run embedded proxy server (is Jetty capable of working like a proxy?) to really test
-//  // proxy.
-//  // Right now, we are just testing that the proxy parameters are being set
-//  public void testProxyConfiguration() {
-//    HTTPSession proxiedSession = newHTTPSession(getServiceURL());
-//    int proxyPort = 40888; // hopefully, the port is unused
-//    proxiedSession.setProxy("localhost", proxyPort);
-//    Client client = new Client(proxiedSession, classResolver);
-//    ITest proxyObject = client.openProxy("test", ITest.class);
-//    try {
-//      proxyObject.voidFunction();
-//    } catch (ClientException ex) {
-//      if (!(ex.getCause() instanceof ConnectException))
-//        fail("expected ConnectException, got " + ex.getCause().getClass().getName());
-//    }
-//  }
+  // // TODO run embedded proxy server (is Jetty capable of working like a proxy?) to really test
+  // // proxy.
+  // // Right now, we are just testing that the proxy parameters are being set
+  // public void testProxyConfiguration() {
+  // HTTPSession proxiedSession = newHTTPSession(getServiceURL());
+  // int proxyPort = 40888; // hopefully, the port is unused
+  // proxiedSession.setProxy("localhost", proxyPort);
+  // Client client = new Client(proxiedSession, classResolver);
+  // ITest proxyObject = client.openProxy("test", ITest.class);
+  // try {
+  // proxyObject.voidFunction();
+  // } catch (ClientException ex) {
+  // if (!(ex.getCause() instanceof ConnectException))
+  // fail("expected ConnectException, got " + ex.getCause().getClass().getName());
+  // }
+  // }
 
   String getServiceURL() {
     return getServiceRootURL() + "/JSON-RPC";

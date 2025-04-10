@@ -68,7 +68,6 @@ final class AsyncProxyHandler implements InvocationHandler {
 
   private AsyncResultCallback<Object, Object, Method> resultCallback;
 
-  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public AsyncProxyHandler(final String proxyKey, final AsyncSession session,
       final JSONSerializer serializer) {
     this.proxyKey = proxyKey;

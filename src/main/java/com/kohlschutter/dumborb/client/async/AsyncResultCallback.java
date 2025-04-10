@@ -30,6 +30,7 @@ import java.util.concurrent.Future;
  *
  * @author matthijs
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface AsyncResultCallback<S, R, C> {
   /**
    * Method to be called when the asynchronous operation is completed.

@@ -24,7 +24,6 @@
 package com.kohlschutter.dumborb.serializer.response.results;
 
 import java.io.CharArrayWriter;
-import java.io.PrintWriter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +53,6 @@ public class RemoteFailedResult extends FailedResult {
     if (getError() instanceof Throwable) {
       Throwable e = (Throwable) getError();
       CharArrayWriter caw = new CharArrayWriter();
-      e.printStackTrace(new PrintWriter(caw));
       JSONObject err = new JSONObject();
       err.put("code", CODE_REMOTE_EXCEPTION);
       err.put("message", e.getMessage());

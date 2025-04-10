@@ -27,6 +27,7 @@ package com.kohlschutter.dumborb.localarg;
  * Interface to be implemented by objects registered to locally resolve method arguments using
  * transport context information.
  */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface LocalArgResolver {
   /**
    * Resolve an argument locally using the given context information.

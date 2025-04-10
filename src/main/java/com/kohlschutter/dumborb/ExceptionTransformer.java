@@ -26,6 +26,7 @@ package com.kohlschutter.dumborb;
 /**
  * Used to transform the exception to some object in JSONRPCResults.
  */
+@FunctionalInterface
 public interface ExceptionTransformer {
   /**
    * Transform the exception to the format desired for transport to the client. This method should
