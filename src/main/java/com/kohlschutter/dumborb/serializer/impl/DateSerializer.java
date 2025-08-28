@@ -43,6 +43,7 @@ import com.kohlschutter.dumborb.serializer.UnmarshallException;
 /**
  * Serializes date and time values.
  */
+@SuppressWarnings("PMD.ReplaceJavaUtilDate")
 public class DateSerializer extends AbstractSerializer {
   /**
    * Classes that this can serialize.

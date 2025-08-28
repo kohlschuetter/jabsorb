@@ -65,7 +65,7 @@ import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
  */
 //@SuppressWarnings("PMD")
 @SuppressWarnings("all")
-@SuppressFBWarnings({"CT_CONSTRUCTOR_THROW", "DCN_NULLPOINTER_EXCEPTION"})
+@SuppressFBWarnings({"CT_CONSTRUCTOR_THROW", "DCN_NULLPOINTER_EXCEPTION", "SF_SWITCH_FALLTHROUGH"})
 public class JSONArray implements Iterable<Object> {
 
     /**
