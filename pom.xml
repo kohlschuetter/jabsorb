@@ -30,7 +30,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jetty.version>12.0.19</jetty.version>
+        <jetty.version>12.1.5</jetty.version>
     </properties>
     <description>
         dumborb -- A JSON-RPC ORB in Java and JavaScript, mostly for dumbo.
