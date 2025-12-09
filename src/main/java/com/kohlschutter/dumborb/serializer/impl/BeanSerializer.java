@@ -46,7 +46,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.kohlschutter.annotations.compiletime.SuppressFBWarnings;
 import com.kohlschutter.dumborb.serializer.AbstractSerializer;
 import com.kohlschutter.dumborb.serializer.MarshallException;
 import com.kohlschutter.dumborb.serializer.ObjectMatch;
