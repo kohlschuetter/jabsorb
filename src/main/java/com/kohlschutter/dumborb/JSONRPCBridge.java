@@ -24,10 +24,12 @@
 package com.kohlschutter.dumborb;
 
 import java.lang.reflect.AccessibleObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -93,6 +95,8 @@ import com.kohlschutter.dumborb.serializer.response.results.SuccessfulResult;
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.CouplingBetweenObjects"})
 public final class JSONRPCBridge {
+  private static final List<Serializer> SERIALIZERS = new ArrayList<>();
+
   /**
    * The logger for this class.
    */
@@ -176,9 +180,19 @@ public final class JSONRPCBridge {
    */
   private final JSONSerializer ser;
 
+  static {
+    SERIALIZERS.addAll(JSONSerializer.getDefaultSerializers());
+    ServiceLoader.load(Serializer.class).forEach((s) -> {
+      if (LOG.isInfoEnabled()) {
+        LOG.info("Adding dumborb serializer from SPI: " + s.getClass());
+      }
+      SERIALIZERS.add(s);
+    });
+  }
+
   public JSONRPCBridge(ClassResolver resolver) {
-    this(JSONSerializer.getDefaultSerializers(), new FixupsCircularReferenceHandler(),
-        FixupCircRefAndNonPrimitiveDupes.class, resolver);
+    this(SERIALIZERS, new FixupsCircularReferenceHandler(), FixupCircRefAndNonPrimitiveDupes.class,
+        resolver);
   }
 
   /**
